@@ -1,5 +1,4 @@
-const routes = [
-  {
+const routes = [{
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
@@ -16,6 +15,10 @@ const routes = [
         component: () => import("src/pages/TopicIndexEditorPage.vue"),
       },
       {
+        path: "translate",
+        component: () => import("src/pages/TranslatePage.vue"),
+      },
+      {
         path: "airtable",
         component: () => import("src/pages/AirTablePage.vue"),
       },
@@ -23,7 +26,10 @@ const routes = [
         path: "settings",
         component: () => import("src/pages/SettingsPage.vue"),
       },
-      { path: "", component: () => import("pages/IndexPage.vue") },
+      {
+        path: "",
+        component: () => import("pages/IndexPage.vue")
+      },
     ],
   },
 

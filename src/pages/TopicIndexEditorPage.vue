@@ -4,10 +4,7 @@
 	</q-page>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
 
-export default defineComponent({
-	name: 'TopicIndexEditorPage'
-})
+
 </script>

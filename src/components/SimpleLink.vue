@@ -10,26 +10,22 @@
     </q-item>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { defineProps } from 'vue';
+const props = defineProps({
+    title: {
+        type: String,
+        required: true
+    },
 
-export default defineComponent({
-    name: 'SimpleLink',
-    props: {
-        title: {
-            type: String,
-            required: true
-        },
+    link: {
+        type: String,
+        default: '#'
+    },
 
-        link: {
-            type: String,
-            default: '#'
-        },
-
-        icon: {
-            type: String,
-            default: ''
-        }
+    icon: {
+        type: String,
+        default: ''
     }
-})
+});
 </script>
