@@ -5,10 +5,38 @@ import { fileURLToPath } from 'node:url'
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform()
-
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
 let mainWindow
+
+async function installDevTools() {
+  if (process.env.DEV) {
+    try {
+      // dynamic import to work in ESM environment
+      const devtools = await import('electron-devtools-installer')
+      await devtools.default(devtools.VUEJS3_DEVTOOLS)
+      console.log('Vue Devtools installed via electron-devtools-installer')
+    } catch (err) {
+      console.warn('electron-devtools-installer failed — trying loadExtension fallback', err)
+
+      // fallback: load unpacked extension from a relative project folder (no absolut path hard-coded)
+      // place the unpacked Vue Devtools in the project root (folder name "vue-devtools"),
+      // or adjust this relative path as needed.
+      const devtoolsPath = path.resolve(process.cwd(), 'vue-devtools')
+
+      try {
+        if (fs.existsSync(devtoolsPath)) {
+          await session.defaultSession.loadExtension(devtoolsPath, { allowFileAccess: true })
+          console.log('Vue Devtools loaded from', devtoolsPath)
+        } else {
+          console.warn('Vue Devtools unpacked folder not found at', devtoolsPath)
+        }
+      } catch (err2) {
+        console.error('Failed loading unpacked Vue Devtools', err2)
+      }
+    }
+  }
+}
 
 async function createWindow () {
   /**
@@ -50,7 +78,7 @@ async function createWindow () {
   })
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(installDevTools).then(createWindow)
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {

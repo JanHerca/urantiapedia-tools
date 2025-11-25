@@ -1,9 +1,10 @@
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { LocalStorage } from 'quasar';
 import { Dark } from 'quasar';
 
 import { Strings } from 'src/core/strings';
+import { Processes } from 'src/core/processes';
 
 export const useMain = defineStore('main', () => {
   //Constants
@@ -18,7 +19,6 @@ export const useMain = defineStore('main', () => {
 
   //Storage
   const uiLanCode = LocalStorage.getItem('language') || 'en';
-  const initialLan = uiLanguages.find(l => l.value === uiLanCode) || uiLanguages[0];
   const initialDarkTheme = LocalStorage.getItem('darkTheme') === 'true';
   const initialTransProjID = LocalStorage.getItem('translateProjectID') || '';
   const initialTranslateAPIKey = LocalStorage.getItem('translateAPIKey') || '';
@@ -27,7 +27,9 @@ export const useMain = defineStore('main', () => {
   const initialOpenAIAPIKey = LocalStorage.getItem('openAIAPIKey') || '';
 
   //State
-  const uiLanguage = ref({...initialLan});
+  const language = ref('en');
+  const uiLanguage = ref(uiLanCode);
+  const process = ref(null);
   const darkTheme = ref(initialDarkTheme);
   const translateProjectID = ref(initialTransProjID);
   const translateAPIKey = ref(initialTranslateAPIKey);
@@ -39,7 +41,7 @@ export const useMain = defineStore('main', () => {
 
   //Watchers
   watch(uiLanguage, (newVal) => {
-    LocalStorage.set('language', newVal.value);
+    LocalStorage.set('language', newVal);
   });
 
   watch(darkTheme, (newVal) => {
@@ -67,6 +69,17 @@ export const useMain = defineStore('main', () => {
     LocalStorage.set('openAIAPIKey', newVal);
   });
 
+  //Computeds
+  const allProcesses = computed(() => {
+    return Object.keys(Processes)
+      .map(key => ({
+        label: Processes[key].desc[uiLanguage.value],
+        value: key,
+        active: Processes[key].active
+      }))
+      .filter(proc => proc.active);
+  });
+
   //Actions
 
   return {
@@ -74,7 +87,9 @@ export const useMain = defineStore('main', () => {
     uiLanguages,
     allLanguages,
     //State
+    language,
     uiLanguage,
+    process,
     darkTheme,
     translateProjectID,
     translateAPIKey,
@@ -83,6 +98,8 @@ export const useMain = defineStore('main', () => {
     openAIAPIKey,
     translateSourceLanguage,
     translateTargetLanguage,
+    //Computeds
+    allProcesses,
     //Actions
 
   };

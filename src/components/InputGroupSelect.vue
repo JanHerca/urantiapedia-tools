@@ -1,14 +1,15 @@
 <template>
   <div class="row no-wrap-sm items-center">
     <div class="q-px-sm-md">
-      {{ label + ':' }}
+      {{ label }}
     </div>
 
     <q-select
-      :modelValue="theValue"
+      :modelValue="options.find(option => option.value === theValue)"
       :options="options"
       option-value="value"
       option-label="label"
+      emit-value
       dense
       outlined
       :class="classes"
@@ -20,7 +21,7 @@
 <script setup>
 
 const theValue = defineModel({
-  type: Object,
+  type: String,
   required: true
 });
 
