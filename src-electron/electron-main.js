@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import path from 'node:path'
+import fs from 'node:fs/promises'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
 
@@ -49,6 +50,7 @@ async function createWindow () {
     useContentSize: true,
     webPreferences: {
       contextIsolation: true,
+      sandbox: false,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(
         currentDir,
@@ -92,6 +94,28 @@ app.on('activate', () => {
   }
 })
 
+// Path handlers
+ipcMain.handle('node:path-join', (evt, parts) => path.join(...parts))
+ipcMain.handle('node:path-resolve', (evt, parts) => path.resolve(...parts))
+ipcMain.handle('node:path-basename', (evt, p) => path.basename(p))
+ipcMain.handle('node:path-dirname', (evt, p) => path.dirname(p))
+ipcMain.handle('node:path-extname', (evt, p) => path.extname(p))
+
+// FS handlers
+ipcMain.handle('fs:exists', async (evt, p) => {
+  try { await fs.access(p); return true } catch { return false }
+})
+ipcMain.handle('fs:stat', async (evt, p) => {
+  try { return await fs.stat(p) } catch { return null }
+})
+ipcMain.handle('fs:readFile', async (evt, p, enc = 'utf8') => {
+  try { return await fs.readFile(p, enc) } catch (err) { return { error: err.message } }
+})
+ipcMain.handle('fs:writeFile', async (evt, p, data, enc = 'utf8') => {
+  try { await fs.writeFile(p, data, enc); return { ok: true } } catch (err) { return { error: err.message } }
+})
+
+// Native dialog handlers
 ipcMain.handle('dialog:openSystemDialog', async (event, options = {}) => {
   const properties = []
 

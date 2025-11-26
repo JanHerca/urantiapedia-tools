@@ -31,6 +31,19 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('myElectronAPI', {
-  // Now the function accepts an options object
+  // path helpers
+  pathJoin: (...parts) => ipcRenderer.invoke('node:path-join', parts),
+  pathResolve: (...parts) => ipcRenderer.invoke('node:path-resolve', parts),
+  pathBasename: (p) => ipcRenderer.invoke('node:path-basename', p),
+  pathDirname: (p) => ipcRenderer.invoke('node:path-dirname', p),
+  pathExtname: (p) => ipcRenderer.invoke('node:path-extname', p),
+
+  // fs helpers (async)
+  stat: (p) => ipcRenderer.invoke('fs:stat', p),
+  exists: (p) => ipcRenderer.invoke('fs:exists', p),
+  readFile: (p, enc = 'utf8') => ipcRenderer.invoke('fs:readFile', p, enc),
+  writeFile: (p, data, enc = 'utf8') => ipcRenderer.invoke('fs:writeFile', p, data, enc),
+
+  // native dialogs
   selectPath: (options) => ipcRenderer.invoke('dialog:openSystemDialog', options)
 })

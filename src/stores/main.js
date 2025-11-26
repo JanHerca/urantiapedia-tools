@@ -7,6 +7,8 @@ import { Strings } from 'src/core/strings';
 import { Processes } from 'src/core/processes';
 
 export const useMain = defineStore('main', () => {
+  const API = window.myElectronAPI;
+
   //Constants
   const uiLanguages = [
     { label: 'English', value: 'en' },
@@ -32,6 +34,7 @@ export const useMain = defineStore('main', () => {
   const uiLanguage = ref(uiLanCode);
   const urantiapediaFolder = ref(initialUrantiapediaFolder);
   const process = ref('BIBLEREF_TXT_BOOK_JSON_TO_TXT');
+  const processData = ref({ active: false, desc: {}, controls: [] });
   const darkTheme = ref(initialDarkTheme);
   const translateProjectID = ref(initialTransProjID);
   const translateAPIKey = ref(initialTranslateAPIKey);
@@ -40,6 +43,13 @@ export const useMain = defineStore('main', () => {
   const openAIAPIKey = ref(initialOpenAIAPIKey);
   const translateSourceLanguage = ref(allLanguages[0]);
   const translateTargetLanguage = ref(allLanguages[0]);
+
+  //Helpers
+
+  async function folderExists(p) {
+    if (!window?.nodeAPI) return false
+    return await window.nodeAPI.exists(p)
+  }
 
   //Watchers
   watch(uiLanguage, (newVal) => {
@@ -75,6 +85,31 @@ export const useMain = defineStore('main', () => {
     LocalStorage.set('openAIAPIKey', newVal);
   });
 
+  watch(process, (newVal) => {
+    const selected = Processes[newVal];
+    const lan = language.value;
+    const extraPath = selected.extraPath && selected.extraPath[lan] 
+      ? selected.extraPath[lan] 
+      : '';
+    const resolveControl = async(c) => {
+      const control = { ...c };
+      if (c.type === 'file' || c.type === 'folder') {
+        control.value = (await API.pathJoin('{ Urantiapedia Folder }', ...c.value))
+          .replace('{0}', lan)
+          .replace('{extraPath}', extraPath);
+      }
+      return control;
+    }
+    Promise.all(selected.controls.map(c => resolveControl(c)))
+      .then(resolvedControls => {
+        processData.value = {
+          active: selected.active,
+          desc: {...selected.desc},
+          controls: resolvedControls
+        };
+      });
+  }, { immediate: true });
+
   //Computeds
   const allProcesses = computed(() => {
     return Object.keys(Processes)
@@ -86,11 +121,8 @@ export const useMain = defineStore('main', () => {
       .filter(proc => proc.active);
   });
 
-  const processData = computed(() => {
-    return Processes[process.value];
-});
-
   //Actions
+
 
   return {
     //Constants

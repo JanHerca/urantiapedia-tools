@@ -14,17 +14,20 @@
       v-model="process"
       class="q-pa-sm-none q-mb-sm-md"
     />
-    <div>
+    <div
+      v-for="control in processData.controls">
       <InputGroupFolder
+        v-if="control.type === 'folder'"
         label="Folder"
-        v-model="folderPath"
+        v-model="control.value"
         :basePath="urantiapediaFolder"
         class="q-pa-sm-none q-mb-sm-md"
         classes="full-width"
       />
       <InputGroupFile
+        v-if="control.type === 'file'"
         label="File"
-        v-model="filePath"
+        v-model="control.value"
         class="q-pa-sm-none q-mb-sm-md"
         classes="full-width"
       />
@@ -39,7 +42,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import InputGroupSelect from 'src/components/InputGroupSelect.vue';
 import InputGroupFolder from 'src/components/InputGroupFolder.vue';
@@ -47,9 +49,6 @@ import InputGroupFile from 'src/components/InputGroupFile.vue';
 import Message from 'src/components/Message.vue';
 import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
-
-const folderPath = ref('');
-const filePath = ref('');
 
 const mainStore = useMain();
 const { allLanguages } = mainStore;

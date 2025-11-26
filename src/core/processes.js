@@ -9,8 +9,6 @@
  * @property {string|Array.<string>} controls.value Default value for the control. If type is
  * 'folder' or 'file', it is an array of folder names to join. If type is 'select', it is
  * the array of options. If type is 'toggle', it is ignored.
- * @property {?Array.<(null|string)>} emptyLan Array of languages that can be made
- * empty in a path for a control. Length must match `controls`.
  * @property {?Object} extraPath Object with an extra folder name for some languages.
  */
 
