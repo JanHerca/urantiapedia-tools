@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import path from 'node:path'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
@@ -89,5 +89,35 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
+  }
+})
+
+ipcMain.handle('dialog:openSystemDialog', async (event, options = {}) => {
+  const properties = []
+
+  // In Vue we can choose 'file', 'folder' o 'both'
+  // Note: 'both' works only in macOS
+  if (options.type === 'folder') {
+    properties.push('openDirectory')
+  } else if (options.type === 'file') {
+    properties.push('openFile')
+  } else {
+    // By default, allow both files and folders
+    properties.push('openFile', 'openDirectory')
+  }
+  
+  // Add filters configuration (e.g., only .txt or .json) if provided in options
+  const filters = options.filters || []
+
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: properties,
+    filters: filters
+  })
+
+  if (canceled) {
+    return null
+  } else {
+    // Return first path
+    return filePaths[0]
   }
 })

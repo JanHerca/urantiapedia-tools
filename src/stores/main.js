@@ -20,6 +20,7 @@ export const useMain = defineStore('main', () => {
   //Storage
   const uiLanCode = LocalStorage.getItem('language') || 'en';
   const initialDarkTheme = LocalStorage.getItem('darkTheme') === 'true';
+  const initialUrantiapediaFolder = LocalStorage.getItem('urantiapediaFolder') || '';
   const initialTransProjID = LocalStorage.getItem('translateProjectID') || '';
   const initialTranslateAPIKey = LocalStorage.getItem('translateAPIKey') || '';
   const initialAirTableAPIKey = LocalStorage.getItem('airTableAPIKey') || '';
@@ -29,7 +30,8 @@ export const useMain = defineStore('main', () => {
   //State
   const language = ref('en');
   const uiLanguage = ref(uiLanCode);
-  const process = ref(null);
+  const urantiapediaFolder = ref(initialUrantiapediaFolder);
+  const process = ref('BIBLEREF_TXT_BOOK_JSON_TO_TXT');
   const darkTheme = ref(initialDarkTheme);
   const translateProjectID = ref(initialTransProjID);
   const translateAPIKey = ref(initialTranslateAPIKey);
@@ -47,6 +49,10 @@ export const useMain = defineStore('main', () => {
   watch(darkTheme, (newVal) => {
     LocalStorage.set('darkTheme', newVal);
     Dark.set(newVal);
+  });
+
+  watch(urantiapediaFolder, (newVal) => {
+    LocalStorage.set('urantiapediaFolder', newVal);
   });
 
   watch(translateProjectID, (newVal) => {
@@ -80,6 +86,10 @@ export const useMain = defineStore('main', () => {
       .filter(proc => proc.active);
   });
 
+  const processData = computed(() => {
+    return Processes[process.value];
+});
+
   //Actions
 
   return {
@@ -89,6 +99,7 @@ export const useMain = defineStore('main', () => {
     //State
     language,
     uiLanguage,
+    urantiapediaFolder,
     process,
     darkTheme,
     translateProjectID,
@@ -100,6 +111,7 @@ export const useMain = defineStore('main', () => {
     translateTargetLanguage,
     //Computeds
     allProcesses,
+    processData,
     //Actions
 
   };

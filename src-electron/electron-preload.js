@@ -27,3 +27,10 @@
  *   }
  * }
  */
+
+import { contextBridge, ipcRenderer } from 'electron'
+
+contextBridge.exposeInMainWorld('myElectronAPI', {
+  // Now the function accepts an options object
+  selectPath: (options) => ipcRenderer.invoke('dialog:openSystemDialog', options)
+})

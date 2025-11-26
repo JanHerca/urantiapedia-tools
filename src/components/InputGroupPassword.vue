@@ -1,16 +1,17 @@
 <template>
-  <div class="row no-wrap-sm items-center">
-    <div class="flex items-center q-px-sm-md">
-      {{ label }} :
+  <div class="row no-wrap items-center">
+    <div class="flex items-center q-px-sm text-no-wrap q-mr-sm">
+      {{ label }}
     </div>
 
     <q-input 
-      :modelValue="thePassword" 
+      v-model="thePassword" 
       filled 
       dense
       :type="isPwd ? 'password' : 'text'"
+      class="col"
       :class="classes"
-      @update:modelValue="onTextchanged">
+    >
       <template v-slot:append>
         <q-icon 
           :name="isPwd ? 'visibility_off' : 'visibility'" 
@@ -35,10 +36,6 @@ const props = defineProps({
   label: { type: String, default: 'Label' },
   classes: { type: String, default: '' }
 });
-
-const onTextchanged = (val) => {
-  thePassword.value = val;
-};
 
 </script>
 

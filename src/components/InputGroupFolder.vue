@@ -1,19 +1,19 @@
 <template>
-  <div class="row no-wrap-sm items-center">
-    <div class="flex items-center q-px-sm-md">
-      {{ label }} :
+  <div class="row no-wrap items-center">
+    <div class="flex items-center q-px-sm text-no-wrap q-mr-sm">
+      {{ label }}
     </div>
 
     <q-input
       filled
       dense
-      :modelValue="theFolderPath"
-      :class="classes"
-      @update:modelValue="onPathChanged">
+      v-model="theFolderPath"
+      class="col"
+      :class="classes">
       <template v-slot:append>
         <q-icon 
           name="folder_open" 
-          @click="text = ''" 
+          @click="onOpenFolderClick" 
           class="cursor-pointer q-pr-sm-sm" />
         <q-icon 
           name="close" 
@@ -33,19 +33,26 @@ const theFolderPath = defineModel({
 
 const props = defineProps({
   label: { type: String, default: 'Label' },
-  classes: { type: String, default: '' }
+  placeholder: { type: String, default: 'Select a folder' },
+  classes: { type: String, default: '' },
+  basePath: { type: String, default: '' }
 });
 
-const emits = defineEmits({
-  'openFolderClick': () => true
-});
+const chooseFolder = async () => {
+  if (!window.myElectronAPI) return
+  const path = await window.myElectronAPI.selectPath({
+    type: 'folder',
+    filters: []
+  });
+  if (path) {
+    theFolderPath.value = props.basePath != ''
+      ? path.replace(props.basePath, '{ Urantiapedia Folder }')
+      : path;
+  }
+}
 
-const onPathChanged = (val) => {
-  theFolderPath.value = val;
-};
-
-onOpenFolderClick = () => {
-  emits('openFolderClick');
+const onOpenFolderClick = () => {
+  chooseFolder();
 };
 
 </script>
