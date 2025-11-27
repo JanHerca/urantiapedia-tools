@@ -94,12 +94,12 @@ app.on('activate', () => {
   }
 })
 
-// Path handlers
-ipcMain.handle('node:path-join', (evt, parts) => path.join(...parts))
-ipcMain.handle('node:path-resolve', (evt, parts) => path.resolve(...parts))
-ipcMain.handle('node:path-basename', (evt, p) => path.basename(p))
-ipcMain.handle('node:path-dirname', (evt, p) => path.dirname(p))
-ipcMain.handle('node:path-extname', (evt, p) => path.extname(p))
+// // Path handlers
+// ipcMain.handle('node:path-join', (evt, parts) => path.join(...parts))
+// ipcMain.handle('node:path-resolve', (evt, parts) => path.resolve(...parts))
+// ipcMain.handle('node:path-basename', (evt, p) => path.basename(p))
+// ipcMain.handle('node:path-dirname', (evt, p) => path.dirname(p))
+// ipcMain.handle('node:path-extname', (evt, p) => path.extname(p))
 
 // FS handlers
 ipcMain.handle('fs:exists', async (evt, p) => {
@@ -107,6 +107,9 @@ ipcMain.handle('fs:exists', async (evt, p) => {
 })
 ipcMain.handle('fs:stat', async (evt, p) => {
   try { return await fs.stat(p) } catch { return null }
+})
+ipcMain.handle('fs:readdir', async (evt, p) => {
+  try { return await fs.readdir(p) } catch (err) { return { error: err.message } }
 })
 ipcMain.handle('fs:readFile', async (evt, p, enc = 'utf8') => {
   try { return await fs.readFile(p, enc) } catch (err) { return { error: err.message } }

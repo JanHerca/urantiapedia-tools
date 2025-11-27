@@ -39,8 +39,8 @@ const props = defineProps({
 });
 
 const chooseFolder = async () => {
-  if (!window.myElectronAPI) return
-  const path = await window.myElectronAPI.selectPath({
+  if (!window.NodeAPI) return
+  const path = await window.NodeAPI.selectPath({
     type: 'folder',
     filters: []
   });

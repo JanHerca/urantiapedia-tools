@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-sm-md">
+  <q-page class="q-pa-md column">
     <InputGroupSelect 
       id="drpLanguage" 
       :label="Strings.lblLanguage[uiLanguage]" 
@@ -37,7 +37,17 @@
       type="warning"
       :dark="darkTheme"
       text="Urantiapedia folder is required in Settings."
+      class="q-mb-sm-md"
     />
+    <div>
+      <q-btn 
+        color="primary"
+        class="q-mb-sm-md"
+        @click="onExecuteClick">
+        {{ Strings.exeButton[uiLanguage] }}
+      </q-btn>
+    </div>
+    <Terminal :logs="logs" class="q-mt-md col" />
   </q-page>
 </template>
 
@@ -47,11 +57,14 @@ import InputGroupSelect from 'src/components/InputGroupSelect.vue';
 import InputGroupFolder from 'src/components/InputGroupFolder.vue';
 import InputGroupFile from 'src/components/InputGroupFile.vue';
 import Message from 'src/components/Message.vue';
+import Terminal from 'src/components/Terminal.vue';
 import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
+import { useBIBLEREF_TXT_BOOK_JSON_TO_TXT } from 'src/composables/processes';
+
 
 const mainStore = useMain();
-const { allLanguages } = mainStore;
+const { allLanguages, addLog, addError } = mainStore;
 const {
   language,
   uiLanguage,
@@ -60,8 +73,34 @@ const {
   process,
   allProcesses,
   processData,
+  logs,
 } = storeToRefs(mainStore);
 
+//Handlers
 
+const onExecuteClick = () => {
+  const values = processData.value.controls.map(c => {
+    return c.type === 'file' || c.type === 'folder' 
+      ? c.value.replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
+      : c.value;
+  });
+  switch (process.value) {
+    case 'BIBLEREF_TXT_BOOK_JSON_TO_TXT':
+      {
+        const {
+          executeProcess,
+        } = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(language, addLog, addError);
+        executeProcess(...values);
+      }
+      break;
+    default:
+      addError(`Process "${process.value}" is not implemented.`);
+      break;
+  }
+};
 
 </script>
+
+<style scoped>
+
+</style>

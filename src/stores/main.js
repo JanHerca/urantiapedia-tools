@@ -2,12 +2,14 @@ import { ref, watch, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { LocalStorage } from 'quasar';
 import { Dark } from 'quasar';
+import { date } from 'quasar';
+import path from 'path';
 
 import { Strings } from 'src/core/strings';
 import { Processes } from 'src/core/processes';
 
 export const useMain = defineStore('main', () => {
-  const API = window.myElectronAPI;
+  const API = window.NodeAPI;
 
   //Constants
   const uiLanguages = [
@@ -43,13 +45,7 @@ export const useMain = defineStore('main', () => {
   const openAIAPIKey = ref(initialOpenAIAPIKey);
   const translateSourceLanguage = ref(allLanguages[0]);
   const translateTargetLanguage = ref(allLanguages[0]);
-
-  //Helpers
-
-  async function folderExists(p) {
-    if (!window?.nodeAPI) return false
-    return await window.nodeAPI.exists(p)
-  }
+  const logs = ref([]);
 
   //Watchers
   watch(uiLanguage, (newVal) => {
@@ -91,23 +87,32 @@ export const useMain = defineStore('main', () => {
     const extraPath = selected.extraPath && selected.extraPath[lan] 
       ? selected.extraPath[lan] 
       : '';
-    const resolveControl = async(c) => {
-      const control = { ...c };
-      if (c.type === 'file' || c.type === 'folder') {
-        control.value = (await API.pathJoin('{ Urantiapedia Folder }', ...c.value))
-          .replace('{0}', lan)
-          .replace('{extraPath}', extraPath);
-      }
-      return control;
-    }
-    Promise.all(selected.controls.map(c => resolveControl(c)))
-      .then(resolvedControls => {
-        processData.value = {
-          active: selected.active,
-          desc: {...selected.desc},
-          controls: resolvedControls
-        };
-      });
+    // const resolveControl = async(c) => {
+    //   const control = { type: c.type };
+    //   if (c.type === 'file' || c.type === 'folder') {
+    //     control.value = (await API.pathJoin('{ Urantiapedia Folder }', ...c.value))
+    //       .replace('{0}', lan)
+    //       .replace('{extraPath}', extraPath);
+    //   }
+    //   return control;
+    // }
+    // Promise.all(selected.controls.map(c => resolveControl(c)))
+    //   .then(resolvedControls => {
+    //     processData.value = {
+    //       controls: resolvedControls
+    //     };
+    //   });
+    processData.value = {
+      controls: selected.controls.map(c => {
+        const control = { type: c.type };
+        if (c.type === 'file' || c.type === 'folder') {
+          control.value = path.join('{ Urantiapedia Folder }', ...c.value)
+            .replace('{0}', lan)
+            .replace('{extraPath}', extraPath);
+        }
+        return control;
+      })
+    };
   }, { immediate: true });
 
   //Computeds
@@ -122,7 +127,18 @@ export const useMain = defineStore('main', () => {
   });
 
   //Actions
+  const addLog = (message, type = 'log') => {
+    const timeStamp = date.formatDate(Date.now(), 'HH:mm:ss');
+    logs.value.push({
+      time: timeStamp,
+      message: message,
+      type: type,
+    });
+  };
 
+  const addWarning = (msg) => addLog(msg, 'warning');
+
+  const addError = (msg) => addLog(msg, 'error');
 
   return {
     //Constants
@@ -133,6 +149,7 @@ export const useMain = defineStore('main', () => {
     uiLanguage,
     urantiapediaFolder,
     process,
+    processData,
     darkTheme,
     translateProjectID,
     translateAPIKey,
@@ -141,10 +158,12 @@ export const useMain = defineStore('main', () => {
     openAIAPIKey,
     translateSourceLanguage,
     translateTargetLanguage,
+    logs,
     //Computeds
     allProcesses,
-    processData,
     //Actions
-
+    addLog,
+    addWarning,
+    addError,
   };
 });
