@@ -14,5 +14,8 @@
   "spellright.documentTypes": [
     "latex",
     "plaintext"
-  ]
+  ],
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }

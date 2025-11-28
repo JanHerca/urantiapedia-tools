@@ -1,4 +1,19 @@
 import { Strings } from 'src/core/strings';
+import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs';
+
+/**
+ * Formats a string using '{x}' pattern where x in a number 0..n.
+ * First arg must be the string, and the rest the values.
+ * @param {...string} params Strings.
+ * @return {string}
+ */
+export const strformat = (...params) => {
+	const str = params[0];
+	return str.replace(/{(\d+)}/g, function(match, number) {
+		const n = (parseInt(number)+1).toString();
+		return typeof params[n] != 'undefined' ? params[n] : match;
+	});
+};
 
 /**
  * Extracts part of a text enclosed in two other texts. It is extracted the 
@@ -9,11 +24,11 @@ import { Strings } from 'src/core/strings';
  * @return {?string}
  */
 export const extractStr = (content, start, end) => {
-	const index = content.indexOf(start);
-	if (index === -1) return null;
-	const index2 = content.indexOf(end, index);
-	if (index2 === -1) return null;
-	return content.substring(index + start.length, index2);
+  const index = content.indexOf(start);
+  if (index === -1) return null;
+  const index2 = content.indexOf(end, index);
+  if (index2 === -1) return null;
+  return content.substring(index + start.length, index2);
 };
 
 /**
@@ -22,13 +37,13 @@ export const extractStr = (content, start, end) => {
  * @returns {Error}
  */
 export const getError = (...params) => {
-	const language = params[0];
-	const msg = params[1];
-	let text = Strings[msg][language];
-	if (!text) {
-		text = Strings[msg]['en'];
-	}
-	return new Error(exports.strformat(text, ...params.slice(2)));
+  const language = params[0];
+  const msg = params[1];
+  let text = Strings[msg] ? Strings[msg][language] : msg;
+  if (!text) {
+    text = Strings[msg]['en'];
+  }
+  return new Error(strformat(text, ...params.slice(2)));
 };
 
 /**
@@ -41,27 +56,58 @@ export const getError = (...params) => {
  * @return {Promise}
  */
 export const reflectPromise = (promise) => {
-	return promise.then((value) => {
-		return {value: value}
-	}, (err) => {
-		return {error: err}
-	});
+  return promise.then((value) => {
+    return { value: value }
+  }, (err) => {
+    return { error: err }
+  });
 };
 
 /**
- * Extends an array.
+ * Extends an array ignoring nulls/undefineds and spreading arrays.
  * @param {Array.<VALUE>} arr Array to modify.
- * @param {Array.<VALUE>|VALUE|undefined} data Array to add.
+ * @param {Array.<VALUE>|VALUE|undefined|null} data Array to add.
  * @template VALUE
  */
-export const extendArray = function(arr, data) {
-	if (data == null) {
-		return;
-	}
-	var i;
-	var extension = Array.isArray(data) ? data : [data];
-	var length = extension.length;
-	for (i = 0; i < length; i++) {
-		arr[arr.length] = extension[i];
-	}
+export const extendArray = function (arr, data) {
+  if (data == null) {
+    return;
+  }
+  var i;
+  var extension = Array.isArray(data) ? data : [data];
+  var length = extension.length;
+  for (i = 0; i < length; i++) {
+    arr[arr.length] = extension[i];
+  }
+};
+
+/**
+ * Gets the Bible abbreviation for a reference or null if not found.
+ * @param {string} language Language.
+ * @param {string} content Bible reference.
+ * @return {?string}
+ */
+export const findBibleAbb = (language, content) => {
+  const abbs = Object.keys(BibleAbbs[language]);
+  const abbs_filter = abbs.filter(ab => content.startsWith(ab));
+  return (abbs_filter.length === 0 ? null :
+    abbs_filter.reduce((a, b) => a.length > b.length ? a : b));
+};
+
+/**
+ * Process an Error object and returns its stack trace as an array of lines.
+ * @param {Error} error The Error object.
+ * @returns {string[]} An array with the lines of the stack trace.
+ */
+export const getStackTraceArray = (error) => {
+  if (!error || !error.stack) {
+    return [];
+  }
+  const stackLines = error.stack.split('\n');
+  const cleanedStack = stackLines
+    .slice(1)
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  return cleanedStack;
 };

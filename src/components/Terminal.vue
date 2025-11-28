@@ -9,6 +9,23 @@
       >
         <span class="timestamp">[{{ log.time }}]</span>
         <span class="message">{{ log.message }}</span>
+        <QExpansionItem
+          v-if="log.type === 'error' && log.stack && log.stack.length > 0"
+          dense
+          switch-toggle-side
+          label="Stack Trace"
+          class="stack-trace-expansion"
+        >
+          <div class="stack-trace-content">
+            <div 
+              v-for="(line, lineIndex) in log.stack" 
+              :key="lineIndex"
+              class="stack-trace-line"
+            >
+              {{ line }}
+            </div>
+          </div>
+        </QExpansionItem>
       </div>
     </QScrollArea>
   </QCard>
@@ -16,10 +33,12 @@
 
 <script setup>
 import { ref, watch, nextTick } from 'vue';
-import { QCard, QScrollArea } from 'quasar';
+import { QCard, QScrollArea, QExpansionItem } from 'quasar';
 
 //Props
 const props = defineProps({
+  //Log array with:
+  // { type: 'log'|'warning'|'error'|'success', time: string, message: string, stack?: string[] }
   logs: {
     type: Array,
     required: true,
@@ -79,5 +98,28 @@ watch(props.logs, () => {
 .log-type-error .message {
   color: #ff4444;
   font-weight: bold;
+}
+.log-type-success .message { 
+  color: #37b737;
+  font-weight: bold;
+}
+.stack-trace-expansion {
+  padding-left: 20px;
+  margin-top: -5px;
+}
+.stack-trace-expansion :deep(.q-item) { 
+    min-height: 20px;
+    padding: 0;
+    color: #777777 !important;
+}
+.stack-trace-content {
+  padding: 4px 0 4px 10px;
+  background-color: #252526;
+  border-left: 2px solid #333;
+}
+.stack-trace-line {
+  font-size: 0.8em;
+  color: #aaaaaa;
+  line-height: 1.3;
 }
 </style>

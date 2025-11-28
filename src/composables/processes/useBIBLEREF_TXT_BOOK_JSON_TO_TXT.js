@@ -1,25 +1,27 @@
 import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useErrors } from 'src/composables/useErrors.js';
+import { useReadFromTXT } from 'src/composables/bibleref/useReadFromTXT.js';
+import { useTranslateAndWriteToTXT } from '../bibleref/useTranslateAndWriteToTXT';
+import { UrantiaBook } from 'src/core/urantiabook.js';
 
 /**
  * Process: Translate Bible Refs (TXT) + UB (JSON) to TXT
  * @param {Ref<string>} language Language ref.
  * @param {function} addLog Function to add log messages.
- * @param {function} addError Function to add error messages.
+ * @param {function} addErrors Function to add error messages.
+ * @param {function} addSuccess Function to add success messages.
  */
 export const useBIBLEREF_TXT_BOOK_JSON_TO_TXT = (
 	language,
 	addLog,
-	addError
+	addErrors,
+	addSuccess
 ) => {
-
-	const { readFromJSON } = useReadFromJSON(
-		language,
-		addLog,
-		addError
-	);
-
-	const { addErrors } = useErrors(addError);
+	const { readFromJSON } = useReadFromJSON(language, addLog);
+	const { readFromTXT } = useReadFromTXT(language, addLog);
+	const { 
+		translate, 
+		writeToTXT 
+	} = useTranslateAndWriteToTXT(language, addLog, addErrors);
 
 	/**
 	 * Executes the process.
@@ -34,9 +36,11 @@ export const useBIBLEREF_TXT_BOOK_JSON_TO_TXT = (
 
 		try {
 			const papers = await readFromJSON(bookFolder);
-			// await bibleref.readFromTXT(biblerefFolder);
-			// await bibleref.translate(biblerefFolder, book);
-			console.log(papers);
+			let biblerefs = await readFromTXT(biblerefFolder);
+			const urantiabook = new UrantiaBook(language.value, papers);
+			biblerefs = translate(biblerefs, urantiabook);
+			await writeToTXT(biblerefFolder, biblerefs);
+			addSuccess('Process successful: BIBLEREF_TXT_BOOK_JSON_TO_TXT');
 		} catch (errors) {
 			addErrors(errors);
 		}

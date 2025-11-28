@@ -64,7 +64,7 @@ import { useBIBLEREF_TXT_BOOK_JSON_TO_TXT } from 'src/composables/processes';
 
 
 const mainStore = useMain();
-const { allLanguages, addLog, addError } = mainStore;
+const { allLanguages, addLog, addErrors, addSuccess } = mainStore;
 const {
   language,
   uiLanguage,
@@ -87,14 +87,13 @@ const onExecuteClick = () => {
   switch (process.value) {
     case 'BIBLEREF_TXT_BOOK_JSON_TO_TXT':
       {
-        const {
-          executeProcess,
-        } = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(language, addLog, addError);
+        const { executeProcess } = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(
+          language, addLog, addErrors, addSuccess);
         executeProcess(...values);
       }
       break;
     default:
-      addError(`Process "${process.value}" is not implemented.`);
+      addErrors(`Process "${process.value}" is not implemented.`);
       break;
   }
 };

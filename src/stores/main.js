@@ -7,9 +7,9 @@ import path from 'path';
 
 import { Strings } from 'src/core/strings';
 import { Processes } from 'src/core/processes';
+import { getStackTraceArray } from 'src/core/utils';
 
 export const useMain = defineStore('main', () => {
-  const API = window.NodeAPI;
 
   //Constants
   const uiLanguages = [
@@ -87,21 +87,6 @@ export const useMain = defineStore('main', () => {
     const extraPath = selected.extraPath && selected.extraPath[lan] 
       ? selected.extraPath[lan] 
       : '';
-    // const resolveControl = async(c) => {
-    //   const control = { type: c.type };
-    //   if (c.type === 'file' || c.type === 'folder') {
-    //     control.value = (await API.pathJoin('{ Urantiapedia Folder }', ...c.value))
-    //       .replace('{0}', lan)
-    //       .replace('{extraPath}', extraPath);
-    //   }
-    //   return control;
-    // }
-    // Promise.all(selected.controls.map(c => resolveControl(c)))
-    //   .then(resolvedControls => {
-    //     processData.value = {
-    //       controls: resolvedControls
-    //     };
-    //   });
     processData.value = {
       controls: selected.controls.map(c => {
         const control = { type: c.type };
@@ -127,18 +112,55 @@ export const useMain = defineStore('main', () => {
   });
 
   //Actions
-  const addLog = (message, type = 'log') => {
+  const addLog = (message, type = 'log', stack = []) => {
+    message = message.replace(urantiapediaFolder.value, '{ Urantiapedia Folder }');
     const timeStamp = date.formatDate(Date.now(), 'HH:mm:ss');
-    logs.value.push({
+    const log = {
       time: timeStamp,
-      message: message,
-      type: type,
-    });
+      message,
+      type,
+    };
+    if (stack && stack.length > 0) {
+      log.stack = stack;
+    }
+    logs.value.push(log);
   };
 
   const addWarning = (msg) => addLog(msg, 'warning');
 
-  const addError = (msg) => addLog(msg, 'error');
+  const addErrors = (msgOrErrors) => {
+    if (Array.isArray(msgOrErrors)) {
+      const allErrors = msgOrErrors.every(err => err instanceof Error);
+      if (allErrors) {
+        const stack = [];
+        msgOrErrors.forEach((err, i, array) => {
+          const stackArray = getStackTraceArray(err);
+          if (stack.length === 0 && stackArray.length > 0) {
+            stack.push(...stackArray);
+          }
+          if (i === array.length - 1) {
+            addLog(err.message, 'error', stack);
+          } else {
+            addLog(err.message, 'error');
+          }
+        });
+      }
+      return;
+    }
+    const arrayMsgOrErrors = Array.isArray(msgOrErrors)
+      ? msgOrErrors
+      : [msgOrErrors];
+    arrayMsgOrErrors.forEach(errMsg => {
+      if (errMsg instanceof Error) {
+        const stack = getStackTraceArray(errMsg);
+        addLog(errMsg.message, 'error', stack);
+        return;
+      }
+      addLog(errMsg, 'error');
+    });
+  };
+
+  const addSuccess = (msg) => addLog(msg, 'success');
 
   return {
     //Constants
@@ -164,6 +186,7 @@ export const useMain = defineStore('main', () => {
     //Actions
     addLog,
     addWarning,
-    addError,
+    addErrors,
+    addSuccess,
   };
 });
