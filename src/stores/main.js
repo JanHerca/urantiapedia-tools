@@ -23,7 +23,7 @@ export const useMain = defineStore('main', () => {
 
   //Storage
   const uiLanCode = LocalStorage.getItem('language') || 'en';
-  const initialDarkTheme = LocalStorage.getItem('darkTheme') === 'true';
+  const initialDarkTheme = LocalStorage.getItem('darkTheme') === true;
   const initialUrantiapediaFolder = LocalStorage.getItem('urantiapediaFolder') || '';
   const initialTransProjID = LocalStorage.getItem('translateProjectID') || '';
   const initialTranslateAPIKey = LocalStorage.getItem('translateAPIKey') || '';

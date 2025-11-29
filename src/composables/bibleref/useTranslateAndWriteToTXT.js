@@ -2,6 +2,12 @@ import { getError, reflectPromise } from 'src/core/utils.js';
 
 import path from 'path';
 
+/**
+ * Translates Bible references using `The Urantia Book` and writes TXT files.
+ * @param {Ref<string>} language Language ref.
+ * @param {function} addLog Function to add log messages.
+ * @param {function} addWarning Function to add warning messages.
+ */
 export const useTranslateAndWriteToTXT = (language, addLog, addWarning) => {
 
   /**

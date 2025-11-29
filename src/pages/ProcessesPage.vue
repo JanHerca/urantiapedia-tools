@@ -60,7 +60,10 @@ import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
 import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
-import { useBIBLEREF_TXT_BOOK_JSON_TO_TXT } from 'src/composables/processes';
+import { 
+  useBIBLEREF_TXT_BOOK_JSON_TO_TXT,
+  useBIBLEREF_JSON_TO_MARKDOWN
+} from 'src/composables/processes';
 
 
 const mainStore = useMain();
@@ -84,17 +87,23 @@ const onExecuteClick = () => {
       ? c.value.replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
       : c.value;
   });
+  let executor;
   switch (process.value) {
     case 'BIBLEREF_TXT_BOOK_JSON_TO_TXT':
-      {
-        const { executeProcess } = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(
-          language, addLog, addErrors, addSuccess);
-        executeProcess(...values);
-      }
+      executor = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(
+        language, addLog, addErrors, addSuccess);
+      break;
+    case 'BIBLEREF_JSON_TO_MARKDOWN':
+      executor = useBIBLEREF_JSON_TO_MARKDOWN(
+        language, addLog, addErrors, addSuccess);
       break;
     default:
       addErrors(`Process "${process.value}" is not implemented.`);
       break;
+  }
+  if (executor) {
+    const { executeProcess } = executor;
+    executeProcess(...values);
   }
 };
 

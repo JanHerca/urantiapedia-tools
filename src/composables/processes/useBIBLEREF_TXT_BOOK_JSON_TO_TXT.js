@@ -1,6 +1,6 @@
 import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
 import { useReadFromTXT } from 'src/composables/bibleref/useReadFromTXT.js';
-import { useTranslateAndWriteToTXT } from '../bibleref/useTranslateAndWriteToTXT';
+import { useTranslateAndWriteToTXT } from 'src/composables/bibleref/useTranslateAndWriteToTXT';
 import { UrantiaBook } from 'src/core/urantiabook.js';
 
 /**

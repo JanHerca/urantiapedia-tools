@@ -1,6 +1,6 @@
 <template>
-  <div class="row no-wrap-sm items-center">
-    <div class="flex items-center q-px-sm-md">
+  <div class="row no-wrap items-center">
+    <div class="flex items-center q-px-sm text-no-wrap q-mr-sm">
       {{ label }}
     </div>
 

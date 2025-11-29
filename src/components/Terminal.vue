@@ -1,6 +1,21 @@
 <template>
   <QCard dark class="terminal-card">
-    <QScrollArea class="terminal-output-area" ref="scrollAreaRef">
+    <QScrollArea 
+      class="terminal-output-area" 
+      ref="scrollAreaRef"
+      :thumb-style="{
+        borderRadius: '5px',
+        backgroundColor: '#027be3',
+        width: '10px',
+        opacity: 0.75
+      }"
+      :bar-style="{
+        borderRadius: '9px',
+        backgroundColor: '#027be3',
+        width: '10px',
+        opacity: 0.2
+      }"
+      >
       <div 
         class="fit"
         v-for="(log, index) in logs" 
