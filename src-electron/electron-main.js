@@ -1,8 +1,12 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, nativeImage } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
+
+if (process.platform === 'win32') {
+  app.setAppUserModelId(app.name)
+}
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform()
@@ -20,9 +24,10 @@ async function installDevTools() {
     } catch (err) {
       console.warn('electron-devtools-installer failed — trying loadExtension fallback', err)
 
-      // fallback: load unpacked extension from a relative project folder (no absolut path hard-coded)
-      // place the unpacked Vue Devtools in the project root (folder name "vue-devtools"),
-      // or adjust this relative path as needed.
+      // fallback: load unpacked extension from a relative project folder 
+      // (no absolut path hard-coded) place the unpacked Vue Devtools in the 
+      // project root (folder name "vue-devtools"), or adjust this relative 
+      // path as needed.
       const devtoolsPath = path.resolve(process.cwd(), 'vue-devtools')
 
       try {
@@ -40,11 +45,22 @@ async function installDevTools() {
 }
 
 async function createWindow () {
+  const iconDir = process.env.DEV
+    ? path.resolve(app.getAppPath(), 'public', 'icons')
+    : path.resolve(app.getAppPath(), 'icons')
+  let iconPath = path.resolve(iconDir, 'icons', 'icon.png')
+
+  // In MacOS, sometimes it's better to use nativeImage to ensure quality
+  // if (platform === 'darwin') {
+  //   const icon = nativeImage.createFromPath(iconPath)
+  //   app.dock.setIcon(icon)
+  // }
+
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    icon: path.resolve(currentDir, 'icons/icon.png'), // tray icon
+    icon: iconPath, // tray icon
     width: 1000,
     height: 600,
     useContentSize: true,
@@ -54,7 +70,8 @@ async function createWindow () {
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(
         currentDir,
-        path.join(process.env.QUASAR_ELECTRON_PRELOAD_FOLDER, 'electron-preload' + process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION)
+        path.join(process.env.QUASAR_ELECTRON_PRELOAD_FOLDER, 
+          'electron-preload' + process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION)
       )
     }
   })
@@ -94,28 +111,43 @@ app.on('activate', () => {
   }
 })
 
-// // Path handlers
-// ipcMain.handle('node:path-join', (evt, parts) => path.join(...parts))
-// ipcMain.handle('node:path-resolve', (evt, parts) => path.resolve(...parts))
-// ipcMain.handle('node:path-basename', (evt, p) => path.basename(p))
-// ipcMain.handle('node:path-dirname', (evt, p) => path.dirname(p))
-// ipcMain.handle('node:path-extname', (evt, p) => path.extname(p))
-
 // FS handlers
 ipcMain.handle('fs:exists', async (evt, p) => {
-  try { await fs.access(p); return true } catch { return false }
+  try { 
+    await fs.access(p); 
+    return true 
+  } catch { 
+    return false 
+  }
 })
 ipcMain.handle('fs:stat', async (evt, p) => {
-  try { return await fs.stat(p) } catch { return null }
+  try { 
+    return await fs.stat(p) 
+  } catch { 
+    return null 
+  }
 })
 ipcMain.handle('fs:readdir', async (evt, p) => {
-  try { return await fs.readdir(p) } catch (err) { return { error: err.message } }
+  try {
+    return await fs.readdir(p)
+  } catch (err) { 
+    return { error: err.message } 
+  }
 })
 ipcMain.handle('fs:readFile', async (evt, p, enc = 'utf8') => {
-  try { return await fs.readFile(p, enc) } catch (err) { return { error: err.message } }
+  try { 
+    return await fs.readFile(p, enc) 
+  } catch (err) { 
+    return { error: err.message } 
+  }
 })
 ipcMain.handle('fs:writeFile', async (evt, p, data, enc = 'utf8') => {
-  try { await fs.writeFile(p, data, enc); return { ok: true } } catch (err) { return { error: err.message } }
+  try { 
+    await fs.writeFile(p, data, enc); 
+    return { ok: true } 
+  } catch (err) { 
+    return { error: err.message } 
+  }
 })
 
 // Native dialog handlers

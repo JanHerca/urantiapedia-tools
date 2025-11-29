@@ -1,8 +1,8 @@
 {
   "name": "urantiapedia-tools",
-  "version": "0.0.1",
+  "version": "2.0.1",
   "description": "Tools for building Urantiapedia",
-  "productName": "urantiapedia-tools",
+  "productName": "Urantiapedia Tools",
   "author": "JanHerca <janherca@gmail.com>",
   "private": true,
   "scripts": {
