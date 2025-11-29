@@ -27,10 +27,15 @@ import path from 'path';
  *   }
  * ];
  * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */
-export const useReadFromTXT = (language, addLog) => {
-  const { readFolder } = useReadFolder(language, addLog);
+export const useReadFromTXT = (
+  language, 
+  uiLanguage, 
+  addLog
+) => {
+  const { readFolder } = useReadFolder(uiLanguage, addLog);
 
   /**
    * Extracts verse number from text.
@@ -65,7 +70,7 @@ export const useReadFromTXT = (language, addLog) => {
     const bookabbs = Object.keys(BibleAbbs[language.value]);
     const bookIndex = booknamesEN.indexOf(booknameEN);
     if (bookIndex === -1) {
-      throw getError(language.value, 'bibleref_bookname_invalid', baseName, 0);
+      throw getError(uiLanguage.value, 'bibleref_bookname_invalid', baseName, 0);
     }
     const book = {
       titleEN: booknameEN,
@@ -87,15 +92,15 @@ export const useReadFromTXT = (language, addLog) => {
       if (line.trim() != '' && !line.startsWith('#') && !line.startsWith('Book')) {
         data = line.split('\t');
         if (data.length < 6) {
-          errors.push(getError(language.value, 'bibleref_no_data', baseName, i));
+          errors.push(getError(uiLanguage.value, 'bibleref_no_data', baseName, i));
         } else {
           bible_ref = data[1];
           data2 = bible_ref.split(':');
           data3 = data[3].split('/');
           if (data2.length < 2) {
-            errors.push(getError(language.value, 'bibleref_bad_ref', baseName, i));
+            errors.push(getError(uiLanguage.value, 'bibleref_bad_ref', baseName, i));
           } else if (data3.length != 2) {
-            errors.push(getError(language.value, 'bibleref_bad_ub_ref', baseName, i));
+            errors.push(getError(uiLanguage.value, 'bibleref_bad_ub_ref', baseName, i));
           } else {
             chapter = parseInt(data2[0]);
             vers = extractVers(data2[1]);
@@ -104,7 +109,7 @@ export const useReadFromTXT = (language, addLog) => {
               vers = 1;
             }
             if (chapter === 0 || vers === 0 || isNaN(chapter) || vers == null) {
-              errors.push(getError(language.value, 'bibleref_bad_number', baseName, i));
+              errors.push(getError(uiLanguage.value, 'bibleref_bad_number', baseName, i));
             } else {
               ref = {
                 bible_ref: bible_ref,

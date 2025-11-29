@@ -1,22 +1,24 @@
 import { useReadFromJSON } from 'src/composables/paramony/useReadFromJSON.js';
 import { useWriteToMarkdown } from 'src/composables/paramony/useWriteToMarkdown';
-import path from 'path';
 
 /**
  * Process: Convert Bible Refs in Urantia Book (JSON) to Markdown.
  * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
  */
 export const useBIBLEREF_JSON_TO_MARKDOWN = (
   language,
+  uiLanguage,
   addLog,
   addErrors,
   addSuccess
 ) => {
-  const { readFromJSON } = useReadFromJSON(language, addLog);
-  const { writeToMarkdown } = useWriteToMarkdown(language, addLog, addErrors);
+  const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
+  const { writeToMarkdown } = useWriteToMarkdown(uiLanguage, addLog, 
+    addErrors);
 
   /**
    * Executes the process.

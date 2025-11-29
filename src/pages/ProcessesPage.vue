@@ -62,7 +62,9 @@ import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
 import { 
   useBIBLEREF_TXT_BOOK_JSON_TO_TXT,
-  useBIBLEREF_JSON_TO_MARKDOWN
+  useBIBLEREF_JSON_TO_MARKDOWN,
+  useBOOK_JSON_TO_BIBLEREF_JSON,
+  useBOOK_JSON_BIBLEREF_JSON_TO_JSON
 } from 'src/composables/processes';
 
 
@@ -91,12 +93,18 @@ const onExecuteClick = () => {
   switch (process.value) {
     case 'BIBLEREF_TXT_BOOK_JSON_TO_TXT':
       executor = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(
-        language, addLog, addErrors, addSuccess);
+        language, uiLanguage, addLog, addErrors, addSuccess);
       break;
     case 'BIBLEREF_JSON_TO_MARKDOWN':
       executor = useBIBLEREF_JSON_TO_MARKDOWN(
-        language, addLog, addErrors, addSuccess);
+        language, uiLanguage, addLog, addErrors, addSuccess);
       break;
+    case 'BOOK_JSON_TO_BIBLEREF_JSON':
+      executor = useBOOK_JSON_TO_BIBLEREF_JSON(
+        language, uiLanguage, addLog, addErrors, addSuccess);
+    case 'BOOK_JSON_BIBLEREF_JSON_TO_JSON':
+      executor = useBOOK_JSON_BIBLEREF_JSON_TO_JSON(
+        language, uiLanguage, addLog, addErrors, addSuccess);
     default:
       addErrors(`Process "${process.value}" is not implemented.`);
       break;

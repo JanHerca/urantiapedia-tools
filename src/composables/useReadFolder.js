@@ -4,11 +4,11 @@ import path from 'path';
 
 /**
  * Returns the array of files in folder with given format.
- * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */
 export const useReadFolder = (
-  language, 
+  uiLanguage,
   addLog
 ) => {
   /**
@@ -25,7 +25,7 @@ export const useReadFolder = (
       // files = await fs.readdir(dirPath);
       files = await window.NodeAPI.readDir(dirPath);
     } catch (err) {
-      throw getError(language.value, 'folder_not_exists', dirPath);
+      throw getError(uiLanguage.value, 'folder_not_exists', dirPath);
     }
     if (files) {
       const formats = format.split(';');
@@ -33,7 +33,7 @@ export const useReadFolder = (
         return (formats.indexOf(path.extname(file)) != -1);
       });
       if (ffiles.length === 0) {
-        throw getError(language.value, 'files_not_with_format', format);
+        throw getError(uiLanguage.value, 'files_not_with_format', format);
       }
       return ffiles;
 

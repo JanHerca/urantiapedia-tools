@@ -5,10 +5,15 @@ import path from 'path';
 /**
  * Translates Bible references using `The Urantia Book` and writes TXT files.
  * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  * @param {function} addWarning Function to add warning messages.
  */
-export const useTranslateAndWriteToTXT = (language, addLog, addWarning) => {
+export const useTranslateAndWriteToTXT = (
+  uiLanguage, 
+  addLog, 
+  addWarning
+) => {
 
   /**
    * Translates Bible references using `The Urantia Book`.
@@ -37,7 +42,7 @@ export const useTranslateAndWriteToTXT = (language, addLog, addWarning) => {
             ref.text_tr = subfootnote[0];
           }
         } catch (err) {
-          errors.push(getError(language.value, `${err.message}: ${bref}`));
+          errors.push(getError(uiLanguage.value, `${err.message}: ${bref}`));
         }
       });
     });

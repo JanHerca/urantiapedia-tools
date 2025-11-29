@@ -3,10 +3,13 @@ import { getError } from 'src/core/utils.js';
 
 /**
  * Write the Paramony in Markdown to the default location.
- * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */
-export const useWriteToMarkdown = (language, addLog) => {
+export const useWriteToMarkdown = (
+  uiLanguage,
+  addLog
+) => {
 
   /**
    * Write the Paramony in Markdown to the default location.
@@ -27,7 +30,7 @@ export const useWriteToMarkdown = (language, addLog) => {
       footnotes.forEach(paper => {
         const { footnotes: pfootnotes } = paper;
         if (!pfootnotes) {
-          throw getError(language.value, 'book_error_footnotes', filePath,
+          throw getError(uiLanguage.value, 'book_error_footnotes', filePath,
             `No footnotes for paper ${paper.paperIndex}.`);
         }
         const { texts, bible_refs, locations } = pfootnotes;
@@ -38,22 +41,22 @@ export const useWriteToMarkdown = (language, addLog) => {
           texts.length != bible_refs.length ||
           texts.length != locations.length
         ) {
-          throw getError(language.value, 'book_error_footnotes', filePath,
+          throw getError(uiLanguage.value, 'book_error_footnotes', filePath,
             `Footnotes items not arrays or not same length in paper ${paper.paperIndex}.`);
         }
         texts.forEach((textAr, i) => {
           const refsAr = bible_refs[i];
           const location = locations[i];
           if (!Array.isArray(textAr)) {
-            throw getError(language.value, 'book_error_footnotes', filePath,
+            throw getError(uiLanguage.value, 'book_error_footnotes', filePath,
               `Text not array on paper ${paper.paperIndex}.`);
           }
           if (!Array.isArray(refsAr)) {
-            throw getError(language.value, 'book_error_footnotes', filePath,
+            throw getError(uiLanguage.value, 'book_error_footnotes', filePath,
               `Bible refs not array on paper ${paper.paperIndex}.`);
           }
           if (textAr.length != refsAr.length) {
-            throw getError(language.value, 'book_error_footnotes', filePath,
+            throw getError(uiLanguage.value, 'book_error_footnotes', filePath,
               `Texts and refs not same length on paper ${paper.paperIndex}.`);
           }
           textAr.forEach((text, j) => {

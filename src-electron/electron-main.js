@@ -114,7 +114,7 @@ app.on('activate', () => {
 // FS handlers
 ipcMain.handle('fs:exists', async (evt, p) => {
   try { 
-    await fs.access(p); 
+    await fs.access(p, fs.constants.F_OK | fs.constants.W_OK); 
     return true 
   } catch { 
     return false 

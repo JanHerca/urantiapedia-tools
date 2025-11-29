@@ -5,11 +5,14 @@ import path from 'path';
 
 /**
  * Reads `The Urantia Book` from a folder with files in JSON format.
- * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */
-export const useReadFromJSON = (language, addLog) => {
-  const { readFolder } = useReadFolder(language, addLog);
+export const useReadFromJSON = (
+  uiLanguage,
+  addLog
+) => {
+  const { readFolder } = useReadFolder(uiLanguage, addLog);
 
   /**
    * Reads a paper from `The Urantia Book` from a file in JSON format.
@@ -21,7 +24,7 @@ export const useReadFromJSON = (language, addLog) => {
     const baseName = path.basename(filePath);
     const paperIndex = parseInt(extractStr(baseName, 'Doc', '.json'));
     if (isNaN(paperIndex)) {
-      throw getError(language.value, 'book_no_paper_index', baseName, 1);
+      throw getError(uiLanguage.value, 'book_no_paper_index', baseName, 1);
     }
     try {
       const buf = await window.NodeAPI.readFile(filePath);

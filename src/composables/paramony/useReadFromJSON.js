@@ -22,10 +22,13 @@ import { getError } from 'src/core/utils.js';
  *   },
  *   ...
  * ];
- * @param {Ref<string>} language Language ref.
+ * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */
-export const useReadFromJSON = (language, addLog) => {
+export const useReadFromJSON = (
+  uiLanguage,
+  addLog
+) => {
 
   /**
    * Reads the default location of the Paramony in JSON.
@@ -39,7 +42,7 @@ export const useReadFromJSON = (language, addLog) => {
     try {
       const exists = await window.NodeAPI.exists(filePath);
       if (!exists) {
-        throw getError(language.value, 'file_not_exists', filePath);
+        throw getError(uiLanguage.value, 'file_not_exists', filePath);
       }
       const buf = await window.NodeAPI.readFile(filePath);
       const content = buf.toString();

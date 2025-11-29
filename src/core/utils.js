@@ -1,6 +1,18 @@
 import { Strings } from 'src/core/strings';
 import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs';
 
+
+/** 
+ * Translates a text.
+ * @param {string} code Code of text to translate.
+ * @param {?string} language Language.
+ */
+export const tr = (code, language) => {
+  const t = Strings[code][language];
+  const t2 = Strings[code]['en'];
+  return t ? t : t2;
+};
+
 /**
  * Formats a string using '{x}' pattern where x in a number 0..n.
  * First arg must be the string, and the rest the values.
@@ -29,6 +41,32 @@ export const extractStr = (content, start, end) => {
   const index2 = content.indexOf(end, index);
   if (index2 === -1) return null;
   return content.substring(index + start.length, index2);
+};
+
+/**
+ * Returns all indexes in which a char (or any of several chars) is found.
+ * @param {string} content Text to search.
+ * @param {string|string[]} chars A char or an array of chars.
+ * @param {?boolean} ignoreHtml Ignores the HTML marks when scanning. By default
+ * is true.
+ * @return {number[]}
+ */
+export const getAllIndexes = (content, chars, ignoreHtml = true) => {
+	if (!content || !chars) return [];
+	const targets = Array.isArray(chars) ? chars.map(String) : [String(chars)];
+	const set = new Set(targets);
+	const indexes = [];
+	let inTag = false;
+	for (let i = 0; i < content.length; i++) {
+		const ch = content[i];
+		if (ignoreHtml) {
+			if (ch === '<') { inTag = true; continue; }
+			if (ch === '>') { inTag = false; continue; }
+			if (inTag) continue;
+		}
+		if (set.has(ch)) indexes.push(i);
+	}
+	return indexes;
 };
 
 /**
