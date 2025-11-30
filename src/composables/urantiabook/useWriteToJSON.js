@@ -29,6 +29,7 @@ export const useWriteToJSON = (
   /**
  * Writes `The Urantia Book` in JSON format.
  * @param {string} dirPath Folder path.
+ * @param {Object[]} papers Array of objects with papers.
  */
   const writeToJSON = async (dirPath, papers) => {
     addLog(`Writing to folder: ${dirPath}`);
@@ -50,7 +51,6 @@ export const useWriteToJSON = (
       if (errors.length > 0) {
         throw errors;
       }
-      return results.map(r => r.value);
     } catch (err) {
       throw err;
     }

@@ -67,7 +67,8 @@ import {
   useBOOK_JSON_BIBLEREF_JSON_TO_JSON,
   useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON,
   useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON,
-  useBOOK_HTML_TO_JSON
+  useBOOK_HTML_TO_JSON,
+  useBOOK_JSON_TO_TXT
 } from 'src/composables/processes';
 
 
@@ -117,6 +118,9 @@ const onExecuteClick = () => {
         language, uiLanguage, addLog, addErrors, addSuccess);
     case 'BOOK_HTML_TO_JSON':
       executor = useBOOK_HTML_TO_JSON(
+        language, uiLanguage, addLog, addErrors, addSuccess);
+    case 'BOOK_JSON_TO_TXT':
+      executor = useBOOK_JSON_TO_TXT(
         language, uiLanguage, addLog, addErrors, addSuccess);
     default:
       addErrors(`Process "${process.value}" is not implemented.`);

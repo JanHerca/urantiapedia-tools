@@ -1,6 +1,5 @@
 import { getError } from 'src/core/utils.js';
 import path from 'path';
-// import { promises as fs } from 'fs';
 
 /**
  * Returns the array of files in folder with given format.

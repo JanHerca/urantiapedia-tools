@@ -43,6 +43,7 @@ export const useReadFromJSON = (
    * with paper content.
    */
   const readFromJSON = async(dirPath) => {
+    addLog(`Reading folder: ${dirPath}`);
     try {
       const files = await readFolder(dirPath, '.json');
 
