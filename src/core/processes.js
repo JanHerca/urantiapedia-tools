@@ -128,86 +128,86 @@ export const Processes = {
 			}
 		]
 	},
-	"BOOK_TEX_TO_JSON": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book (LaTeX) to JSON",
-			es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (LaTeX) a JSON"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'book-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'json', 'book-{0}']
-			}
-		]
-	},
-	"BOOK_TEX_TOPICS_TXT_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book (LaTeX) + Topic Index (TXT) to MediaWiki",
-			es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (LaTeX) + Topic Index (TXT) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'book-{0}-footnotes']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'topic-index-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'book-{0}']
-			},
-			{
-				type: 'select',
-				value: '{categories}'
-			}
-		]
-	},
-	"BOOK_TEX_TO_WIKIXML": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book (LaTeX) to Wiki XML",
-			es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (LaTeX) a Wiki XML"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'book-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'xml', 'book-{0}']
-			},
-			{
-				type: 'toggle',
-				value: false
-			}
-		]
-	},
-	"BOOK_JSON_TO_TEX": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book (JSON) to LaTeX",
-			es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (JSON) a LaTeX"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'json', 'book-{0}-footnotes']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'book-{0}']
-			}
-		]
-	},
+	// "BOOK_TEX_TO_JSON": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book (LaTeX) to JSON",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (LaTeX) a JSON"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'book-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'json', 'book-{0}']
+	// 		}
+	// 	]
+	// },
+	// "BOOK_TEX_TOPICS_TXT_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book (LaTeX) + Topic Index (TXT) to MediaWiki",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (LaTeX) + Topic Index (TXT) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'book-{0}-footnotes']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'topic-index-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'book-{0}']
+	// 		},
+	// 		{
+	// 			type: 'select',
+	// 			value: '{categories}'
+	// 		}
+	// 	]
+	// },
+	// "BOOK_TEX_TO_WIKIXML": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book (LaTeX) to Wiki XML",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (LaTeX) a Wiki XML"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'book-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'xml', 'book-{0}']
+	// 		},
+	// 		{
+	// 			type: 'toggle',
+	// 			value: false
+	// 		}
+	// 	]
+	// },
+	// "BOOK_JSON_TO_TEX": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book (JSON) to LaTeX",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (JSON) a LaTeX"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'json', 'book-{0}-footnotes']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'book-{0}']
+	// 		}
+	// 	]
+	// },
 	"BOOK_JSON_TO_TXT": {
 		active: true,
 		desc: {
@@ -225,31 +225,31 @@ export const Processes = {
 			}
 		]
 	},
-	"BOOK_JSON_TOPICS_TXT_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book (JSON) + Topic Index (TXT) to MediaWiki",
-			es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (JSON) + Topic Index (TXT) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'json', 'book-{0}-footnotes']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'topic-index-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'book-{0}']
-			},
-			{
-				type: 'select',
-				value: '{categories}'
-			}
-		]
-	},
+	// "BOOK_JSON_TOPICS_TXT_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book (JSON) + Topic Index (TXT) to MediaWiki",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (JSON) + Topic Index (TXT) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'json', 'book-{0}-footnotes']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'topic-index-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'book-{0}']
+	// 		},
+	// 		{
+	// 			type: 'select',
+	// 			value: '{categories}'
+	// 		}
+	// 	]
+	// },
 	"BOOK_JSON_TOPICS_TXT_TO_WIKIJS": {
 		active: true,
 		desc: {
@@ -300,40 +300,40 @@ export const Processes = {
 			}
 		]
 	},
-	"BOOK_JSON_TO_WIKIXML": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book (JSON) to Wiki XML",
-			es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (JSON) a Wiki XML"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'json', 'book-{0}-footnotes']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'xml', 'book-{0}']
-			}
-		]
-	},
-	"BOOK_INDEX_JSON_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "THE URANTIA BOOK: Convert Urantia Book Index (JSON) to MediaWiki",
-			es: "EL LIBRO DE URANTIA: Convertir Indice de Libro de Urantia (JSON) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'json', 'book-{0}-footnotes']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'book-{0}']
-			}
-		]
-	},
+	// "BOOK_JSON_TO_WIKIXML": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book (JSON) to Wiki XML",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Libro de Urantia (JSON) a Wiki XML"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'json', 'book-{0}-footnotes']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'xml', 'book-{0}']
+	// 		}
+	// 	]
+	// },
+	// "BOOK_INDEX_JSON_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "THE URANTIA BOOK: Convert Urantia Book Index (JSON) to MediaWiki",
+	// 		es: "EL LIBRO DE URANTIA: Convertir Indice de Libro de Urantia (JSON) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'json', 'book-{0}-footnotes']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'book-{0}']
+	// 		}
+	// 	]
+	// },
 	"BOOK_INDEX_JSON_TO_WIKIJS": {
 		active: true,
 		desc: {
@@ -368,56 +368,56 @@ export const Processes = {
 			}
 		]
 	},
-	"BIBLE_TEX_BIBLEREF_TXT_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "BIBLE: Convert Bible (LaTeX) + Refs (TXT) to MediaWiki",
-			es: "BIBLIA: Convertir Biblia (LaTeX) + Refs (TXT) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'bible-refs-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'bible-{0}', '{extraPath}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'bible-{0}', '{extraPath}']
-			}
-		],
-		extraPath: {
-			en: 'ASV',
-			es: 'RV1960'
-		}
-	},
-	"BIBLE_TEX_BIBLEREF_TXT_TO_WIKIJS": {
-		active: false,
-		desc: {
-			en: "BIBLE: Convert Bible (LaTeX) + Refs (TXT) to Wiki.js",
-			es: "BIBLIA: Convertir Biblia (LaTeX) + Refs (TXT) a Wiki.js"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'bible-refs-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'bible-{0}', '{extraPath}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'wikijs', '{0}', 'Bible']
-			}
-		],
-		extraPath: {
-			en: 'ASV',
-			es: 'RV1960'
-		}
-	},
+	// "BIBLE_TEX_BIBLEREF_TXT_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "BIBLE: Convert Bible (LaTeX) + Refs (TXT) to MediaWiki",
+	// 		es: "BIBLIA: Convertir Biblia (LaTeX) + Refs (TXT) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'bible-refs-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'bible-{0}', '{extraPath}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'bible-{0}', '{extraPath}']
+	// 		}
+	// 	],
+	// 	extraPath: {
+	// 		en: 'ASV',
+	// 		es: 'RV1960'
+	// 	}
+	// },
+	// "BIBLE_TEX_BIBLEREF_TXT_TO_WIKIJS": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "BIBLE: Convert Bible (LaTeX) + Refs (TXT) to Wiki.js",
+	// 		es: "BIBLIA: Convertir Biblia (LaTeX) + Refs (TXT) a Wiki.js"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'bible-refs-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'bible-{0}', '{extraPath}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'wikijs', '{0}', 'Bible']
+	// 		}
+	// 	],
+	// 	extraPath: {
+	// 		en: 'ASV',
+	// 		es: 'RV1960'
+	// 	}
+	// },
 	"BIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS": {
 		active: true,
 		desc: {
@@ -443,27 +443,27 @@ export const Processes = {
 			es: 'RV1960'
 		}
 	},
-	"BIBLE_TEX_TO_BIBLEINDEX_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "BIBLE: Convert Bible (LaTeX) to index MediaWiki",
-			es: "BIBLIA: Convertir Biblia (LaTeX) a índice MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'bible-{0}', '{extraPath}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'bible-{0}', '{extraPath}']
-			}
-		],
-		extraPath: {
-			en: 'ASV',
-			es: 'RV1960'
-		}
-	},
+	// "BIBLE_TEX_TO_BIBLEINDEX_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "BIBLE: Convert Bible (LaTeX) to index MediaWiki",
+	// 		es: "BIBLIA: Convertir Biblia (LaTeX) a índice MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'bible-{0}', '{extraPath}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'bible-{0}', '{extraPath}']
+	// 		}
+	// 	],
+	// 	extraPath: {
+	// 		en: 'ASV',
+	// 		es: 'RV1960'
+	// 	}
+	// },
 	"BIBLE_TEX_TO_BIBLEINDEX_WIKIJS": {
 		active: true,
 		desc: {
@@ -485,31 +485,31 @@ export const Processes = {
 			es: 'RV1960'
 		}
 	},
-	"BIBLE_TEX_TO_WIKIXML": {
-		active: false,
-		desc: {
-			en: "BIBLE: Convert Bible (LaTeX) to Wiki XML",
-			es: "BIBLIA: Convertir Biblia (LaTeX) a Wiki XML"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'tex', 'bible-{0}', '{extraPath}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'xml', 'bible-{0}', '{extraPath}']
-			},
-			{
-				type: 'toggle',
-				value: false
-			}
-		],
-		extraPath: {
-			en: 'ASV',
-			es: 'RV1960'
-		}
-	},
+	// "BIBLE_TEX_TO_WIKIXML": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "BIBLE: Convert Bible (LaTeX) to Wiki XML",
+	// 		es: "BIBLIA: Convertir Biblia (LaTeX) a Wiki XML"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'tex', 'bible-{0}', '{extraPath}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'xml', 'bible-{0}', '{extraPath}']
+	// 		},
+	// 		{
+	// 			type: 'toggle',
+	// 			value: false
+	// 		}
+	// 	],
+	// 	extraPath: {
+	// 		en: 'ASV',
+	// 		es: 'RV1960'
+	// 	}
+	// },
 	"BIBLE_UPDATE_TITLES_WIKIJS": {
 		active: true,
 		desc: {
@@ -544,31 +544,31 @@ export const Processes = {
 			es: 'RV1960'
 		}
 	},
-	"TOPICS_TXT_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "TOPICS: Convert Topic Index (TXT) to MediaWiki",
-			es: "TOPICS: Convertir Topic Index (TXT) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'topic-index-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'topic-index-{0}']
-			},
-			{
-				type: 'select',
-				value: '{categories}'
-			},
-			{
-				type: 'select',
-				value: '{letters}'
-			}
-		]
-	},
+	// "TOPICS_TXT_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "TOPICS: Convert Topic Index (TXT) to MediaWiki",
+	// 		es: "TOPICS: Convertir Topic Index (TXT) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'topic-index-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'topic-index-{0}']
+	// 		},
+	// 		{
+	// 			type: 'select',
+	// 			value: '{categories}'
+	// 		},
+	// 		{
+	// 			type: 'select',
+	// 			value: '{letters}'
+	// 		}
+	// 	]
+	// },
 	"TOPICS_TXT_TO_WIKIJS": {
 		active: true,
 		desc: {
@@ -594,31 +594,31 @@ export const Processes = {
 			}
 		]
 	},
-	"TOPICS_INDEX_TXT_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "TOPICS: Create index of Topic Index (TXT) to MediaWiki",
-			es: "TOPICS: Crear Indice de Topic Index (TXT) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'topic-index-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['output', 'mediawiki', 'topic-index-{0}']
-			},
-			{
-				type: 'select',
-				value: '{categories}'
-			},
-			{
-				type: 'select',
-				value: '{letters}'
-			}
-		]
-	},
+	// "TOPICS_INDEX_TXT_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "TOPICS: Create index of Topic Index (TXT) to MediaWiki",
+	// 		es: "TOPICS: Crear Indice de Topic Index (TXT) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'topic-index-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['output', 'mediawiki', 'topic-index-{0}']
+	// 		},
+	// 		{
+	// 			type: 'select',
+	// 			value: '{categories}'
+	// 		},
+	// 		{
+	// 			type: 'select',
+	// 			value: '{letters}'
+	// 		}
+	// 	]
+	// },
 	"TOPICS_INDEX_TXT_TO_WIKIJS": {
 		active: true,
 		desc: {
@@ -716,23 +716,23 @@ export const Processes = {
 			}
 		]
 	},
-	"ARTICLE_TXT_TO_MEDIAWIKI": {
-		active: false,
-		desc: {
-			en: "ARTICLES: Convert Articles (TXT) to MediaWiki",
-			es: "ARTICULOS: Convertir Artículos (TXT) a MediaWiki"
-		},
-		controls: [
-			{
-				type: 'folder',
-				value: ['input', 'txt', 'articles-{0}']
-			},
-			{
-				type: 'folder',
-				value: ['input', 'mediawiki', 'articles-{0}']
-			}
-		]
-	},
+	// "ARTICLE_TXT_TO_MEDIAWIKI": {
+	// 	active: false,
+	// 	desc: {
+	// 		en: "ARTICLES: Convert Articles (TXT) to MediaWiki",
+	// 		es: "ARTICULOS: Convertir Artículos (TXT) a MediaWiki"
+	// 	},
+	// 	controls: [
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'txt', 'articles-{0}']
+	// 		},
+	// 		{
+	// 			type: 'folder',
+	// 			value: ['input', 'mediawiki', 'articles-{0}']
+	// 		}
+	// 	]
+	// },
 	"ARTICLE_CATALOG_MARKDOWN_TO_WIKIJS": {
 		active: true,
 		desc: {

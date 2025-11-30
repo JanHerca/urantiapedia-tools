@@ -64,7 +64,10 @@ import {
   useBIBLEREF_TXT_BOOK_JSON_TO_TXT,
   useBIBLEREF_JSON_TO_MARKDOWN,
   useBOOK_JSON_TO_BIBLEREF_JSON,
-  useBOOK_JSON_BIBLEREF_JSON_TO_JSON
+  useBOOK_JSON_BIBLEREF_JSON_TO_JSON,
+  useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON,
+  useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON,
+  useBOOK_HTML_TO_JSON
 } from 'src/composables/processes';
 
 
@@ -104,6 +107,16 @@ const onExecuteClick = () => {
         language, uiLanguage, addLog, addErrors, addSuccess);
     case 'BOOK_JSON_BIBLEREF_JSON_TO_JSON':
       executor = useBOOK_JSON_BIBLEREF_JSON_TO_JSON(
+        language, uiLanguage, addLog, addErrors, addSuccess);
+    case 'BOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON':
+      values.push(urantiapediaFolder.value);
+      executor = useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON(
+        language, uiLanguage, addLog, addErrors, addSuccess);
+    case 'BOOK_JSON_SUBSECTIONS_TSV_TO_JSON':
+      executor = useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON(
+        language, uiLanguage, addLog, addErrors, addSuccess);
+    case 'BOOK_HTML_TO_JSON':
+      executor = useBOOK_HTML_TO_JSON(
         language, uiLanguage, addLog, addErrors, addSuccess);
     default:
       addErrors(`Process "${process.value}" is not implemented.`);

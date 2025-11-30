@@ -44,6 +44,26 @@ export const extractStr = (content, start, end) => {
 };
 
 /**
+ * Extracts verse number from text.
+ * @param {string} text Text with verse number.
+ * @returns {number|string|null} Verse number, 'all' for all verses, or null if invalid.
+ */
+export const extractVers = (text) => {
+  let num = '',
+  i = 0;
+  if (text.length === 0) {
+    return null;
+  } else if (text === 'all') {
+    return text;
+  }
+  while (!isNaN(text[i])) {
+    num += text[i];
+    i++;
+  }
+  return (isNaN(parseInt(num)) ? null : parseInt(num));
+};
+
+/**
  * Returns all indexes in which a char (or any of several chars) is found.
  * @param {string} content Text to search.
  * @param {string|string[]} chars A char or an array of chars.
@@ -77,10 +97,11 @@ export const getAllIndexes = (content, chars, ignoreHtml = true) => {
 export const getError = (...params) => {
   const language = params[0];
   const msg = params[1];
-  let text = Strings[msg] ? Strings[msg][language] : msg;
-  if (!text) {
-    text = Strings[msg]['en'];
-  }
+  let text = Strings[msg] 
+    ? (Strings[msg][language]
+      ? Strings[msg][language]
+      : Strings[msg]['en'])
+    : msg;
   return new Error(strformat(text, ...params.slice(2)));
 };
 
@@ -107,7 +128,7 @@ export const reflectPromise = (promise) => {
  * @param {Array.<VALUE>|VALUE|undefined|null} data Array to add.
  * @template VALUE
  */
-export const extendArray = function (arr, data) {
+export const extendArray = (arr, data) => {
   if (data == null) {
     return;
   }
@@ -117,6 +138,96 @@ export const extendArray = function (arr, data) {
   for (i = 0; i < length; i++) {
     arr[arr.length] = extension[i];
   }
+};
+
+/**
+ * Replaces inside a string a start and end tag with other start and end text.
+ * @param {string} content String to replace.
+ * @param {string} initTag Starting tag.
+ * @param {string} endTag Ending tag.
+ * @param {string} initTag2 Tag to use to replace starting tag.
+ * @param {string} endTag2 Tag to use to replace ending tag.
+ * @param {string[]} errors Array of messages for errors.
+ * @return {string}
+ */
+export const replaceTags = (
+  content, 
+  initTag, 
+  endTag, 
+  initTag2, 
+  endTag2, 
+  errors,
+  uiLanguage
+) => {
+	let result = '', ii, i = 0, index;
+	while (i < content.length) {
+		index = content.indexOf(initTag, i);
+		if (index === -1) {
+			result += content.substring(i);
+			break;
+		} else {
+			result += content.substring(i, index);
+		}
+		ii = index + initTag.length;
+		i = content.indexOf(endTag, ii);
+		if (i === -1) {
+			errors.push(getError(uiLanguage, 'book_tag_no_closing'));
+			return content;
+		}
+		result += initTag2 + content.substring(ii, i) + endTag2;
+		i += endTag.length;
+	}
+	return result;
+};
+
+/**
+ * Removes inside a string all content between a starting and end tags in
+ * all occurrences or only tags. Starting and ending tags must be HTML tags. 
+ * Removes not only tags but also attributes. Also removes double blank
+ * spaces.
+ * @example
+ * const text = 'This text <span class="extra">with a tag</span> inside';
+ * const text2 = removeHTMLTags(text, '<span>', '</span>', false, []);
+ * // returns 'This text with a tag inside'
+ * const text3 = removeHTMLTags(text, '<span>', '</span>', true, []);
+ * // return 'This text inside'
+ * @param {string} content String to replace.
+ * @param {string} initTag Starting tag.
+ * @param {string} endTag End tag.
+ * @param {boolean} removeContent If remove text inside tags or not.
+ * @param {string[]} errors Array to store errors.
+ * @return {string}
+ */
+export const removeHTMLTags = (
+  content, 
+  initTag, 
+  endTag, 
+  removeContent, 
+  errors,
+  uiLanguage
+) => {
+	let result = '', ii, i = 0, index;
+	const iTag = initTag.substring(0, initTag.length - 1);
+	while (i < content.length) {
+		index = content.indexOf(iTag, i);
+		if (index === -1) {
+			result += content.substring(i);
+			break;
+		}
+		result += content.substring(i, index);
+		ii = index + iTag.length;
+		index = content.indexOf('>', ii);
+		i = content.indexOf(endTag, ii);
+		if (i === -1 || index === -1 || index >= content.length - 4 || index >= i) {
+			errors.push(getError(uiLanguage, 'book_tag_no_closing'));
+			break;
+		}
+		if (!removeContent) {
+			result += content.substring(index + 1, i);
+		}
+		i += endTag.length;
+	}
+	return result;
 };
 
 /**
@@ -148,4 +259,35 @@ export const getStackTraceArray = (error) => {
     .filter(line => line.length > 0);
 
   return cleanedStack;
+};
+
+/**
+ * Returns an array with three values [paper_id, section_id, par_id]
+ * For example: for '101:2.1' returns [101,2,1]
+ * Input always must have three value or triggers an exception.
+ * @param {string} ub_ref Reference to UB.
+ * @param {string} uiLanguage UI language.
+ * @return {Array} Throws an error if something is wrong.
+ */
+export const getUBRef = (ub_ref, uiLanguage) => {
+  let data, data2, paper_id, section_id, par_id;
+  const err = getError(uiLanguage, 'book_wrong_reference', ub_ref);
+  data = ub_ref.split(':');
+  if (data.length != 2) {
+    throw err;
+  }
+  paper_id = parseInt(data[0]);
+  if (isNaN(paper_id)) {
+    throw err;
+  }
+  data2 = data[1].split('.');
+  if (data2.length != 2) {
+    throw err;
+  }
+  section_id = parseInt(data2[0]);
+  par_id = parseInt(data2[1]);
+  if (isNaN(section_id) || isNaN(par_id)) {
+    throw err;
+  }
+  return [paper_id, section_id, par_id];
 };

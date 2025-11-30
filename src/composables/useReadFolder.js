@@ -22,7 +22,6 @@ export const useReadFolder = (
     addLog(`Reading folder: ${dirPath}`);
     let files = null;
     try {
-      // files = await fs.readdir(dirPath);
       files = await window.NodeAPI.readDir(dirPath);
     } catch (err) {
       throw getError(uiLanguage.value, 'folder_not_exists', dirPath);
@@ -36,7 +35,6 @@ export const useReadFolder = (
         throw getError(uiLanguage.value, 'files_not_with_format', format);
       }
       return ffiles;
-
     }
   };
 

@@ -1,5 +1,5 @@
 import { useReadFolder } from 'src/composables/useReadFolder.js';
-import { getError, reflectPromise } from 'src/core/utils.js';
+import { getError, reflectPromise, extractVers } from 'src/core/utils.js';
 import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs.js';
 
 import path from 'path';
@@ -36,26 +36,6 @@ export const useReadFromTXT = (
   addLog
 ) => {
   const { readFolder } = useReadFolder(uiLanguage, addLog);
-
-  /**
-   * Extracts verse number from text.
-   * @param {string} text Text with verse number.
-   * @returns {number|string|null} Verse number, 'all' for all verses, or null if invalid.
-   */
-  const extractVers = (text) => {
-    let num = '',
-    i = 0;
-    if (text.length === 0) {
-      return null;
-    } else if (text === 'all') {
-      return text;
-    }
-    while (!isNaN(text[i])) {
-      num += text[i];
-      i++;
-    }
-    return (isNaN(parseInt(num)) ? null : parseInt(num));
-  };
 
   /**
    * Extracts Bible references from TXT lines.

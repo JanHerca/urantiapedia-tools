@@ -1,4 +1,5 @@
-import { getError, extendArray, findBibleAbb, getAllIndexes } from 'src/core/utils.js';
+import { getError, extendArray, findBibleAbb, getAllIndexes,
+  getUBRef } from 'src/core/utils.js';
 
 /**
  * UrantiaBook class.
@@ -58,35 +59,7 @@ export class UrantiaBook {
     return true;
   }
 
-  /**
-   * Returns an array with three values [paper_id, section_id, par_id]
-   * For example: for '101:2.1' returns [101,2,1]
-   * Input always must have three value or triggers an exception.
-   * @param {string} lu_ref Reference to UB.
-   * @return {Array}
-   */
-  getRef(lu_ref) {
-    let data, data2, paper_id, section_id, par_id;
-    const err = getError(this.language, 'book_wrong_reference', lu_ref);
-    data = lu_ref.split(':');
-    if (data.length != 2) {
-      throw err;
-    }
-    paper_id = parseInt(data[0]);
-    if (isNaN(paper_id)) {
-      throw err;
-    }
-    data2 = data[1].split('.');
-    if (data2.length != 2) {
-      throw err;
-    }
-    section_id = parseInt(data2[0]);
-    par_id = parseInt(data2[1]);
-    if (isNaN(section_id) || isNaN(par_id)) {
-      throw err;
-    }
-    return [paper_id, section_id, par_id];
-  }
+
 
   /**
    * Returns an array of arrays with three values [paper_id, section_id, par_id]
@@ -116,7 +89,7 @@ export class UrantiaBook {
       //Only paper case
       paper.sections.forEach(s => {
         s.pars.forEach(p => {
-          result.push(this.getRef(p.par_ref));
+          result.push(getUBRef(p.par_ref));
         });
       });
     } else if (data.length > 1) {
@@ -134,7 +107,7 @@ export class UrantiaBook {
         paper.sections.forEach(s => {
           if (s.section_index >= min && s.section_index <= max) {
             s.pars.forEach(p => {
-              result.push(this.getRef(p.par_ref));
+              result.push(getUBRef(p.par_ref));
             });
           }
         });
@@ -160,7 +133,7 @@ export class UrantiaBook {
             fail = true;
           } else {
             section.pars.slice(min - 1, max).forEach(p => {
-              result.push(this.getRef(p.par_ref));
+              result.push(getUBRef(p.par_ref));
             });
           }
         });
@@ -244,7 +217,7 @@ export class UrantiaBook {
           const index = strRefs.findIndex(r => ref.startsWith(r));
           if (index != -1 && strRefs2.indexOf(pref) == -1) {
             strRefs2.push(pref);
-            result.push(this.getRef(pref));
+            result.push(getUBRef(pref));
           }
         });
       });
@@ -263,7 +236,7 @@ export class UrantiaBook {
     //
     let ref;
     try {
-      ref = this.getRef(lu_ref);
+      ref = getUBRef(lu_ref);
     } catch (err) {
       throw err;
     }
