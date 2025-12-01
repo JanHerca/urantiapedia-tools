@@ -231,6 +231,39 @@ export const removeHTMLTags = (
 };
 
 /**
+ * Removes HTML tags but preserves the inner text.
+ * Example: "this is <span>the name</span> used" => "this is the name used"
+ * @param {string} content
+ * @return {string}
+ */
+export const removeAllHTML = (content) => {
+  if (content == null) return '';
+  // remove tags, normalize whitespace and trim
+  return content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+};
+
+/**
+ * Converts a text in LaTeX format to HTML format, replacing special chars 
+ * with same chars but adapted to Wiki formats.
+ * @param {string} content Content.
+ * @returns {string}
+ */
+export const replaceSpecialChars = (content) => {
+  return content
+    .replace(/(\\\"u)/g, 'ü')
+    .replace(/(---)/g, '—')
+    .replace(/`/g, '‘')
+    .replace(/'/g, '’')
+    .replace(/\\bigbreak/g, '<br/>')
+    .replace(/{\\textdegree}/g, '&deg;')
+    .replace(/{\\textordmasculine}/g, 'º')
+    .replace(/{\\textordfeminine}/g, 'ª')
+    .replace(/\\textsuperscript\{27\}/g, '<sup>27</sup>')
+    .replace(/\\textsuperscript\{3\}/g, '<sup>3</sup>')
+    .replace(/{\\textonequarter}/g, '&frac14;');
+};
+
+/**
  * Gets the Bible abbreviation for a reference or null if not found.
  * @param {string} language Language.
  * @param {string} content Bible reference.
@@ -259,6 +292,84 @@ export const getStackTraceArray = (error) => {
     .filter(line => line.length > 0);
 
   return cleanedStack;
+};
+
+/**
+ * Replaces a text with an array of components by other array of components.
+ * This function is required because RegExp has problems searching components
+ * that are full words starting or ending with accent.
+ * @param {Array.<string>} arItems Array of components to search.
+ * @param {Array.<string>} arReplaces Array of components to replace.
+ * @param {string} text Text to modify.
+ * @param {?boolean} ignoreCase Optional ignore case. By default is false.
+ * @param {?boolean} replaceAll Optional replace all occurrences of each item.
+ *  By default is false, only first occurence of each item is replaced.
+ * @param {?boolean} useExisting Optional replace with existing case. If case
+ * existing is different with what is sent, use existing. By default is false.
+ * @param {?boolean} useFirst Optional use first found of items passed. 
+ * By default is false and all items are used.
+ * @return {string} Modified text.
+ */
+export const replaceWords = (
+  arItems, 
+  arReplaces, 
+  text, 
+  ignoreCase,
+  replaceAll, 
+  useExisting, 
+  useFirst
+) => {
+  let result = text, ini = 0, fin = 0, j, item, testIni, testFin, p1, p2,
+    ip1, ip2, existing, ireplace, index;
+  const regex = /[a-z0-9áéíóúäëïöüàèìòùâêîôûñ'-]/i;
+  const len = text.length;
+  const replaces = [];
+  ignoreCase = ignoreCase || false;
+  replaceAll = replaceAll || false;
+  useExisting = useExisting || false;
+  useFirst = useFirst || false;
+  let iresult = (ignoreCase ? result.toLowerCase() : result);
+  for (j = 0; j < arItems.length; j++) {
+    item = (ignoreCase ? arItems[j].toLowerCase() : arItems[j]);
+    ini = 0;
+    if (replaces.length > 0 && useFirst) {
+      break;
+    }
+    while (ini != -1) {
+      ini = iresult.indexOf(item, ini);
+      fin = ini + item.length - 1;
+      testIni = !regex.test(iresult.substring(ini - 1, ini));
+      testFin = !regex.test(iresult.substring(fin + 1, fin + 2));
+      if (ini != -1) {
+        if (
+          (ini === 0 || (ini > 0 && testIni)) &&
+          (fin === len - 1 || (fin < len - 1 && testFin))
+        ) {
+          p1 = result.substring(0, ini);
+          p2 = result.substring(ini);
+          existing = p2.substring(0, item.length);
+          ireplace = (useExisting ?
+            arReplaces[j].replace(arItems[j], existing) :
+            arReplaces[j]);
+          replaces.push(ireplace);
+          index = replaces.length - 1;
+          result = p1 + `#${index}#` + p2.substring(item.length);
+          ip1 = iresult.substring(0, ini);
+          ip2 = iresult.substring(ini);
+          iresult = ip1 + `#${index}#` + ip2.substring(item.length);
+          if (!replaceAll) break;
+        }
+        ini = fin + 1;
+        if (ini === len - 1) {
+          break;
+        }
+      }
+    }
+  }
+  for (j = 0; j < replaces.length; j++) {
+    result = result.replace(new RegExp(`#${j}#`, 'g'), replaces[j]);
+  }
+  return result;
 };
 
 /**
@@ -291,3 +402,85 @@ export const getUBRef = (ub_ref, uiLanguage) => {
   }
   return [paper_id, section_id, par_id];
 };
+
+/**
+ * Returns the title of a paper from The Urantia Book.
+ * @param {?Object} paper Paper.
+ * @param {string} language Language code.
+ * @param {?boolean} upper If return in upper case or not.
+ * @returns {string}
+ */
+export const getBookPaperTitle = (paper, language, upper) => {
+  upper = (upper != undefined ? upper : false);
+  if (!paper) {
+    return ' ';
+  }
+  const paperWord = Strings['bookPaper'][language];
+  const t = paper.paper_title;
+  const i = paper.paper_index;
+  const paperWord2 = paperWord.indexOf('{') != -1
+    ? strformat(paperWord, i) 
+    : paperWord;
+  const tu = t.toUpperCase();
+  const pu = paperWord2.toUpperCase();
+  const tt = (upper ? tu : t);
+  if (i === 0) {
+    //Prologue
+    return tt;
+  }
+  if (tu.startsWith(pu)) {
+    return tt;
+  } else if (paperWord.indexOf('{') != -1) {
+    return `${upper ? pu : paperWord2}. ${tt}`;
+  }
+  return `${(upper ? pu : paperWord)} ${i}. ${tt}`;
+};
+
+/**
+ * Returns of the possible names for a topic to use when searching, dealing with
+ * issues in some languages.
+ * @param {Object} topic A topic entry.
+ * @param {string} language Language.
+ * @return {string[]}
+ */
+export const getTopicNames = (topic, language) => {
+  const name = topic.name.split('(')[0].trim();
+  const names = [name];
+  extendArray(names, topic.altnames);
+  if (language === "en" || language === "fr") {
+    extendArray(names, names.map(i => i.replace(/'/g, '’')));
+  }
+  if (language === "fr") {
+    extendArray(names, names
+      .map(i => ['L', 'l', 'D', 'd', 'qu', 's'].map(j => `${j}’${i}`))
+      .flat()
+    );
+  }
+  return names.filter((n, i, ar) => ar.indexOf(n) === i);
+};
+
+/**
+ * Returns an array with position indexes of the references in sentences
+ * separated by periods inside the paragraph.
+ * @param {string} content Paragraph content.
+ * @param {number} length Max number of footnotes of the paper, that 
+ * represents the max number to search a reference.
+ * @return {number[]} Returns -1 when periods are not found.
+ */
+export const getRefsLocations = (content, length) => {
+  let indexes = [], index;
+  const ii = getAllIndexes(content, '.');
+
+  for (let i = 0; i < length; i++) {
+    index = content.indexOf(`{${i}}`);
+    if (index != -1) {
+      if (ii.length === 0) {
+        indexes.push(-1);
+      } else {
+        indexes.push(ii.findIndex(e => e > index));
+      }
+    }
+  }
+  return indexes;
+};
+

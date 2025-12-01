@@ -373,29 +373,4 @@ export class UrantiaBook {
     return result;
   }
 
-  /**
-   * Returns an array with position indexes of the references in sentences
-   * separated by periods inside the paragraph.
-   * @param {string} content Paragraph content.
-   * @param {number} length Max number of footnotes of the paper, that 
-   * represents the max number to search a reference.
-   * @return {number[]} Returns -1 when periods are not found.
-   */
-  getRefsLocations(content, length) {
-    let indexes = [], index;
-    const ii = getAllIndexes(content, '.');
-
-    for (let i = 0; i < length; i++) {
-      index = content.indexOf(`{${i}}`);
-      if (index != -1) {
-        if (ii.length === 0) {
-          indexes.push(-1);
-        } else {
-          indexes.push(ii.findIndex(e => e > index));
-        }
-      }
-    }
-    return indexes;
-  }
-
 }

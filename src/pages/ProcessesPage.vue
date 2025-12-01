@@ -68,12 +68,13 @@ import {
   useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON,
   useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON,
   useBOOK_HTML_TO_JSON,
-  useBOOK_JSON_TO_TXT
+  useBOOK_JSON_TO_TXT,
+  useBOOK_JSON_TOPICS_TXT_TO_WIKIJS
 } from 'src/composables/processes';
 
 
 const mainStore = useMain();
-const { allLanguages, addLog, addErrors, addSuccess } = mainStore;
+const { allLanguages, addLog, addWarning, addErrors, addSuccess } = mainStore;
 const {
   language,
   uiLanguage,
@@ -122,6 +123,10 @@ const onExecuteClick = () => {
     case 'BOOK_JSON_TO_TXT':
       executor = useBOOK_JSON_TO_TXT(
         language, uiLanguage, addLog, addErrors, addSuccess);
+    case 'BOOK_JSON_TOPICS_TXT_TO_WIKIJS':
+      values.push(urantiapediaFolder.value);
+      executor = useBOOK_JSON_TOPICS_TXT_TO_WIKIJS(
+        language, uiLanguage, addLog, addWarning, addErrors, addSuccess);
     default:
       addErrors(`Process "${process.value}" is not implemented.`);
       break;

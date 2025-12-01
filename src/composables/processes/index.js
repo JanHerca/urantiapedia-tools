@@ -4,4 +4,7 @@ export * from './useBOOK_JSON_BIBLEREF_JSON_TO_JSON.js';
 export * from './useBOOK_JSON_TO_BIBLEREF_JSON.js';
 export * from './useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON.js';
 export * from './useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON.js';
-export * from './useBOOK_HTML_TO_JSON';
+export * from './useBOOK_HTML_TO_JSON.js';
+export * from './useBOOK_JSON_TO_TXT.js';
+export * from './useBOOK_JSON_TOPICS_TXT_TO_WIKIJS';
+export * from './useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS.js';

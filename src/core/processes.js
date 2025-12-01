@@ -165,6 +165,10 @@ export const Processes = {
         value: ['input', 'txt', 'articles-{0}', 'ub_paralells.tsv']
       },
       {
+        type: 'file',
+        value: ['input', 'txt', 'ub_corrections.tsv']
+      },
+      {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'The_Urantia_Book']
       }
@@ -186,12 +190,16 @@ export const Processes = {
         value: ['input', 'json']
       },
       {
-        type: 'folder',
-        value: ['output', 'wikijs', '{0}', 'The_Urantia_Book_Multiple']
+        type: 'file',
+        value: ['input', 'txt', 'articles-{0}', 'ub_paralells.tsv']
       },
       {
         type: 'file',
-        value: ['input', 'txt', 'articles-{0}', 'ub_paralells.tsv']
+        value: ['input', 'txt', 'ub_corrections.tsv']
+      },
+      {
+        type: 'folder',
+        value: ['output', 'wikijs', '{0}', 'The_Urantia_Book_Multiple']
       }
     ]
   },

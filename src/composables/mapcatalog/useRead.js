@@ -81,17 +81,17 @@ export const useRead = (
         addLog(`Map catalog not supported for: ${language.value}`);
         return null;
       }
-      addLog(`Reading file: ${mapcatalogFileEN}`);
       const mapcatalogFileEN = path.join(urantiapediaFolder, 'input', 
         'markdown', 'en', 'map_catalog.md');
+      addLog(`Reading file: ${mapcatalogFileEN}`);
       const bufEN = await window.NodeAPI.readFile(mapcatalogFileEN);
       const linesEN = bufEN.toString().split('\n');
       const maps = readFileEN(linesEN);
       let translations;
       if (language.value != 'en') {
-        addLog(`Reading file: ${mapcatalogFileCurrent}`);
         const mapcatalogFileCurrent = path.join(urantiapediaFolder, 'input', 
           'markdown', language.value, 'map_catalog.md');
+        addLog(`Reading file: ${mapcatalogFileCurrent}`);
         const bufCurrent = await window.NodeAPI.readFile(mapcatalogFileCurrent);
         const linesCurrent = bufCurrent.toString().split('\n');
         translations = readFileOther(linesCurrent);

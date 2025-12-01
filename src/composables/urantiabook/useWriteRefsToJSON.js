@@ -1,4 +1,4 @@
-import { getError, extendArray } from 'src/core/utils.js';
+import { getError, extendArray, getRefsLocations } from 'src/core/utils.js';
 
 import path from 'path';
 
@@ -73,7 +73,7 @@ export const useWriteRefsToJSON = (
                   footnotes.bible_refs.push(bible_refs);
                 }
               });
-              let locations = ub_book.getRefsLocations(
+              let locations = getRefsLocations(
                 par.par_content, paper.footnotes.length)
                 .map(loc => par.par_ref + '#' + loc);
               extendArray(footnotes.locations, locations);

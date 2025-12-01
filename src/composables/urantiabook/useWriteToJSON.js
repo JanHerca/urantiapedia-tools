@@ -35,7 +35,7 @@ export const useWriteToJSON = (
     addLog(`Writing to folder: ${dirPath}`);
     try {
       const baseName = path.basename(dirPath);
-      const access = window.NodeAPÎ.exists(dirPath);
+      const access = window.NodeAPI.exists(dirPath);
       if (!access) {
         throw getError(uiLanguage.value, 'folder_no_access', baseName)
       }
@@ -43,7 +43,7 @@ export const useWriteToJSON = (
         .map(paper => {
           const i = paper.paper_index;
           const stri = (i > 99 ? `${i}` : (i > 9 ? `0${i}` : `00${i}`));
-          let filePath = path.join(dirPath, `Doc${stri}.${format}`);
+          const filePath = path.join(dirPath, `Doc${stri}.${format}`);
           return reflectPromise(writeFileToJSON(filePath, paper));
         });
       const results = await Promise.all(promises);

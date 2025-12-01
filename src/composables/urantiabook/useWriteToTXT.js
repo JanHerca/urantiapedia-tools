@@ -78,7 +78,7 @@ export const useWriteToTXT = (
     addLog(`Writing to folder: ${dirPath}`);
     try {
       const baseName = path.basename(dirPath);
-      const access = window.NodeAPÎ.exists(dirPath);
+      const access = window.NodeAPI.exists(dirPath);
       if (!access) {
         throw getError(uiLanguage.value, 'folder_no_access', baseName)
       }

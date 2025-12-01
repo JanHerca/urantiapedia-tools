@@ -110,7 +110,7 @@ export const useRead = (
         'markdown', 'en', 'image_catalog.md');
       const bufEN = await window.NodeAPI.readFile(imagecatalogFileEN);
       const linesEN = bufEN.toString().split('\n');
-      const imagesEN = readFileEN(linesEN);
+      const images = readFileEN(linesEN);
 
       if (language.value != 'en') {
         const imagecatalogFileCurrent = path.join(urantiapediaFolder, 'input', 
@@ -118,11 +118,11 @@ export const useRead = (
         addLog(`Reading file: ${imagecatalogFileCurrent}`);
         const bufCurrent = await window.NodeAPI.readFile(imagecatalogFileCurrent);
         const linesCurrent = bufCurrent.toString().split('\n');
-        const imagesCurrent = readFileOther(linesCurrent, imagesEN);
+        const imagesCurrent = readFileOther(linesCurrent, images);
         return imagesCurrent;
       }
       
-      return imagesEN;
+      return images;
     } catch (err) {
       throw err;
     }
