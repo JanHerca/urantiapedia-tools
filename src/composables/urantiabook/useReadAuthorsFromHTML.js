@@ -2,7 +2,7 @@ import { getError } from 'src/core/utils.js';
 import { bookConfigs } from 'src/core/urantiabookConfigs.js';
 
 import path from 'path';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 /**
  * Reads `The Urantia Book` authors from a HTML file.

@@ -43,7 +43,7 @@ export const useWriteToJSON = (
         .map(paper => {
           const i = paper.paper_index;
           const stri = (i > 99 ? `${i}` : (i > 9 ? `0${i}` : `00${i}`));
-          const filePath = path.join(dirPath, `Doc${stri}.${format}`);
+          const filePath = path.join(dirPath, `Doc${stri}.json`);
           return reflectPromise(writeFileToJSON(filePath, paper));
         });
       const results = await Promise.all(promises);

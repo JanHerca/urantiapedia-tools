@@ -46,7 +46,7 @@ export class Paralells {
    */
   translations = [];
 
-  constructor(language, footnotes, books, translations) {
+  constructor(language, books, footnotes, translations) {
     this.language = language;
     this.footnotes = footnotes;
     this.books = books;

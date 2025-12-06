@@ -6,6 +6,7 @@ import { getWikijsBookLink, getWikijsHeader, getWikijsBookCopyright,
   getWikijsBookSectionTitles, fixWikijsHeader } from 'src/core/wikijs.js';
 import { getWikijsBookParRef } from 'src/core/wikijs.js';
 import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs';
+import { HTMLSeparator as HSep } from 'src/core/enums.js';
 
 import path from 'path';
 
@@ -24,7 +25,56 @@ export const useWriteToWikijs = (
 ) => {
   const audio = ['en', 'es', 'fr', 'it', 'pt', 'de'];
   const colors = ['blue', 'purple', 'teal', 'deep-orange', 'indigo',
-		'pink', 'blue-grey']; //Colors for up to 7 columns max
+    'pink', 'blue-grey']; //Colors for up to 7 columns max
+
+  /**
+   * Returns a clone of a paper but replacing the corrections to obtain
+   * the original 1955 paper. This only works for English edition.
+   * @param {Object[]} papers Array of paper objects.
+   * @param {Object[]} corrections Array of correction objects.
+   * @param {number} paper_index Index of paper.
+   */
+  const getOriginalPaper = (papers, corrections, paper_index) => {
+    const paper = papers.find(p => p.paper_index === paper_index);
+    const clone = {
+      ...paper,
+      sections: paper.sections.map(section => {
+        return {
+          ...section,
+          pars: section.pars.map(p => ({ ...p }))
+        };
+      }),
+      footnotes: paper.footnotes.slice()
+    };
+    const correctionsFiltered = corrections.filter(c => {
+      const r = c.par_ref.split(/[:\.]/);
+      return parseInt(r[0]) === paper_index;
+    });
+    correctionsFiltered.forEach(c => {
+      clone.sections.forEach(section => {
+        section.pars.forEach(p => {
+          if (p.par_ref === c.par_ref) {
+            let original = c.original.indexOf('...') != -1
+              ? c.original.split('...')[1]
+              : c.original;
+            original = original.indexOf('. (') != -1
+              ? original.split('. (')[0]
+              : original;
+            original = replaceTags(original, HSep.ITALIC_START,
+              HSep.ITALIC_END, '*', '*', []);
+            const corrected = replaceTags(c.corrected, HSep.ITALIC_START,
+              HSep.ITALIC_END, '*', '*', []);
+            if (p.par_content.indexOf(corrected) === -1) {
+              addWarning(`Error finding corrected text (${p.par_ref})`);
+            }
+            p.par_content = p.par_content.replace(corrected,
+              original);
+          }
+        });
+      });
+    });
+    return clone;
+  };
 
   /**
    * Returns the HTML fragment for Wiki.js of a footnote.
@@ -55,7 +105,7 @@ export const useWriteToWikijs = (
           ref = fss;
         }
         if (ab && ref) {
-          path = BibleAbbs[language.value][ab][1];
+          path = `/${language.value}/Bible/${BibleAbbs[language.value][ab][1]}`;
           if (ref.indexOf(':')) {
             chapter = ref.substring(0, ref.indexOf(':'));
             vers = ref.substring(ref.indexOf(':') + 1);
@@ -600,7 +650,7 @@ export const useWriteToWikijs = (
       //Update date created avoiding a new date for it
       const buf = (await reflectPromise(window.NodeAPI.readFile(filePath))).value;
       if (buf) {
-        const previousLines = bufOther.toString().split('\n');
+        const previousLines = buf.toString().split('\n');
         const curLines = (header + body).split('\n');
         const newHeader = fixWikijsHeader(header, previousLines, curLines);
         if (newHeader) {
@@ -652,7 +702,7 @@ export const useWriteToWikijs = (
       const promises = papers
         .map(paper => {
           const i = paper.paper_index;
-          const filePath = path.join(dirPath, `${i}.${format}`);
+          const filePath = path.join(dirPath, `${i}.html`);
           return reflectPromise(writeFileToWikijs(
             filePath, 
             papers,
@@ -676,8 +726,89 @@ export const useWriteToWikijs = (
     }
   };
 
+  /**
+   * Writes `The Urantia Book` (mutiple versions mode) in HTML format that 
+   * can be imported in Wiki.js, each paper a file.
+   * @param {string} dirPath Folder path.
+   * @param {Object[]} books Array of Book objects with the book in several 
+   * versions. The first one must be the master version, which will have 
+   * links to footnotes.
+   * @param {?TopicIndex} topicIndex Optional TopicIndex with topics.
+   * @param {?TopicIndex[]} topicIndexEN Optional TopicIndex with topics in english.
+   * If previous param is english is not required otherwise is required.
+   * @param {?ImageCatalog} imageCatalog Optional array of images in image catalog.
+   * @param {?MapCatalog} mapCatalog Optional array of maps in map catalog.
+   * @param {?Paralells} bookParalells Optional array of books paralells.
+   * @param {?Articles} articlesParalells Optional array of articles paralells.
+   * @param {?Object[]} corrections Optional array of corrections done in the 
+   * English Urantia Book 1955 edition.
+   */
+  const writeMultipleToWikijs = async (
+    dirPath, 
+    books, 
+    topicIndex, 
+    topicIndexEN, 
+		imageCatalog, 
+    mapCatalog, 
+    bookParalells, 
+    articlesParalells,
+    corrections
+  ) => {
+    addLog(`Writing to folder: ${dirPath}`);
+    try {
+      await window.NodeAPI.exists(dirPath);
+    } catch (err) {
+      throw getError(uiLanguage.value, 'folder_not_exists', dirPath);
+    }
+
+    try {
+      const papersEN = books.find(b => b.language === 'en').papers;
+      const papersMaster = books.find(b => b.isMaster).papers;
+      const promises = books[0].papers.map(paper => {
+        const index = paper.paper_index;
+        const papers = books.map(b => {
+          const p2 = b.papers.find(p1 => p1.paper_index === index);
+          p2.isMaster = b.isMaster;
+          p2.year = b.year;
+          p2.copyright = b.copyright;
+          p2.label = (language.value === 'en' ? '1955 SRT' : b.label);
+          return p2;
+        });
+        //For English we add here the old 1955 version
+        if (language.value === 'en') {
+          const originalPaper = getOriginalPaper(papersEN, corrections, index);
+          originalPaper.year = paper.year;
+          originalPaper.copyright = paper.copyright;
+          originalPaper.label = '1955 ORIGINAL';
+          papers.push(originalPaper);
+        }
+        const filePath = path.join(dirPath, `${index}.html`);
+        const p = writeFileToWikijs(
+          filePath, 
+          papersMaster,
+          papers, 
+          topicIndex,
+          topicIndexEN, 
+          imageCatalog, 
+          mapCatalog, 
+          bookParalells,
+          articlesParalells,
+          corrections);
+        return reflectPromise(p);
+      });
+      const results = await Promise.all(promises);
+      const errors = results.filter(r => r.error).map(r => r.error);
+      if (errors.length > 0) {
+        throw errors;
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
+
   return {
-    writeToWikijs
+    writeToWikijs,
+    writeMultipleToWikijs
   };
 
 };

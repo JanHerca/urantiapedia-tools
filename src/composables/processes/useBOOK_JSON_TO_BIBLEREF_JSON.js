@@ -1,11 +1,12 @@
-import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useWriteRefsToJSON } from 'src/composables/urantiabook/useWriteRefsToJSON.js';
+import { useReadFromJSON } from '../urantiabook/useReadFromJSON.js';
+import { useWriteRefsToJSON } from '../urantiabook/useWriteRefsToJSON.js';
 import { UrantiaBook } from 'src/core/urantiabook.js';
 
 /**
  * Save Bible Refs in (JSON) in JSON.
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
@@ -13,6 +14,7 @@ import { UrantiaBook } from 'src/core/urantiabook.js';
 export const useBOOK_JSON_TO_BIBLEREF_JSON = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addErrors,
   addSuccess
@@ -28,6 +30,7 @@ export const useBOOK_JSON_TO_BIBLEREF_JSON = (
    * @param {string} outputFile File with footnotes in JSON.
    */
   const executeProcess = async (bookFolder, outputFile) => {
+    processing.value = true;
     addLog('Executing process: BOOK_JSON_TO_BIBLEREF_JSON');
 
     try {
@@ -37,6 +40,8 @@ export const useBOOK_JSON_TO_BIBLEREF_JSON = (
       addSuccess('Process successful: BOOK_JSON_TO_BIBLEREF_JSON');
     } catch (errors) {
       addErrors(errors);
+    } finally {
+      processing.value = false;
     }
   };
 

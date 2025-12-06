@@ -43,7 +43,14 @@
       <q-btn 
         color="primary"
         class="q-mb-sm-md"
+        :disabled="processing"
         @click="onExecuteClick">
+        <div v-if="processing" class="row items-center q-pr-sm">
+          <q-spinner
+            color="white"
+            size="1em"
+          />
+        </div>
         {{ Strings.exeButton[uiLanguage] }}
       </q-btn>
     </div>
@@ -69,7 +76,8 @@ import {
   useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON,
   useBOOK_HTML_TO_JSON,
   useBOOK_JSON_TO_TXT,
-  useBOOK_JSON_TOPICS_TXT_TO_WIKIJS
+  useBOOK_JSON_TOPICS_TXT_TO_WIKIJS,
+  useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS
 } from 'src/composables/processes';
 
 
@@ -81,8 +89,9 @@ const {
   darkTheme,
   urantiapediaFolder,
   process,
-  allProcesses,
   processData,
+  processing,
+  allProcesses,
   logs,
 } = storeToRefs(mainStore);
 
@@ -98,35 +107,47 @@ const onExecuteClick = () => {
   switch (process.value) {
     case 'BIBLEREF_TXT_BOOK_JSON_TO_TXT':
       executor = useBIBLEREF_TXT_BOOK_JSON_TO_TXT(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
       break;
     case 'BIBLEREF_JSON_TO_MARKDOWN':
       executor = useBIBLEREF_JSON_TO_MARKDOWN(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
       break;
     case 'BOOK_JSON_TO_BIBLEREF_JSON':
       executor = useBOOK_JSON_TO_BIBLEREF_JSON(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
     case 'BOOK_JSON_BIBLEREF_JSON_TO_JSON':
       executor = useBOOK_JSON_BIBLEREF_JSON_TO_JSON(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
     case 'BOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON':
       values.push(urantiapediaFolder.value);
       executor = useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
     case 'BOOK_JSON_SUBSECTIONS_TSV_TO_JSON':
       executor = useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
     case 'BOOK_HTML_TO_JSON':
       executor = useBOOK_HTML_TO_JSON(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
     case 'BOOK_JSON_TO_TXT':
       executor = useBOOK_JSON_TO_TXT(
-        language, uiLanguage, addLog, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
     case 'BOOK_JSON_TOPICS_TXT_TO_WIKIJS':
       values.push(urantiapediaFolder.value);
       executor = useBOOK_JSON_TOPICS_TXT_TO_WIKIJS(
-        language, uiLanguage, addLog, addWarning, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+      break;
+    case 'BOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS':
+      values.push(urantiapediaFolder.value);
+      executor = useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+      break;
     default:
       addErrors(`Process "${process.value}" is not implemented.`);
       break;

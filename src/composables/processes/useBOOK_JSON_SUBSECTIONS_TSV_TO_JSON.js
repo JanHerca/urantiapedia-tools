@@ -1,11 +1,12 @@
-import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useReadSubsections } from 'src/composables/urantiabook/useReadSubsections.js';
-import { useWriteToJSON } from 'src/composables/urantiabook/useWriteToJSON.js';
+import { useReadFromJSON } from '../urantiabook/useReadFromJSON.js';
+import { useReadSubsections } from '../urantiabook/useReadSubsections.js';
+import { useWriteToJSON } from '../urantiabook/useWriteToJSON.js';
 
 /**
  * Update Subsections in Urantia Book (TSV) [Only Spanish]
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
@@ -13,6 +14,7 @@ import { useWriteToJSON } from 'src/composables/urantiabook/useWriteToJSON.js';
 export const useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addErrors,
   addSuccess
@@ -28,18 +30,21 @@ export const useBOOK_JSON_SUBSECTIONS_TSV_TO_JSON = (
    * @param {string} bookFolder Folder with UB in JSON format.
    * @param {string} subsectionsFile File with subsections in TSV format.
    */
-    const executeProcess = async (bookFolder, subsectionsFile) => {
-      addLog('Executing process: BOOK_JSON_SUBSECTIONS_TSV_TO_JSON');
+  const executeProcess = async (bookFolder, subsectionsFile) => {
+    processing.value = true;
+    addLog('Executing process: BOOK_JSON_SUBSECTIONS_TSV_TO_JSON');
 
-      try {
-        let papers = await readFromJSON(bookFolder);
-        papers = await readSubsections(subsectionsFile, papers);
-        await writeToJSON(bookFolder, papers);
-        addSuccess('Process successful: BOOK_JSON_SUBSECTIONS_TSV_TO_JSON');
-      } catch (errors) {
-        addErrors(errors);
-      }
-    };
+    try {
+      let papers = await readFromJSON(bookFolder);
+      papers = await readSubsections(subsectionsFile, papers);
+      await writeToJSON(bookFolder, papers);
+      addSuccess('Process successful: BOOK_JSON_SUBSECTIONS_TSV_TO_JSON');
+    } catch (errors) {
+      addErrors(errors);
+    } finally {
+      processing.value = false;
+    }
+  };
 
-    return { executeProcess };
+  return { executeProcess };
 };

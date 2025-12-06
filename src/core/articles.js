@@ -1,3 +1,4 @@
+import { strformat, replaceTags } from 'src/core/utils.js';
 
 /**
  * Articles class (for processing Newsletters library in Urantiapedia)

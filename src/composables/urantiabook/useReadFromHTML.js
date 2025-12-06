@@ -1,11 +1,11 @@
-import { useReadFolder } from 'src/composables/useReadFolder.js';
-import { extractStr, getError, reflectPromise, 
+import { useReadFolder } from '../useReadFolder.js';
+import { extractStr, getError, extendArray, reflectPromise, 
   replaceTags, removeHTMLTags, getUBRef } from 'src/core/utils.js';
 import { bookConfigs } from 'src/core/urantiabookConfigs.js';
 import { HTMLSeparator as HSep } from 'src/core/enums.js';
 
 import path from 'path';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 
 /**
  * Reads `The Urantia Book` from a folder with files in JSON format.

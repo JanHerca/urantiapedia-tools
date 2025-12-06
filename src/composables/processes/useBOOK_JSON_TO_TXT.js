@@ -1,10 +1,11 @@
-import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useWriteToTXT } from 'src/composables/urantiabook/useWriteToTXT.js';
+import { useReadFromJSON } from '../urantiabook/useReadFromJSON.js';
+import { useWriteToTXT } from '../urantiabook/useWriteToTXT.js';
 
 /**
  * Convert Urantia Book from JSON to TXT.
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
@@ -12,6 +13,7 @@ import { useWriteToTXT } from 'src/composables/urantiabook/useWriteToTXT.js';
 export const useBOOK_JSON_TO_TXT = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addErrors,
   addSuccess
@@ -27,6 +29,7 @@ export const useBOOK_JSON_TO_TXT = (
    * @param {string} outputFolder Output folder for TXT files.
    */
   const executeProcess = async (bookFolder, outputFolder) => {
+    processing.value = true;
     addLog('Executing process: BOOK_JSON_TO_TXT');
 
     try {
@@ -36,6 +39,8 @@ export const useBOOK_JSON_TO_TXT = (
       addSuccess('Process successful: BOOK_JSON_TO_TXT');
     } catch (errors) {
       addErrors(errors);
+    } finally {
+      processing.value = false;
     }
   };
 

@@ -1,4 +1,4 @@
-import { useReadFolder } from 'src/composables/useReadFolder.js';
+import { useReadFolder } from '../useReadFolder.js';
 import { strformat, getError, reflectPromise } from 'src/core/utils.js';
 
 import path from 'path';

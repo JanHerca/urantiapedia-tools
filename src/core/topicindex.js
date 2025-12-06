@@ -1,4 +1,6 @@
-export const topicTypes = ['PERSON', 'PLACE', 'ORDER', 'RACE', 'RELIGION', 'OTHER'];
+import { extendArray } from './utils.js';
+
+// export const topicTypes = ['PERSON', 'PLACE', 'ORDER', 'RACE', 'RELIGION', 'OTHER'];
 
 /**
  * TopicIndex class.
@@ -164,7 +166,7 @@ export class TopicIndex {
    * @param {number} par Paragraph index.
    * @return {Array.<Object>} Objects with topics.
    */
-  filterTopicsWithRef = (paper, section, par) => {
+  filterTopicsWithRef(paper, section, par) {
     if (!this.ref_topics[paper]) return [];
     if (!this.ref_topics[paper][section]) return [];
     if (!this.ref_topics[paper][section][par]) return [];

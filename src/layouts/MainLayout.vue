@@ -6,7 +6,7 @@
 
         <q-toolbar-title> Urantiapedia Tools </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Version v{{ appVersion }}</div>
       </q-toolbar>
     </q-header>
 
@@ -25,8 +25,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import SimpleLink from "components/SimpleLink.vue";
+
+const appVersion = ref('');
 
 const linksList = [
   {
@@ -66,4 +68,13 @@ const leftDrawerOpen = ref(false);
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
+
+onMounted(async () => {
+  if (window.NodeAPI && window.NodeAPI.getAppVersion) {
+    const version = await window.NodeAPI.getAppVersion();
+    appVersion.value = version;
+  } else {
+    appVersion.value = 'Web/Dev'; 
+  }
+});
 </script>

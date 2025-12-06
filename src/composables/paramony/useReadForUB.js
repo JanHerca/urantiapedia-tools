@@ -1,5 +1,5 @@
-import { useReadFileEN } from 'src/composables/paramony/useReadFileEN.js';
-import { useReadFileOther } from 'src/composables/paramony/useReadFileOther.js';
+import { useReadFileEN } from './useReadFileEN.js';
+import { useReadFileOther } from './useReadFileOther.js';
 
 import path from 'path';
 

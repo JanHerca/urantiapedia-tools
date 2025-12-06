@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, nativeImage } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import os from 'node:os'
@@ -127,9 +127,20 @@ ipcMain.handle('fs:stat', async (evt, p) => {
     return null 
   }
 })
-ipcMain.handle('fs:readdir', async (evt, p) => {
+ipcMain.handle('fs:readdir', async (evt, p, options) => {
   try {
-    return await fs.readdir(p)
+    const dirents = await fs.readdir(p, options)
+
+    if (!options || !options.withFileTypes) {
+      return dirents
+    }
+
+    return dirents.map(dirent => ({
+      name: dirent.name,
+      isFile: dirent.isFile(),
+      isDirectory: dirent.isDirectory(),
+      isSymbolicLink: dirent.isSymbolicLink(),
+    }))
   } catch (err) { 
     return { error: err.message } 
   }
@@ -178,5 +189,23 @@ ipcMain.handle('dialog:openSystemDialog', async (event, options = {}) => {
   } else {
     // Return first path
     return filePaths[0]
+  }
+})
+
+//Version handler
+ipcMain.handle('app:getVersion', async () => {
+  let packageJsonPath;
+  if (process.env.DEV) {
+    packageJsonPath = path.join(process.cwd(), 'package.json')
+  } else {
+    packageJsonPath = path.join(app.getAppPath(), 'package.json')
+  }
+  try {
+    const data = await fs.readFile(packageJsonPath, 'utf8');
+    const packageJson = JSON.parse(data)
+    return packageJson.version
+  } catch (err) {
+    console.error('Error reading package.json:', err)
+    return null
   }
 })

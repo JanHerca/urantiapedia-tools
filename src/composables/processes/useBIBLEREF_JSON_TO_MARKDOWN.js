@@ -1,10 +1,11 @@
-import { useReadFromJSON } from 'src/composables/paramony/useReadFromJSON.js';
-import { useWriteToMarkdown } from 'src/composables/paramony/useWriteToMarkdown';
+import { useReadFromJSON } from '../paramony/useReadFromJSON.js';
+import { useWriteToMarkdown } from '../paramony/useWriteToMarkdown';
 
 /**
  * Process: Convert Bible Refs in Urantia Book (JSON) to Markdown.
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
@@ -12,6 +13,7 @@ import { useWriteToMarkdown } from 'src/composables/paramony/useWriteToMarkdown'
 export const useBIBLEREF_JSON_TO_MARKDOWN = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addErrors,
   addSuccess
@@ -28,6 +30,7 @@ export const useBIBLEREF_JSON_TO_MARKDOWN = (
    * @param {string} outputPath File with footnotes in Markdown.
    */
   const executeProcess = async (inputPath, outputPath) => {
+    processing.value = true;
     addLog('Executing process: BIBLEREF_JSON_TO_MARKDOWN');
 
     try {
@@ -36,6 +39,8 @@ export const useBIBLEREF_JSON_TO_MARKDOWN = (
       addSuccess('Process successful: BIBLEREF_JSON_TO_MARKDOWN');
     } catch (errors) {
       addErrors(errors);
+    } finally {
+      processing.value = false;
     }
   };
 

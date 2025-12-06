@@ -1,7 +1,7 @@
-import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useUpdateRefs } from 'src/composables/urantiabook/useUpdateRefs.js';
-import { useWriteToJSON } from 'src/composables/urantiabook/useWriteToJSON.js';
-import { useReadForUB } from 'src/composables/paramony/useReadForUB.js';
+import { useReadFromJSON } from '../urantiabook/useReadFromJSON.js';
+import { useUpdateRefs } from '../urantiabook/useUpdateRefs.js';
+import { useWriteToJSON } from '../urantiabook/useWriteToJSON.js';
+import { useReadForUB } from '../paramony/useReadForUB.js';
 
 
 import { getError } from 'src/core/utils.js';
@@ -12,6 +12,7 @@ import path from 'path';
  * Update Bible Refs in Urantia Book.
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
@@ -19,6 +20,7 @@ import path from 'path';
 export const useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addErrors,
   addSuccess
@@ -37,6 +39,7 @@ export const useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON = (
    * @param {string} urantiapediaFolder Folder with Urantiapedia.
    */
   const executeProcess = async (bookFolder, urantiapediaFolder) => {
+    processing.value = true;
     addLog('Executing process: BOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON');
 
     try {
@@ -54,6 +57,8 @@ export const useBOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON = (
       addSuccess('Process successful: BOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON');
     } catch (errors) {
       addErrors(errors);
+    } finally {
+      processing.value = false;
     }
   };
 

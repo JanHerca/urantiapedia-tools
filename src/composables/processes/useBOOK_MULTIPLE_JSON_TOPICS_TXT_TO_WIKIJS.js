@@ -1,22 +1,24 @@
-import { useRead as useReadPL } from 'src/composables/paralells/useRead.js';
-import { useReadUBParalellsFromTSV } from 'src/composables/articles/useReadUBParalellsFromTSV.js';
-import { useReadCorrections } from 'src/composables/urantiabook/useReadCorrections.js';
-import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useReadFromTXT } from 'src/composables/topicindex/useReadFromTXT.js';
-import { useUpdateTopicNames } from 'src/composables/topicindex/useUpdateTopicNames.js';
-import { useGetRefsForSearching } from 'src/composables/topicindex/useGetRefsForSearching.js';
-import { useReadFolder } from 'src/composables/useReadFolder.js';
+import { useRead as useReadParalells } from '../paralells/useRead.js';
+import { useReadUBParalellsFromTSV } from '../articles/useReadUBParalellsFromTSV.js';
+import { useReadCorrections } from '../urantiabook/useReadCorrections.js';
+import { useReadFromJSON } from '../urantiabook/useReadFromJSON.js';
+import { useReadFromTXT } from '../topicindex/useReadFromTXT.js';
+import { useUpdateTopicNames } from '../topicindex/useUpdateTopicNames.js';
+import { useGetRefsForSearching } from '../topicindex/useGetRefsForSearching.js';
+import { useReadDataOfBookVersions } from '../urantiabook/useReadDataOfBookVersions.js';
+import { useReadBooksFromJSON } from '../urantiabook/useReadBooksFromJSON';
+import { useWriteToWikijs } from '../urantiabook/useWriteToWikijs.js';
+import { useReadFolder } from '../useReadFolder.js';
 
-import { TopicIndex } from '/src/core/topicindex.js';
+import { TopicIndex } from 'src/core/topicindex.js';
 import { Paralells } from 'src/core/paralells.js';
 import { Articles } from 'src/core/articles.js';
+import { UrantiaBook } from 'src/core/urantiabook.js';
 import { reflectPromise } from 'src/core/utils.js';
 
 import path from 'path';
 
-//TODO: Add links to topics in english and master versions
 //TODO: Add Extended index in headers
-//TODO: Add authors in Index (not in Extended)
 //TODO: Add links in home page & About UB page to go directly to multi
 //TODO: Add a diff system
 //TODO: Allow images to be also centered (not only left by default)
@@ -25,26 +27,32 @@ import path from 'path';
  * Convert Multiple Urantia Book (JSON) + Topic Index (TXT) to Wiki.js
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addWarning Function to add warning messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
  */
-export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
+export const useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addWarning,
   addErrors,
   addSuccess
 ) => {
-  const { readParalells } = useReadPL(language, uiLanguage, addLog);
+  const { readParalells } = useReadParalells(language, uiLanguage, addLog);
   const { readUBParalellsFromTSV } = useReadUBParalellsFromTSV(uiLanguage, addLog);
   const { readCorrections } = useReadCorrections(language, uiLanguage, addLog);
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
   const { readFromTXT } = useReadFromTXT(uiLanguage, addLog);
   const { updateTopicNames } = useUpdateTopicNames(language, uiLanguage, addLog);
   const { getRefsForSearching } = useGetRefsForSearching(uiLanguage, addLog);
+  const { readDataOfBookVersions } = useReadDataOfBookVersions(uiLanguage, addLog);
+  const { readBooksFromJSON } = useReadBooksFromJSON(uiLanguage, addLog);
+  const { writeMultipleToWikijs } = useWriteToWikijs(language, 
+    uiLanguage, addLog, addWarning);
   const { readFolder } = useReadFolder(uiLanguage, addLog);
 
   /**
@@ -71,49 +79,76 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
     outputFolder, 
     urantiapediaFolder
   ) => {
-    addLog('Executing process: BOOK_JSON_TOPICS_TXT_TO_WIKIJS');
+    processing.value = true;
+    addLog('Executing process: BOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS');
     try {
-      //Reading paralells
+      //Reading books paralells
       const { 
-        books, 
+        books: paralelledBooks, 
         footnotes, 
-        translations: translationsPL 
+        translations 
       } = await readParalells(urantiapediaFolder);
-      const bookParalells = new Paralells(language.value, books, footnotes, translationsPL);
-      //Reading articles
-      const articles = readUBParalellsFromTSV(paralellsFile);
+      const bookParalells = new Paralells(language.value, paralelledBooks, 
+        footnotes, translations);
+      
+      //Reading articles paralells
+      const articles = await readUBParalellsFromTSV(paralellsFile);
       const articleParalells = new Articles(language.value, articles);
+      
       //Reading corrections
       const corrections = await readCorrections(correctionsFile);
+      
       //Reading The Urantia Book
       const masterDir = path.join(bookFolder, `book-${language.value}-footnotes`);
-      const papers = await readFromJSON(masterDir);
-      const ub_book = new UrantiaBook(language.value, papers);
+      const masterPapers = await readFromJSON(masterDir);
+      const masterBook = new UrantiaBook(language.value, masterPapers);
+      
       //Reading Topic Index
       const topicsFolderEN = topicsFolder.replace(`topic-index-${language.value}`, 
         'topic-index-en');
       const topicsEN = await readFromTXT(topicsFolderEN);
       updateTopicNames(topicsEN, topicsEN);
-      const ref_topicsEN = getRefsForSearching(ub_book, topicsEN);
+      const ref_topicsEN = getRefsForSearching(masterBook, topicsEN);
       const topicIndexEN = new TopicIndex('en', topicsEN, ref_topicsEN);
-
       const exists = await reflectPromise(readFolder(topicsFolder, '.txt'));
       let topics, topicIndex, ref_topics;
       if (exists.value) {
         topics = await readFromTXT(topicsFolder);
         updateTopicNames(topics, topicsEN);
-        ref_topics = getRefsForSearching(ub_book, topics);
+        ref_topics = getRefsForSearching(masterBook, topics);
         topicIndex = new TopicIndex(language.value, topics, ref_topics);
       }
+      
       //Get Data of book versions
-      //TODO
+      const folders = await readDataOfBookVersions(language.value, bookFolder);
+      const books = await readBooksFromJSON(language.value, folders);
+      
       //Checks
-      //TODO
-      //Write
-      //TODO
-      addSuccess('Process successful: BOOK_JSON_TOPICS_TXT_TO_WIKIJS');
+      const errors = books
+        .filter(b => !b.isMaster)
+        .map(b => new UrantiaBook(language.value, b.papers))
+        .map(bi => masterBook.checkBook(bi))
+        .find(e => e.length > 0);
+      if (errors) throw errors;
+      
+      //No errors, proceed
+      await writeMultipleToWikijs(
+        outputFolder, 
+        books,
+        topicIndex, 
+        topicIndexEN, 
+        null, //Images are not shown in multi-column UB pages
+        null,  //Maps are not shown in multi-column UB pages
+        bookParalells,
+        articleParalells,
+        corrections
+      );
+      
+      addSuccess('Process successful: BOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS');
     } catch (errors) {
       addErrors(errors);
+    } finally {
+      processing.value = false;
     }
 
   };

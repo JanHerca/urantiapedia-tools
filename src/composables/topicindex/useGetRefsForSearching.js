@@ -1,4 +1,4 @@
-
+import { extendArray } from 'src/core/utils.js';
 /**
  * Returns an internal array to be be used for fast searches.
  * @param {Ref<string>} uiLanguage UI language ref.

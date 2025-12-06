@@ -1,26 +1,28 @@
-import { useRead as useReadIC } from 'src/composables/imagecatalog/useRead.js';
-import { useRead as useReadMC } from 'src/composables/mapcatalog/useRead.js';
-import { useRead as useReadPL } from 'src/composables/paralells/useRead.js';
-import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { useReadFromTXT } from 'src/composables/topicindex/useReadFromTXT.js';
-import { useUpdateTopicNames } from 'src/composables/topicindex/useUpdateTopicNames.js';
-import { useGetRefsForSearching } from 'src/composables/topicindex/useGetRefsForSearching.js';
-import { useReadUBParalellsFromTSV } from 'src/composables/articles/useReadUBParalellsFromTSV.js';
-import { useReadCorrections } from 'src/composables/urantiabook/useReadCorrections.js';
-import { useWriteToWikijs } from 'src/composables/urantiabook/useWriteToWikijs.js';
-import { useReadFolder } from 'src/composables/useReadFolder.js';
+import { useRead as useReadIC } from '../imagecatalog/useRead.js';
+import { useRead as useReadMC } from '../mapcatalog/useRead.js';
+import { useRead as useReadPL } from '../paralells/useRead.js';
+import { useReadFromJSON } from '../urantiabook/useReadFromJSON.js';
+import { useReadFromTXT } from '../topicindex/useReadFromTXT.js';
+import { useUpdateTopicNames } from '../topicindex/useUpdateTopicNames.js';
+import { useGetRefsForSearching } from '../topicindex/useGetRefsForSearching.js';
+import { useReadUBParalellsFromTSV } from '../articles/useReadUBParalellsFromTSV.js';
+import { useReadCorrections } from '../urantiabook/useReadCorrections.js';
+import { useWriteToWikijs } from '../urantiabook/useWriteToWikijs.js';
+import { useReadFolder } from '../useReadFolder.js';
 
 import { ImageCatalog } from 'src/core/imagecatalog.js';
 import { MapCatalog } from 'src/core/mapcatalog.js';
-import { TopicIndex } from '/src/core/topicindex.js';
+import { TopicIndex } from 'src/core/topicindex.js';
 import { Paralells } from 'src/core/paralells.js';
 import { Articles } from 'src/core/articles.js';
+import { UrantiaBook } from 'src/core/urantiabook.js';
 import { reflectPromise } from 'src/core/utils.js';
 
 /**
  * Convert Urantia Book (JSON) + Topic Index (TXT) to Wiki.js
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
+ * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
  * @param {function} addWarning Function to add warning messages.
  * @param {function} addErrors Function to add error messages.
@@ -29,6 +31,7 @@ import { reflectPromise } from 'src/core/utils.js';
 export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
   language,
   uiLanguage,
+  processing,
   addLog,
   addWarning,
   addErrors,
@@ -72,28 +75,41 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
     outputFolder, 
     urantiapediaFolder
   ) => {
+    processing.value = true;
     addLog('Executing process: BOOK_JSON_TOPICS_TXT_TO_WIKIJS');
 
     try {
       //Reading image catalog
       const images = await readImageCatalog(urantiapediaFolder);
       const imageCatalog = new ImageCatalog(language.value, images);
+      
       //Reading map catalog
       const { 
         maps, 
         translations: translationsMC 
       } = await readMapCatalog(urantiapediaFolder);
       const mapCatalog = new MapCatalog(language.value, maps, translationsMC);
-      //Reading paralells
+      
+      //Reading books paralells
       const { 
         books, 
         footnotes, 
         translations: translationsPL 
       } = await readParalells(urantiapediaFolder);
-      const bookParalells = new Paralells(language.value, books, footnotes, translationsPL);
+      const bookParalells = new Paralells(language.value, books, footnotes, 
+        translationsPL);
+      
+      //Reading articles paralells
+      const articles = readUBParalellsFromTSV(paralellsFile);
+      const articleParalells = new Articles(language.value, articles);
+      
+      //Reading corrections
+      const corrections = await readCorrections(correctionsFile);
+      
       //Reading The Urantia Book
       const papers = await readFromJSON(bookFolder);
       const ub_book = new UrantiaBook(language.value, papers);
+      
       //Reading Topic Index
       let topics, topicsEN;
       let topicIndex, topicIndexEN;
@@ -110,11 +126,7 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
         topicIndex = new TopicIndex(language.value, topics, ref_topics);
         topicIndexEN = topicsEN ? new TopicIndex('en', topicsEN, ref_topics) : undefined;
       }
-      //Reading articles
-      const articles = readUBParalellsFromTSV(paralellsFile);
-      const articleParalells = new Articles(language.value, articles);
-      //Reading corrections
-      const corrections = await readCorrections(correctionsFile);
+      
       //Write
       await writeToWikijs(
         outputFolder, 
@@ -127,10 +139,11 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
         articleParalells,
         corrections);
 
-
       addSuccess('Process successful: BOOK_JSON_TOPICS_TXT_TO_WIKIJS');
     } catch (errors) {
       addErrors(errors);
+    } finally {
+      processing.value = false;
     }
   };
 

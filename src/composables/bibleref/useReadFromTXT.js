@@ -1,4 +1,4 @@
-import { useReadFolder } from 'src/composables/useReadFolder.js';
+import { useReadFolder } from '../useReadFolder.js';
 import { getError, reflectPromise, extractVers } from 'src/core/utils.js';
 import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs.js';
 

@@ -37,6 +37,7 @@ export const useMain = defineStore('main', () => {
   const urantiapediaFolder = ref(initialUrantiapediaFolder);
   const process = ref('BIBLEREF_TXT_BOOK_JSON_TO_TXT');
   const processData = ref({ active: false, desc: {}, controls: [] });
+  const processing = ref(false);
   const darkTheme = ref(initialDarkTheme);
   const translateProjectID = ref(initialTransProjID);
   const translateAPIKey = ref(initialTranslateAPIKey);
@@ -172,6 +173,7 @@ export const useMain = defineStore('main', () => {
     urantiapediaFolder,
     process,
     processData,
+    processing,
     darkTheme,
     translateProjectID,
     translateAPIKey,

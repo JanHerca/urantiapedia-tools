@@ -1,5 +1,4 @@
-import { getError, extendArray, findBibleAbb, getAllIndexes,
-  getUBRef } from 'src/core/utils.js';
+import { getError, extendArray, findBibleAbb, getUBRef } from 'src/core/utils.js';
 
 /**
  * UrantiaBook class.
