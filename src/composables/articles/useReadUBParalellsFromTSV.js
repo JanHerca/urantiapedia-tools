@@ -17,7 +17,8 @@ export const useReadUBParalellsFromTSV = (
   const readUBParalellsFromTSV = async (filePath) => {
     addLog(`Reading file: ${filePath}`);
     try {
-      const buf = (await reflectPromise(window.NodeAPI.readFile(filePath))).value;
+      const result = await reflectPromise(window.NodeAPI.readFile(filePath));
+      const buf = result.value;
       if (!buf) {
         addLog(`File not found: ${filePath}`);
         return [];

@@ -142,14 +142,14 @@ ipcMain.handle('fs:readdir', async (evt, p, options) => {
       isSymbolicLink: dirent.isSymbolicLink(),
     }))
   } catch (err) { 
-    return { error: err.message } 
+    throw err
   }
 })
 ipcMain.handle('fs:readFile', async (evt, p, enc = 'utf8') => {
   try { 
     return await fs.readFile(p, enc) 
   } catch (err) { 
-    return { error: err.message } 
+    throw err
   }
 })
 ipcMain.handle('fs:writeFile', async (evt, p, data, enc = 'utf8') => {
@@ -157,7 +157,7 @@ ipcMain.handle('fs:writeFile', async (evt, p, data, enc = 'utf8') => {
     await fs.writeFile(p, data, enc); 
     return { ok: true } 
   } catch (err) { 
-    return { error: err.message } 
+    throw err
   }
 })
 

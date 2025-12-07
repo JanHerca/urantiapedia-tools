@@ -1,4 +1,4 @@
-import { ref, watch, computed } from 'vue';
+import { ref, watch, watchEffect, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { LocalStorage } from 'quasar';
 import { Dark } from 'quasar';
@@ -47,6 +47,7 @@ export const useMain = defineStore('main', () => {
   const translateSourceLanguage = ref(allLanguages[0]);
   const translateTargetLanguage = ref(allLanguages[0]);
   const logs = ref([]);
+  const logsFilter = ref(null); //'warning', 'error' or null
 
   //Watchers
   watch(uiLanguage, (newVal) => {
@@ -82,8 +83,8 @@ export const useMain = defineStore('main', () => {
     LocalStorage.set('openAIAPIKey', newVal);
   });
 
-  watch(process, (newVal) => {
-    const selected = Processes[newVal];
+  watchEffect(() => {
+    const selected = Processes[process.value];
     const lan = language.value;
     const extraPath = selected.extraPath && selected.extraPath[lan] 
       ? selected.extraPath[lan] 
@@ -99,17 +100,23 @@ export const useMain = defineStore('main', () => {
         return control;
       })
     };
-  }, { immediate: true });
+  });
 
   //Computeds
   const allProcesses = computed(() => {
     return Object.keys(Processes)
       .map(key => ({
-        label: Processes[key].desc[uiLanguage.value],
+        label: (Processes[key].emoji || '') + ' ' + Processes[key].desc[uiLanguage.value],
         value: key,
         active: Processes[key].active
       }))
       .filter(proc => proc.active);
+  });
+
+  const filteredLogs = computed(() => {
+    return logsFilter.value
+      ? logs.value.filter(log => log.type === logsFilter.value)
+      : logs.value;
   });
 
   //Actions
@@ -183,8 +190,10 @@ export const useMain = defineStore('main', () => {
     translateSourceLanguage,
     translateTargetLanguage,
     logs,
+    logsFilter,
     //Computeds
     allProcesses,
+    filteredLogs,
     //Actions
     addLog,
     addWarning,

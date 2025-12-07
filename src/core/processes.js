@@ -32,7 +32,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'txt', 'bible-refs-{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F4D2}"
   },
   "BIBLEREF_JSON_TO_MARKDOWN": {
     active: true,
@@ -49,7 +50,8 @@ export const Processes = {
         type: 'file',
         value: ['input', 'markdown', '{0}', 'paramony', 'The Urantia Book.md']
       }
-    ]
+    ],
+    emoji: "\u{1F4D2}"
   },
   "BOOK_JSON_TO_BIBLEREF_JSON": {
     active: true,
@@ -62,7 +64,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'json', 'book-{0}-footnotes']
       }
-    ]
+    ],
+    emoji: "\u{1F4D2}"
   },
   "BOOK_JSON_BIBLEREF_JSON_TO_JSON": {
     active: false,
@@ -75,7 +78,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'json', 'book-{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_JSON_BIBLEREF_MARKDOWN_TO_JSON": {
     active: true,
@@ -88,7 +92,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'json', 'book-{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_JSON_SUBSECTIONS_TSV_TO_JSON": {
     active: true,
@@ -105,7 +110,8 @@ export const Processes = {
         type: 'file',
         value: ['input', 'txt', 'ub_subsections', 'ub_subsections_{0}.tsv']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_HTML_TO_JSON": {
     active: true,
@@ -126,7 +132,8 @@ export const Processes = {
         type: 'file',
         value: ['input', 'txt', 'ub_subsections', 'ub_subsections_{0}.tsv']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_JSON_TO_TXT": {
     active: true,
@@ -143,7 +150,8 @@ export const Processes = {
         type: 'folder',
         value: ['audio', 'book-{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_JSON_TOPICS_TXT_TO_WIKIJS": {
     active: true,
@@ -172,7 +180,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'The_Urantia_Book']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS": {
     active: true,
@@ -201,7 +210,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'The_Urantia_Book_Multiple']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_INDEX_JSON_TO_WIKIJS": {
     active: true,
@@ -218,7 +228,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'The_Urantia_Book']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BOOK_INDEX_MULTIPLE_JSON_TO_WIKIJS": {
     active: true,
@@ -235,7 +246,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'The_Urantia_Book_Multiple']
       }
-    ]
+    ],
+    emoji: "\u{1F4D8}"
   },
   "BIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS": {
     active: true,
@@ -260,7 +272,8 @@ export const Processes = {
     extraPath: {
       en: 'ASV',
       es: 'RV1960'
-    }
+    },
+    emoji: "\u{1F4D5}"
   },
   "BIBLE_TEX_TO_BIBLEINDEX_WIKIJS": {
     active: true,
@@ -281,7 +294,8 @@ export const Processes = {
     extraPath: {
       en: 'ASV',
       es: 'RV1960'
-    }
+    },
+    emoji: "\u{1F4D5}"
   },
   "BIBLE_UPDATE_TITLES_WIKIJS": {
     active: true,
@@ -294,7 +308,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'Bible']
       }
-    ]
+    ],
+    emoji: "\u{1F4D5}"
   },
   "BIBLE_TEX_CHECK": {
     active: true,
@@ -315,7 +330,8 @@ export const Processes = {
     extraPath: {
       en: 'ASV',
       es: 'RV1960'
-    }
+    },
+    emoji: "\u{1F4D5}"
   },
   "TOPICS_TXT_TO_WIKIJS": {
     active: true,
@@ -340,7 +356,8 @@ export const Processes = {
         type: 'select',
         value: '{letters}'
       }
-    ]
+    ],
+    emoji: "\u{1F4C7}"
   },
   "TOPICS_INDEX_TXT_TO_WIKIJS": {
     active: true,
@@ -365,7 +382,8 @@ export const Processes = {
         type: 'select',
         value: '{letters}'
       }
-    ]
+    ],
+    emoji: "\u{1F4C7}"
   },
   "REVIEW_TOPIC_TXT_LU_JSON": {
     active: true,
@@ -394,7 +412,8 @@ export const Processes = {
         type: 'select',
         value: '{topics}'
       }
-    ]
+    ],
+    emoji: "\u{1F4C7}"
   },
   "REVIEW_TOPIC_THREE_LANS": {
     active: true,
@@ -411,7 +430,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'json']
       }
-    ]
+    ],
+    emoji: "\u{1F4C7}"
   },
   "SUM_TOPIC_TXT": {
     active: true,
@@ -424,7 +444,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'txt', 'topic-index-{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F4C7}"
   },
   "NORM_TOPIC_TXT": {
     active: true,
@@ -437,7 +458,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'txt', 'topic-index-{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F4C7}"
   },
   "ARTICLE_CATALOG_MARKDOWN_TO_WIKIJS": {
     active: true,
@@ -454,7 +476,8 @@ export const Processes = {
         type: 'folder',
         value: ['tests', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_INDEX_TO_WIKIJS": {
     active: true,
@@ -471,7 +494,8 @@ export const Processes = {
         type: 'file',
         value: ['output', 'wikijs', '{0}', 'index', 'articles_innerface.html']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_INDEX_ADD_FROM_TRANSLATION": {
     active: true,
@@ -488,7 +512,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_NAVIGATION_HEADERS_IN_WIKIJS": {
     active: true,
@@ -505,7 +530,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_ANCHORS_IN_WIKIJS": {
     active: true,
@@ -518,7 +544,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_CREATE_PARALELLS_FROM_WIKIJS": {
     active: true,
@@ -539,7 +566,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_CREATE_BLANK_FROM_LIST": {
     active: true,
@@ -556,7 +584,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_AUTHORS_INDEXES": {
     active: true,
@@ -573,7 +602,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "ARTICLE_COPY_TO_FOLDER": {
     active: true,
@@ -590,7 +620,8 @@ export const Processes = {
         type: 'folder',
         value: ['tests', 'article']
       }
-    ]
+    ],
+    emoji: "\u{1F4C3}"
   },
   "LIBRARY_CREATE_BLANK_FROM_LIST": {
     active: true,
@@ -607,7 +638,8 @@ export const Processes = {
         type: 'folder',
         value: ['tests', 'book_translated']
       }
-    ]
+    ],
+    emoji: "\u{1F4DA}"
   },
   "FIX_MARKDOWN_FOOTNOTES": {
     active: true,
@@ -620,7 +652,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'book']
       }
-    ]
+    ],
+    emoji: "\u{1F4DA}"
   },
   "ALL_INDEXES": {
     active: true,
@@ -633,7 +666,8 @@ export const Processes = {
         type: 'folder',
         value: ['output', 'wikijs', '{0}']
       }
-    ]
+    ],
+    emoji: "\u{1F520}"
   },
   "PARALELL_INDEX": {
     active: true,
@@ -650,7 +684,8 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'wikijs', '{0}', 'index']
       }
-    ]
+    ],
+    emoji: "\u{1F520}"
   },
   "TEST": {
     active: true,
@@ -671,6 +706,7 @@ export const Processes = {
         type: 'folder',
         value: ['input', 'html', 'test']
       }
-    ]
+    ],
+    emoji: "\u{1F528}"
   }
 };

@@ -1,54 +1,88 @@
 <template>
-  <QCard dark class="terminal-card">
-    <QScrollArea 
-      class="terminal-output-area" 
-      ref="scrollAreaRef"
-      :thumb-style="{
-        borderRadius: '5px',
-        backgroundColor: '#027be3',
-        width: '10px',
-        opacity: 0.75
-      }"
-      :bar-style="{
-        borderRadius: '9px',
-        backgroundColor: '#027be3',
-        width: '10px',
-        opacity: 0.2
-      }"
-      >
-      <div 
-        class="fit"
-        v-for="(log, index) in logs" 
-        :key="index" 
-        :class="['log-line', `log-type-${log.type}`]"
-      >
-        <span class="timestamp">[{{ log.time }}]</span>
-        <span class="message">{{ log.message }}</span>
-        <QExpansionItem
-          v-if="log.type === 'error' && log.stack && log.stack.length > 0"
-          dense
-          switch-toggle-side
-          label="Stack Trace"
-          class="stack-trace-expansion"
+  <div class="column fit">
+    <q-btn-group flat>
+      <q-btn 
+        icon="warning" 
+        label="Warnings" 
+        color="orange-7"
+        size="sm"
+        @click="logsFilter = (logsFilter === 'warning' ? null : 'warning')"
+        :flat="logsFilter !== 'warning'"
+      />
+      
+      <q-btn 
+        icon="error" 
+        label="Errors" 
+        color="red-7"
+        size="sm"
+        @click="logsFilter = (logsFilter === 'error' ? null : 'error')"
+        :flat="logsFilter !== 'error'"
+      />
+      <q-btn 
+        icon="not_interested" 
+        label="Clear" 
+        color="primary"
+        size="sm"
+        flat
+        @click="logsComplete = []"
+      />
+    </q-btn-group>
+    <QCard dark class="terminal-card col">
+      <QScrollArea 
+        class="terminal-output-area" 
+        ref="scrollAreaRef"
+        :thumb-style="{
+          borderRadius: '5px',
+          backgroundColor: '#027be3',
+          width: '10px',
+          opacity: 0.75
+        }"
+        :bar-style="{
+          borderRadius: '9px',
+          backgroundColor: '#027be3',
+          width: '10px',
+          opacity: 0.2
+        }"
         >
-          <div class="stack-trace-content">
-            <div 
-              v-for="(line, lineIndex) in log.stack" 
-              :key="lineIndex"
-              class="stack-trace-line"
-            >
-              {{ line }}
+        <div 
+          class="fit"
+          v-for="(log, index) in logs" 
+          :key="index" 
+          :class="['log-line', `log-type-${log.type}`]"
+        >
+          <span class="timestamp">[{{ log.time }}]</span>
+          <span class="message">{{ log.message }}</span>
+          <QExpansionItem
+            v-if="log.type === 'error' && log.stack && log.stack.length > 0"
+            dense
+            switch-toggle-side
+            label="Stack Trace"
+            class="stack-trace-expansion"
+          >
+            <div class="stack-trace-content">
+              <div 
+                v-for="(line, lineIndex) in log.stack" 
+                :key="lineIndex"
+                class="stack-trace-line"
+              >
+                {{ line }}
+              </div>
             </div>
-          </div>
-        </QExpansionItem>
-      </div>
-    </QScrollArea>
-  </QCard>
+          </QExpansionItem>
+        </div>
+      </QScrollArea>
+    </QCard>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch, nextTick } from 'vue';
+import { storeToRefs } from 'pinia';
 import { QCard, QScrollArea, QExpansionItem } from 'quasar';
+import { useMain } from 'src/stores/main';
+
+const mainStore = useMain();
+const { logs: logsComplete , logsFilter } = storeToRefs(mainStore);
 
 //Props
 const props = defineProps({
@@ -75,12 +109,12 @@ watch(props.logs, () => {
 
 <style scoped>
 .terminal-card {
-  position: relative;
   background-color: #1e1e1e !important;
   color: #cccccc;
   border-radius: 4px;
   border: 1px solid #333;
-  height: fit-content;
+  position: relative;
+  height: 100%;
   min-height: 0;
   width: 100%;
 }

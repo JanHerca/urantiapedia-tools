@@ -10,12 +10,27 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer 
+      :class="{ 'q-mt-xl' : miniState}"
+      v-model="leftDrawerOpen" 
+      :mini="!leftDrawerOpen || miniState"
+      show-if-above 
+      bordered>
       <q-list>
         <q-item-label header> Urantiapedia Tools </q-item-label>
 
         <SimpleLink v-for="link in linksList" :key="link.title" v-bind="link" />
       </q-list>
+      <div class="absolute" style="top: 15px; right: -17px">
+        <q-btn
+          dense
+          round
+          unelevated
+          color="primary"
+          :icon="miniState ? 'chevron_right' : 'chevron_left'"
+          @click="miniState = !miniState"
+        />
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -29,6 +44,8 @@ import { ref, onMounted } from "vue";
 import SimpleLink from "components/SimpleLink.vue";
 
 const appVersion = ref('');
+const leftDrawerOpen = ref(false);
+const miniState = ref(false)
 
 const linksList = [
   {
@@ -63,8 +80,6 @@ const linksList = [
   }
 ];
 
-const leftDrawerOpen = ref(false);
-
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
@@ -72,9 +87,9 @@ const toggleLeftDrawer = () => {
 onMounted(async () => {
   if (window.NodeAPI && window.NodeAPI.getAppVersion) {
     const version = await window.NodeAPI.getAppVersion();
-    appVersion.value = version;
+    appVersion.value = version ?? ' - ';
   } else {
-    appVersion.value = 'Web/Dev'; 
+    appVersion.value = ' - '; 
   }
 });
 </script>

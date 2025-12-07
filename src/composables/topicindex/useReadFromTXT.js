@@ -231,7 +231,7 @@ export const useReadFromTXT = (
    * @return {Promise<Object[]>} Returns array of topics objects.
    */
   const readFromTXT = async (dirPath, category = 'ALL', letter = 'ALL') => {
-    addLog(`Reading Topic _Index folder: ${dirPath}`);
+    addLog(`Reading TopicIndex folder: ${dirPath}`);
     try {
       const files = await readFolder(dirPath, '.txt');
 

@@ -8,7 +8,7 @@ import path from 'path';
 import * as cheerio from 'cheerio';
 
 /**
- * Reads `The Urantia Book` from a folder with files in JSON format.
+ * Reads `The Urantia Book` from a folder with files in HTML format.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */

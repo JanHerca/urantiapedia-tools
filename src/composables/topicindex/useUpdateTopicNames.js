@@ -2,37 +2,36 @@ import { getError, getTopicNames } from 'src/core/utils.js';
 
 /**
  * Updates the list of topic names.
- * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  */
 export const useUpdateTopicNames = (
-  language,
   uiLanguage,
   addLog
 ) => {
   /**
    * Updates the list of topic names.
-   * @param {Object[]} topics Topic index in current language.
+   * @param {string} language Language.
+   * @param {Object[]} topics Topic index in given language.
    * @param {(Object[]|undefined)} topicsEN Topic index in English.
    * @return {Promise}
    */
-  const updateTopicNames = (topics, topicsEN) => {
-    if (!topicsEN) {
+  const updateTopicNames = (language, topics, topicsEN) => {
+    if (language != 'en' && !topicsEN) {
       return;
     }
-    addLog('Updating topic names');
+    addLog(`Updating topic names in language ${language}`);
     const topicErr = [];
-    const tpath = `/${language.value}/topic/`;
+    const tpath = `/${language}/topic/`;
     try {
       topics.forEach(topic => {
-        const tEN = (language.value === 'en'
+        const tEN = (language === 'en'
           ? topic
-          : topicsEN.topics.find(t => {
+          : topicsEN.find(t => {
             return (t.filename === topic.filename &&
               t.fileline === topic.fileline);
           }));
-        if (language.value != 'en' && !tEN) {
+        if (language != 'en' && !tEN) {
           topicErr.push(getError(uiLanguage.value, 'topic_en_not_found',
             topic.name));
         }

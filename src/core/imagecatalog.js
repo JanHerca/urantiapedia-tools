@@ -1,3 +1,4 @@
+import { strformat } from './utils.js';
 
 // TODO: Could be interesting create an algorythm to locate floating right images:
 // - using image-style-align-right and style="margin:10px 0 10px 10px;" in figure tag

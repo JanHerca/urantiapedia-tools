@@ -402,7 +402,7 @@ export const useWriteToWikijs = (
   
       const footnoteDef = [
         {
-          section: tr('articles', uiLanguage.value),
+          section: tr('articles', language.value),
           footnotes: articlesFn, 
           index: 0,
           suffix: 'a', 
@@ -410,7 +410,7 @@ export const useWriteToWikijs = (
           alt: '📃'
         },
         {
-          section: tr('study_aids', uiLanguage.value),
+          section: tr('study_aids', language.value),
           footnotes: study_aidsFn, 
           index: 0,
           suffix: 's', 
@@ -418,7 +418,7 @@ export const useWriteToWikijs = (
           alt: '📓'
         },
         {
-          section: tr('bibleName', uiLanguage.value),
+          section: tr('bibleName', language.value),
           footnotes: paramonyFn, 
           index: 0,
           suffix: 'b', 
@@ -426,7 +426,7 @@ export const useWriteToWikijs = (
           alt: '📕'
         },
         {
-          section: tr('booksOther', uiLanguage.value),
+          section: tr('booksOther', language.value),
           footnotes: paralellsFn, 
           index: 0,
           suffix: 'o', 

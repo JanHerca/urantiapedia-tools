@@ -1,60 +1,68 @@
 <template>
   <q-page class="q-pa-md column">
-    <InputGroupSelect 
-      id="drpLanguage" 
-      :label="Strings.lblLanguage[uiLanguage]" 
-      :options="allLanguages" 
-      v-model="language"
-      class="q-pa-sm-none q-mb-sm-md"
-    />
-    <InputGroupSelect 
-      id="drpProcess" 
-      :label="Strings.lblProcess[uiLanguage]" 
-      :options="allProcesses" 
-      v-model="process"
-      class="q-pa-sm-none q-mb-sm-md"
-    />
-    <div
-      v-for="control in processData.controls">
-      <InputGroupFolder
-        v-if="control.type === 'folder'"
-        label="Folder"
-        v-model="control.value"
-        :basePath="urantiapediaFolder"
-        class="q-pa-sm-none q-mb-sm-md"
-        classes="full-width"
-      />
-      <InputGroupFile
-        v-if="control.type === 'file'"
-        label="File"
-        v-model="control.value"
-        class="q-pa-sm-none q-mb-sm-md"
-        classes="full-width"
-      />
-    </div>
-    <Message 
-      v-if="urantiapediaFolder === ''"
-      type="warning"
-      :dark="darkTheme"
-      text="Urantiapedia folder is required in Settings."
-      class="q-mb-sm-md"
-    />
-    <div>
-      <q-btn 
-        color="primary"
-        class="q-mb-sm-md"
-        :disabled="processing"
-        @click="onExecuteClick">
-        <div v-if="processing" class="row items-center q-pr-sm">
-          <q-spinner
-            color="white"
-            size="1em"
+    <div class="row col q-col-gutter-md">
+      <div class="col-12 col-md-6 column">
+        <InputGroupSelect 
+          id="drpLanguage" 
+          :label="Strings.lblLanguage[uiLanguage]" 
+          :options="allLanguages" 
+          v-model="language"
+          class="q-pa-sm-none q-mb-sm-md"
+        />
+        <InputGroupSelect 
+          id="drpProcess" 
+          :label="Strings.lblProcess[uiLanguage]" 
+          :options="allProcesses" 
+          v-model="process"
+          class="q-pa-sm-none q-mb-sm-md"
+        />
+        <div
+          v-for="control in processData.controls">
+          <InputGroupFolder
+            v-if="control.type === 'folder'"
+            label="Folder"
+            v-model="control.value"
+            :basePath="urantiapediaFolder"
+            class="q-pa-sm-none q-mb-sm-md"
+            classes="full-width"
+          />
+          <InputGroupFile
+            v-if="control.type === 'file'"
+            label="File"
+            v-model="control.value"
+            class="q-pa-sm-none q-mb-sm-md"
+            classes="full-width"
           />
         </div>
-        {{ Strings.exeButton[uiLanguage] }}
-      </q-btn>
+        <Message 
+          v-if="urantiapediaFolder === ''"
+          type="warning"
+          :dark="darkTheme"
+          text="Urantiapedia folder is required in Settings."
+          class="q-mb-sm-md"
+        />
+        <div>
+          <q-btn 
+            color="primary"
+            class="q-mb-sm-md"
+            :disabled="processing"
+            @click="onExecuteClick">
+            <div v-if="processing" class="row items-center q-pr-sm">
+              <q-spinner
+                color="white"
+                size="1em"
+              />
+            </div>
+            {{ Strings.exeButton[uiLanguage] }}
+          </q-btn>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 column">
+        <Terminal 
+          :logs="filteredLogs" 
+          class="col" />
+      </div>
     </div>
-    <Terminal :logs="logs" class="q-mt-md col" />
   </q-page>
 </template>
 
@@ -92,7 +100,7 @@ const {
   processData,
   processing,
   allProcesses,
-  logs,
+  filteredLogs,
 } = storeToRefs(mainStore);
 
 //Handlers

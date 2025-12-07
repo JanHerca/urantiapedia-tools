@@ -42,7 +42,7 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
   const { readParalells } = useReadPL(language, uiLanguage, addLog);
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
   const { readFromTXT } = useReadFromTXT(uiLanguage, addLog);
-  const { updateTopicNames } = useUpdateTopicNames(language, uiLanguage, addLog);
+  const { updateTopicNames } = useUpdateTopicNames(uiLanguage, addLog);
   const { getRefsForSearching } = useGetRefsForSearching(uiLanguage, addLog);
   const { readUBParalellsFromTSV } = useReadUBParalellsFromTSV(uiLanguage, addLog);
   const { readCorrections } = useReadCorrections(language, uiLanguage, addLog);
@@ -100,7 +100,7 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
         translationsPL);
       
       //Reading articles paralells
-      const articles = readUBParalellsFromTSV(paralellsFile);
+      const articles = await readUBParalellsFromTSV(paralellsFile);
       const articleParalells = new Articles(language.value, articles);
       
       //Reading corrections
@@ -111,20 +111,20 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
       const ub_book = new UrantiaBook(language.value, papers);
       
       //Reading Topic Index
-      let topics, topicsEN;
-      let topicIndex, topicIndexEN;
+      let topicIndex;
       const exists = await reflectPromise(readFolder(topicsFolder, '.txt'));
       if (exists.value) {
-        topics = await readFromTXT(topicsFolder);
-        if (language.value != 'en') {
+        const topics = await readFromTXT(topicsFolder);
+        if (language.value === 'en') {
+          updateTopicNames(language.value, topics);
+        } else {
           const topicsFolderEN = topicsFolder.replace(`topic-index-${language.value}`, 
-           'topic-index-en');
-          topicsEN = await readFromTXT(topicsFolderEN);
+            'topic-index-en');
+          const topicsEN = await readFromTXT(topicsFolderEN);
+          updateTopicNames(language.value, topics, topicsEN);
         }
-        updateTopicNames(topics, topicsEN);
         const ref_topics = getRefsForSearching(ub_book, topics);
         topicIndex = new TopicIndex(language.value, topics, ref_topics);
-        topicIndexEN = topicsEN ? new TopicIndex('en', topicsEN, ref_topics) : undefined;
       }
       
       //Write
@@ -132,7 +132,7 @@ export const useBOOK_JSON_TOPICS_TXT_TO_WIKIJS = (
         outputFolder, 
         papers, 
         topicIndex, 
-        topicIndexEN,
+        null, // The TopicIndex in English is not needed i this process
         imageCatalog,
         mapCatalog,
         bookParalells,

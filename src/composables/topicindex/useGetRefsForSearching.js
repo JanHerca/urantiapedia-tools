@@ -10,7 +10,7 @@ export const useGetRefsForSearching = (
 ) => {
   /**
    * Returns an internal array to be be used for fast searches.
-   * @param {UrantiaBook} book Book to be used for extract references.
+   * @param {UrantiaBook} book Book to be used for extracting references.
    * @param {Object[]} topics Topic index.
    */
   const getRefsForSearching = (book, topics) => {

@@ -47,7 +47,7 @@ export const useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS = (
   const { readCorrections } = useReadCorrections(language, uiLanguage, addLog);
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
   const { readFromTXT } = useReadFromTXT(uiLanguage, addLog);
-  const { updateTopicNames } = useUpdateTopicNames(language, uiLanguage, addLog);
+  const { updateTopicNames } = useUpdateTopicNames(uiLanguage, addLog);
   const { getRefsForSearching } = useGetRefsForSearching(uiLanguage, addLog);
   const { readDataOfBookVersions } = useReadDataOfBookVersions(uiLanguage, addLog);
   const { readBooksFromJSON } = useReadBooksFromJSON(uiLanguage, addLog);
@@ -107,14 +107,14 @@ export const useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS = (
       const topicsFolderEN = topicsFolder.replace(`topic-index-${language.value}`, 
         'topic-index-en');
       const topicsEN = await readFromTXT(topicsFolderEN);
-      updateTopicNames(topicsEN, topicsEN);
+      updateTopicNames('en', topicsEN);
       const ref_topicsEN = getRefsForSearching(masterBook, topicsEN);
       const topicIndexEN = new TopicIndex('en', topicsEN, ref_topicsEN);
       const exists = await reflectPromise(readFolder(topicsFolder, '.txt'));
       let topics, topicIndex, ref_topics;
       if (exists.value) {
         topics = await readFromTXT(topicsFolder);
-        updateTopicNames(topics, topicsEN);
+        updateTopicNames(language.value, topics, topicsEN);
         ref_topics = getRefsForSearching(masterBook, topics);
         topicIndex = new TopicIndex(language.value, topics, ref_topics);
       }

@@ -105,9 +105,9 @@ export const useRead = (
   const readImageCatalog = async (urantiapediaFolder) => {
     addLog(`Reading image catalog`);
     try {
-      addLog(`Reading file: ${imagecatalogFileEN}`);
       const imagecatalogFileEN = path.join(urantiapediaFolder, 'input', 
         'markdown', 'en', 'image_catalog.md');
+      addLog(`Reading file: ${imagecatalogFileEN}`);
       const bufEN = await window.NodeAPI.readFile(imagecatalogFileEN);
       const linesEN = bufEN.toString().split('\n');
       const images = readFileEN(linesEN);

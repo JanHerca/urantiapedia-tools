@@ -1,3 +1,4 @@
+import { strformat, tr } from './utils.js';
 
 /**
  * MapCatalog class (for maps to embed inside The Urantia Book).
@@ -59,9 +60,9 @@ export class MapCatalog {
     const quote = this.language === 'en' 
       ? map.quote
       : (quote2 ? quote2.translation : map.quote);
-    const ref2 = this.tr('bookAbb') + ' ' + ref;
+    const ref2 = tr('bookAbb', this.language) + ' ' + ref;
     const path = `/${this.language}${map.path}`;
-    const label = this.tr('lblOpenMap');
+    const label = tr('lblOpenMap', this.language);
     const html = strformat(this.template, title, quote, ref2, path, label,
       map.thumbnail);
     return html;

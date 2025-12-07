@@ -87,7 +87,7 @@ export const useRead = (
       const bufEN = await window.NodeAPI.readFile(mapcatalogFileEN);
       const linesEN = bufEN.toString().split('\n');
       const maps = readFileEN(linesEN);
-      let translations;
+      let translations = [];
       if (language.value != 'en') {
         const mapcatalogFileCurrent = path.join(urantiapediaFolder, 'input', 
           'markdown', language.value, 'map_catalog.md');
