@@ -125,13 +125,13 @@ export const Processes = {
         value: ['input', 'html', 'book-{0}']
       },
       {
+        type: 'file',
+        value: ['input', 'txt', 'ub_subsections', 'ub_subsections_{0}.tsv']
+      },
+      {
         type: 'folder',
         value: ['input', 'json', 'book-{0}']
       },
-      {
-        type: 'file',
-        value: ['input', 'txt', 'ub_subsections', 'ub_subsections_{0}.tsv']
-      }
     ],
     emoji: "\u{1F4D8}"
   },
@@ -148,7 +148,7 @@ export const Processes = {
       },
       {
         type: 'folder',
-        value: ['audio', 'book-{0}']
+        value: ['input', 'audio', 'book-{0}']
       }
     ],
     emoji: "\u{1F4D8}"

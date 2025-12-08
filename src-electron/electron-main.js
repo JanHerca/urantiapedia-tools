@@ -160,6 +160,14 @@ ipcMain.handle('fs:writeFile', async (evt, p, data, enc = 'utf8') => {
     throw err
   }
 })
+ipcMain.handle('fs:mkdir', async (evt, p) => {
+  try {
+    await fs.mkdir(p)
+    return { ok: true}
+  } catch (err) {
+    throw err
+  }
+})
 
 // Native dialog handlers
 ipcMain.handle('dialog:openSystemDialog', async (event, options = {}) => {

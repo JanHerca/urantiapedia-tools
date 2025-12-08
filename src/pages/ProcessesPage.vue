@@ -85,7 +85,13 @@ import {
   useBOOK_HTML_TO_JSON,
   useBOOK_JSON_TO_TXT,
   useBOOK_JSON_TOPICS_TXT_TO_WIKIJS,
-  useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS
+  useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS,
+  useBOOK_INDEX_JSON_TO_WIKIJS,
+  useBOOK_INDEX_MULTIPLE_JSON_TO_WIKIJS,
+  useBIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS,
+  useBIBLE_TEX_TO_BIBLEINDEX_WIKIJS,
+  useBIBLE_UPDATE_TITLES_WIKIJS,
+  useBIBLE_TEX_CHECK
 } from 'src/composables/processes';
 
 
@@ -155,6 +161,30 @@ const onExecuteClick = () => {
       values.push(urantiapediaFolder.value);
       executor = useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS(
         language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+      break;
+    case 'BOOK_INDEX_JSON_TO_WIKIJS':
+      executor = useBOOK_INDEX_JSON_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'BOOK_INDEX_MULTIPLE_JSON_TO_WIKIJS':
+      executor = useBOOK_INDEX_MULTIPLE_JSON_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'BIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS':
+      executor = useBIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+      break;
+    case 'BIBLE_TEX_TO_BIBLEINDEX_WIKIJS':
+      executor = useBIBLE_TEX_TO_BIBLEINDEX_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'BIBLE_UPDATE_TITLES_WIKIJS':
+      executor = useBIBLE_UPDATE_TITLES_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'BIBLE_TEX_CHECK':
+      executor = useBIBLE_TEX_CHECK(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
       break;
     default:
       addErrors(`Process "${process.value}" is not implemented.`);

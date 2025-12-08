@@ -292,7 +292,7 @@ export const useReadFromHTML = (
       if (errors.length > 0) {
         throw errors;
       }
-      return results.map(r => r.value);
+      return results.filter(r => r.value != null).map(r => r.value);
     } catch (err) {
       throw err;
     }

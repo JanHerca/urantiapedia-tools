@@ -31,16 +31,14 @@ export const useReadForUB = (
       addLog(`Reading file: ${filePathEN}`);
       const bufEN = await window.NodeAPI.readFile(filePathEN);
       const linesEN = bufEN.toString().split('\n');
-      const footnotesEN = await readFileEN('The Urantia Book', linesEN);
-      let footnotesOther = [];
+      const footnotes = await readFileEN('The Urantia Book', linesEN);
       if (language.value != 'en') {
         addLog(`Reading file: ${filePathOther}`);
         const bufOther = await window.NodeAPI.readFile(filePathOther);
         const linesOther = bufOther.toString().split('\n');
-        footnotesOther = await readFileOther('The Urantia Book', linesOther, 
-          footnotesEN);
+        await readFileOther('The Urantia Book', linesOther, footnotes);
       }
-      return language.value === 'en' ? footnotesEN : footnotesOther;
+      return footnotes;
     } catch (err) {
       throw err;
     }

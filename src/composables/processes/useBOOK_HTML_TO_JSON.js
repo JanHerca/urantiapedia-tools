@@ -30,10 +30,11 @@ export const useBOOK_HTML_TO_JSON = (
    * Reads authors (*.html) +
    * Read subsections (*.tsv) => 
    * Writes (*.json)
-   * @param {string} bookFolder Folder with UB in JSON format.
+   * @param {string} bookFolder Folder with UB in HTML format.
    * @param {string} subsectionsFile File with subsections in TSV format.
+   * @param {string} outputFolder Output folder for JSON files.
    */
-  const executeProcess = async (bookFolder, subsectionsFile) => {
+  const executeProcess = async (bookFolder, subsectionsFile, outputFolder) => {
     processing.value = true;
     addLog('Executing process: BOOK_HTML_TO_JSON');
 
@@ -41,7 +42,7 @@ export const useBOOK_HTML_TO_JSON = (
       let papers = await readFromHTML(bookFolder);
       papers = await readAuthorsFromHTML(bookFolder, papers);
       papers = await readSubsections(subsectionsFile, papers);
-      await writeToJSON(bookFolder, papers);
+      await writeToJSON(outputFolder, papers);
       addSuccess('Process successful: BOOK_HTML_TO_JSON');
     } catch (errors) {
       addErrors(errors);

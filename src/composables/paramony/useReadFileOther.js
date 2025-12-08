@@ -37,7 +37,9 @@ export const useReadFileOther = (
    * @param {string} type Type of Paramony, `The Urantia Book` or `Bible`.
    * @param {string[]} lines Lines.
    * @param {Object[]} paramony Array of objects with the Paramony for Urantia
-   * Book or Bible books. The objects the array are modified in place and returned.
+   * Book or Bible books. The objects the array are modified in place.
+   * @return {Promise<Object[]>} Returns an array of objects with problems found
+   * in translations. Each object contains titleEN, bible_ref, lu_ref and text.
    */
   const readFileOther = async (type, lines, paramony) => {
     addLog(`Reading content for ${type}`);
@@ -108,7 +110,7 @@ export const useReadFileOther = (
           });
         });
       }
-      return paramony;
+      return noTranslated;
     } catch (err) {
       throw err;
     }

@@ -7,6 +7,7 @@ import { getWikijsBookLink, getWikijsHeader, getWikijsBookCopyright,
 import { getWikijsBookParRef } from 'src/core/wikijs.js';
 import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs';
 import { HTMLSeparator as HSep } from 'src/core/enums.js';
+import { useWriteHTMLToWikijs } from '../useWriteHTMLToWikijs.js';
 
 import path from 'path';
 
@@ -23,6 +24,7 @@ export const useWriteToWikijs = (
   addLog,
   addWarning
 ) => {
+  const { writeHTMLToWikijs } = useWriteHTMLToWikijs();
   const audio = ['en', 'es', 'fr', 'it', 'pt', 'de'];
   const colors = ['blue', 'purple', 'teal', 'deep-orange', 'indigo',
     'pink', 'blue-grey']; //Colors for up to 7 columns max
@@ -646,19 +648,7 @@ export const useWriteToWikijs = (
       } else if (topicErr.length > 0) {
         throw getError(uiLanguage.value, topicErr.map(e => e.message).join(', '));
       }
-      //Only write if content is new or file not exists
-      //Update date created avoiding a new date for it
-      const buf = (await reflectPromise(window.NodeAPI.readFile(filePath))).value;
-      if (buf) {
-        const previousLines = buf.toString().split('\n');
-        const curLines = (header + body).split('\n');
-        const newHeader = fixWikijsHeader(header, previousLines, curLines);
-        if (newHeader) {
-          await window.NodeAPI.writeFile(filePath, newHeader + body);
-        }
-        return;
-      }
-      await window.NodeAPI.writeFile(filePath, header + body);
+      await writeHTMLToWikijs(filePath, header, body);
 
     } catch (err) {
       throw err;
@@ -695,7 +685,7 @@ export const useWriteToWikijs = (
     addLog(`Writing to folder: ${dirPath}`);
     try {
       const baseName = path.basename(dirPath);
-      const access = window.NodeAPI.exists(dirPath);
+      const access = await window.NodeAPI.exists(dirPath);
       if (!access) {
         throw getError(uiLanguage.value, 'folder_no_access', baseName)
       }

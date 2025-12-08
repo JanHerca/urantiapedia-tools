@@ -19,7 +19,7 @@ export const useReadSubsections = (
    * with Urantia Book papers.
    */
   const readSubsections = async (filePath, papers) => {
-    addLog(`Reading file: ${filePath}`);
+    addLog(`Reading subsections file: ${filePath}`);
     try {
       const buf = await window.NodeAPI.readFile(filePath);
       const lines = buf.toString().split('\n');
