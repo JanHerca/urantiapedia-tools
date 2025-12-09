@@ -20,6 +20,20 @@ export const useMain = defineStore('main', () => {
     label: Strings.bookLanguages[code],
     value: code
   }));
+  const topicTypes = ['PERSON', 'PLACE', 'ORDER', 'RACE', 'RELIGION', 'OTHER'];
+  const topicFilters = [
+    {value: 'ALL', label: 'ALL'},
+    ...topicTypes.map(l => ({value: l, label: l}))
+  ];
+  const topicIndexes = [
+    {value: 'ALL INDEXES', label: 'ALL INDEXES'},
+    ...topicFilters.map(({value, label}) => ({value, label}))
+  ];
+	const topicLetters = [
+    {value: 'ALL', label: 'ALL'}, 
+    {value: '_', label: 'NUMBER'},
+    ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({value: l, label: l}))
+  ];
 
   //Storage
   const uiLanCode = LocalStorage.getItem('language') || 'en';
@@ -96,6 +110,22 @@ export const useMain = defineStore('main', () => {
           control.value = path.join('{ Urantiapedia Folder }', ...c.value)
             .replace('{0}', lan)
             .replace('{extraPath}', extraPath);
+        } else if (c.type === 'select') {
+          control.subtype = c.subtype;
+          if (c.subtype === 'TopicFilters') {
+            control.values = topicFilters.slice();
+            control.value = control.values[0].value;
+          } else if (c.subtype === 'TopicIndexes') {
+            control.values = topicIndexes.slice();
+            control.value = control.values[0].value;
+          } else if (c.subtype === 'TopicLetters') {
+            control.values = topicLetters.slice();
+            control.value = control.values[0].value;
+          }
+        } else if (c.type === 'input') {
+          control.label = c.label;
+          control.placeholder = c.placeholder;
+          control.value = '';
         }
         return control;
       })
@@ -170,10 +200,25 @@ export const useMain = defineStore('main', () => {
 
   const addSuccess = (msg) => addLog(msg, 'success');
 
+  const addTable = (msg, table) => {
+    const timeStamp = date.formatDate(Date.now(), 'HH:mm:ss');
+    const log = {
+      time: timeStamp,
+      message: msg,
+      type: 'table',
+      table
+    };
+    logs.value.push(log);
+  };
+
   return {
     //Constants
     uiLanguages,
     allLanguages,
+    topicTypes,
+    topicFilters,
+    topicIndexes,
+    topicLetters,
     //State
     language,
     uiLanguage,
@@ -199,5 +244,6 @@ export const useMain = defineStore('main', () => {
     addWarning,
     addErrors,
     addSuccess,
+    addTable
   };
 });

@@ -1630,6 +1630,21 @@ export const Strings = {
 		es: "Unir los ficheros de salida en uno",
 		fr: "Joindre les fichiers de sortie en un seul",
 	},
+	"lblTopicFilters": {
+		en: "Topic categories",
+		es: "Categorías de términos",
+		fr: "Catégories de sujets",
+	},
+	"lblTopicIndexes": {
+		en: "Topic indexes",
+		es: "Índices de términos",
+		fr: "Index de sujets",
+	},
+	"lblTopicLetters": {
+		en: "Topic letters",
+		es: "Letras de términos",
+		fr: "Lettres thématiques",
+	},
 	"lblCategories": {
 		en: "Topic categories",
 		es: "Categorías de términos",

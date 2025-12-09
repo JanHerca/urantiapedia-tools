@@ -1,7 +1,5 @@
 import { extendArray } from './utils.js';
 
-// export const topicTypes = ['PERSON', 'PLACE', 'ORDER', 'RACE', 'RELIGION', 'OTHER'];
-
 /**
  * TopicIndex class.
  */
@@ -71,50 +69,52 @@ export class TopicIndex {
   /**
    * Gets an object containing a summary with the number of topics of each
    * type and totals, as well as redirects number.
+   * @param topicTypes Types of topics.
    * @return {Object}
    */
-  getSummary() {
+  getSummary(topicTypes) {
     const letters = '_abcdefghijklmnopqrstuvwxyz';
     let result = {};
-    const columns = ['#', ...topicTypes, 'REDIREC', 'REVISED', 'TOTAL'];
-    result.topics = [columns];
-    result.lines = [columns];
+    const columns = [...topicTypes, 'REDIREC', 'REVISED', 'TOTAL'];
+    result.topics = [];
+    result.lines = [];
+    const rowTopicsTotal = { name: 'TOTAL' };
+    columns.forEach(c => rowTopicsTotal[c] = 0);
+    const rowLinesTotal = { name: 'TOTAL' };
+    columns.forEach(c => rowLinesTotal[c] = 0);
 
     letters.split('').forEach(letter => {
-      const rowTopics = [letter.toUpperCase()];
-      const rowLines = [letter.toUpperCase()];
+      const rowTopics = { name: letter.toUpperCase() };
+      const rowLines = { name: letter.toUpperCase() };
       const tt = this.topics.filter(t => t.filename === letter + '.txt');
       //Categories
       topicTypes.forEach(type => {
         const tf = tt.filter(t => t.type === type);
         const lines = tf.reduce((a, t) => a += t.lines.length, 0);
-        rowTopics.push(tf.length);
-        rowLines.push(lines);
+        rowTopics[type] = tf.length;
+        rowTopicsTotal[type] += rowTopics[type];
+        rowLines[type] = lines;
+        rowLinesTotal[type] += rowLines[type];
       });
       //Redirects
-      rowTopics.push(tt.filter(t => t.lines.length === 0).length);
-      rowLines.push(0);
+      rowTopics['REDIREC'] = tt.filter(t => t.lines.length === 0).length;
+      rowTopicsTotal['REDIREC'] += rowTopics['REDIREC'];
+      rowLines['REDIREC'] = 0;
       //Revised
       const tr = tt.filter(t => t.revised);
-      rowTopics.push(tr.length);
-      rowLines.push(tr.reduce((a, t) => a += t.lines.length, 0));
+      rowTopics['REVISED'] = tr.length;
+      rowTopicsTotal['REVISED'] += rowTopics['REVISED'];
+      rowLines['REVISED'] = tr.reduce((a, t) => a += t.lines.length, 0);
+      rowLinesTotal['REVISED'] += rowLines['REVISED'];
       //Totals
-      rowTopics.push(tt.length);
-      rowLines.push(tt.reduce((a, t) => a += t.lines.length, 0));
+      rowTopics['TOTAL'] = tt.length;
+      rowTopicsTotal['TOTAL'] += rowTopics['TOTAL'];
+      rowLines['TOTAL'] = tt.reduce((a, t) => a += t.lines.length, 0);
+      rowLinesTotal['TOTAL'] += rowLines['TOTAL'];
       result.topics.push(rowTopics);
       result.lines.push(rowLines);
     });
-
-    const rowTopicsTotal = columns.map((c, i) => {
-      return (i === 0 ? 'TOTAL' : result.topics
-        .reduce((a, r, j) => a += (j != 0 ? r[i] : 0), 0));
-    });
     result.topics.push(rowTopicsTotal);
-
-    const rowLinesTotal = columns.map((c, i) => {
-      return (i === 0 ? 'TOTAL' : result.lines
-        .reduce((a, r, j) => a += (j != 0 ? r[i] : 0), 0));
-    });
     result.lines.push(rowLinesTotal);
 
     return result;
@@ -224,6 +224,27 @@ export class TopicIndex {
       }
       return (index != -1);
     });
+  }
+
+  /**
+   * Returns of the possible names for a topic to use when searching.
+   * @param {Object} topic A topic entry.
+   * @return {string[]}
+   */
+  getNames(topic) {
+    const name = topic.name.split('(')[0].trim();
+    const names = [name];
+    extendArray(names, topic.altnames);
+    if (this.language === "en" || this.language === "fr") {
+      extendArray(names, names.map(i => i.replace(/'/g, '’')));
+    }
+    if (this.language === "fr") {
+      extendArray(names, names
+        .map(i => ['L', 'l', 'D', 'd', 'qu', 's'].map(j => `${j}’${i}`))
+        .flat()
+      );
+    }
+    return names.filter((n, i, ar) => ar.indexOf(n) === i);
   }
 
 }

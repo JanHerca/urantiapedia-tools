@@ -3,7 +3,7 @@ import { tr, strformat, getError, extendArray, getAllIndexes, reflectPromise,
   removeAllHTML, getBookPaperTitle } from 'src/core/utils.js';
 import { getWikijsBookLink, getWikijsHeader, getWikijsBookCopyright, 
   getWikijsLinks, getWikijsBookButtons, getWikijsBookTitles, 
-  getWikijsBookSectionTitles, fixWikijsHeader } from 'src/core/wikijs.js';
+  getWikijsBookSectionTitles } from 'src/core/wikijs.js';
 import { getWikijsBookParRef } from 'src/core/wikijs.js';
 import { BibleAbbreviations as BibleAbbs } from 'src/core/bibleAbbs';
 import { HTMLSeparator as HSep } from 'src/core/enums.js';
@@ -687,7 +687,7 @@ export const useWriteToWikijs = (
       const baseName = path.basename(dirPath);
       const access = await window.NodeAPI.exists(dirPath);
       if (!access) {
-        throw getError(uiLanguage.value, 'folder_no_access', baseName)
+        throw getError(uiLanguage.value, 'folder_no_access', baseName);
       }
       const promises = papers
         .map(paper => {

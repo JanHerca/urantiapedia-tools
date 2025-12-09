@@ -295,6 +295,43 @@ export const getStackTraceArray = (error) => {
 };
 
 /**
+ * Checks a text with an array of components.
+ * This function is required because RegExp has problems to search components
+ * that are full words and start or end with special chars like accent.
+ * @param {Array.<string>} arItems Array of components. If any of them appear 
+ * then test is valid.
+ * @param {string} text Text to test.
+ * @return {boolean}
+ */
+export const testWords = (arItems, text) => {
+  let ini = 0, fin = 0, j, testIni, testFin;
+  const regex = /[a-z0-9áéíóúäëïöüàèìòùâêîôû’]/i;
+  const len = text.length;
+  for (j = 0; j < arItems.length; j++) {
+    ini = 0;
+    while (ini != -1) {
+      ini = text.indexOf(arItems[j], ini);
+      fin = ini + arItems[j].length - 1;
+      testIni = !regex.test(text.substring(ini - 1, ini));
+      testFin = !regex.test(text.substring(fin + 1, fin + 2));
+      if (ini != -1) {
+        if (
+          (ini === 0 || (ini > 0 && testIni)) &&
+          (fin === len - 1 || (fin < len - 1 && testFin))
+        ) {
+          return true;
+        }
+        ini = fin + 1;
+        if (ini === len - 1) {
+          break;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+/**
  * Replaces a text with an array of components by other array of components.
  * This function is required because RegExp has problems searching components
  * that are full words starting or ending with accent.

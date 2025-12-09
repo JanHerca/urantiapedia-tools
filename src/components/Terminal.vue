@@ -9,7 +9,6 @@
         @click="logsFilter = (logsFilter === 'warning' ? null : 'warning')"
         :flat="logsFilter !== 'warning'"
       />
-      
       <q-btn 
         icon="error" 
         label="Errors" 
@@ -50,25 +49,46 @@
           :key="index" 
           :class="['log-line', `log-type-${log.type}`]"
         >
-          <span class="timestamp">[{{ log.time }}]</span>
-          <span class="message">{{ log.message }}</span>
-          <QExpansionItem
-            v-if="log.type === 'error' && log.stack && log.stack.length > 0"
-            dense
-            switch-toggle-side
-            label="Stack Trace"
-            class="stack-trace-expansion"
-          >
-            <div class="stack-trace-content">
-              <div 
-                v-for="(line, lineIndex) in log.stack" 
-                :key="lineIndex"
-                class="stack-trace-line"
-              >
-                {{ line }}
+          <template v-if="log.type !== 'table'">
+            <span class="timestamp">[{{ log.time }}]</span>
+            <span class="message">{{ log.message }}</span>
+            <QExpansionItem
+              v-if="log.type === 'error' && log.stack && log.stack.length > 0"
+              dense
+              switch-toggle-side
+              label="Stack Trace"
+              class="stack-trace-expansion"
+            >
+              <div class="stack-trace-content">
+                <div 
+                  v-for="(line, lineIndex) in log.stack" 
+                  :key="lineIndex"
+                  class="stack-trace-line"
+                >
+                  {{ line }}
+                </div>
               </div>
-            </div>
-          </QExpansionItem>
+            </QExpansionItem>
+          </template>
+
+          <div v-else class="table-container">
+            <q-table
+              v-if="log.table"
+              :rows="log.table"
+              :title="log.message"
+              row-key="name"
+              dense
+              :rows-per-page-options="[0]"
+              hide-pagination
+              :class="['terminal-table', 'q-mt-sm']"
+            >
+              <template v-slot:body-cell="props">
+                <q-td :props="props" class="terminal-table-cell">
+                  {{ props.value }}
+                </q-td>
+              </template>
+            </q-table>
+          </div>
         </div>
       </QScrollArea>
     </QCard>
@@ -170,5 +190,31 @@ watch(props.logs, () => {
   font-size: 0.8em;
   color: #aaaaaa;
   line-height: 1.3;
+}
+.table-container {
+  padding-bottom: 8px;
+  padding-right: 12px;
+}
+.terminal-table {
+  background-color: #252526;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
+.terminal-table :deep(.q-table__container) {
+  background-color: transparent;
+  color: #ffffff;
+}
+.terminal-table :deep(.q-table tbody td) {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+  padding: 4px 8px;
+  border-color: #333;
+}
+.terminal-table-cell {
+  color: #ffffff !important;
+}
+.log-type-table .message {
+  color: #027be3;
 }
 </style>

@@ -17,7 +17,7 @@
           class="cursor-pointer q-pr-sm-sm" />
         <q-icon 
           name="close" 
-          @click="theFolderPath = ''" 
+          @click="theFilePath = ''" 
           class="cursor-pointer" />
       </template>
     </q-input>

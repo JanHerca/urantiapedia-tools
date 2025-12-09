@@ -350,11 +350,11 @@ export const Processes = {
       },
       {
         type: 'select',
-        value: '{categories}'
+        subtype: 'TopicFilters'
       },
       {
         type: 'select',
-        value: '{letters}'
+        subtype: 'TopicLetters'
       }
     ],
     emoji: "\u{1F4C7}"
@@ -376,11 +376,7 @@ export const Processes = {
       },
       {
         type: 'select',
-        value: '{categories}'
-      },
-      {
-        type: 'select',
-        value: '{letters}'
+        subtype: 'TopicIndexes'
       }
     ],
     emoji: "\u{1F4C7}"
@@ -402,15 +398,16 @@ export const Processes = {
       },
       {
         type: 'select',
-        value: '{categories}'
+        subtype: 'TopicFilters'
       },
       {
         type: 'select',
-        value: '{letters}'
+        subtype: 'TopicLetters'
       },
       {
-        type: 'select',
-        value: '{topics}'
+        type: 'input',
+        label: 'Topic',
+        placeholder: 'Enter a topic name to filter (overrides previous selections)'
       }
     ],
     emoji: "\u{1F4C7}"

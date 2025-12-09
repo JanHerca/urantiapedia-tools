@@ -33,6 +33,21 @@
             class="q-pa-sm-none q-mb-sm-md"
             classes="full-width"
           />
+          <InputGroupSelect 
+            v-if="control.type === 'select'"
+            :label="Strings[`lbl${control.subtype}`][uiLanguage]" 
+            :options="control.values" 
+            v-model="control.value"
+            class="q-pa-sm-none q-mb-sm-md"
+          />
+          <InputGroupText
+            v-if="control.type === 'text'"
+            :label="control.label"
+            :placeholder="control.placeholder"
+            v-model="control.value"
+            class="q-pa-sm-none q-mb-sm-md"
+            classes="full-width"
+          />
         </div>
         <Message 
           v-if="urantiapediaFolder === ''"
@@ -71,6 +86,7 @@ import { storeToRefs } from 'pinia';
 import InputGroupSelect from 'src/components/InputGroupSelect.vue';
 import InputGroupFolder from 'src/components/InputGroupFolder.vue';
 import InputGroupFile from 'src/components/InputGroupFile.vue';
+import InputGroupText from 'src/components/InputGroupText.vue';
 import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
 import { Strings } from 'src/core/strings';
@@ -91,12 +107,25 @@ import {
   useBIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS,
   useBIBLE_TEX_TO_BIBLEINDEX_WIKIJS,
   useBIBLE_UPDATE_TITLES_WIKIJS,
-  useBIBLE_TEX_CHECK
+  useBIBLE_TEX_CHECK,
+  useTOPICS_TXT_TO_WIKIJS,
+  useTOPICS_INDEX_TXT_TO_WIKIJS,
+  useREVIEW_TOPIC_TXT_LU_JSON,
+  useREVIEW_TOPIC_THREE_LANS,
+  useSUM_TOPIC_TXT
 } from 'src/composables/processes';
 
 
 const mainStore = useMain();
-const { allLanguages, addLog, addWarning, addErrors, addSuccess } = mainStore;
+const { 
+  topicTypes, 
+  allLanguages, 
+  addLog, 
+  addWarning, 
+  addErrors, 
+  addSuccess,
+  addTable
+} = mainStore;
 const {
   language,
   uiLanguage,
@@ -108,6 +137,8 @@ const {
   allProcesses,
   filteredLogs,
 } = storeToRefs(mainStore);
+
+const topicIndexes = ['ALL', ...topicTypes];
 
 //Handlers
 
@@ -185,6 +216,27 @@ const onExecuteClick = () => {
     case 'BIBLE_TEX_CHECK':
       executor = useBIBLE_TEX_CHECK(
         language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'TOPICS_TXT_TO_WIKIJS':
+      executor = useTOPICS_TXT_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'TOPICS_INDEX_TXT_TO_WIKIJS':
+      executor = useTOPICS_INDEX_TXT_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess, topicIndexes);
+      break;
+    case 'REVIEW_TOPIC_TXT_LU_JSON':
+      executor = useREVIEW_TOPIC_TXT_LU_JSON(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'REVIEW_TOPIC_THREE_LANS':
+      executor = useREVIEW_TOPIC_THREE_LANS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'SUM_TOPIC_TXT':
+      executor = useSUM_TOPIC_TXT(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess, addTable, 
+        topicTypes);
       break;
     default:
       addErrors(`Process "${process.value}" is not implemented.`);

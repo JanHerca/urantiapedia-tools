@@ -14,3 +14,8 @@ export * from './useBIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS.js';
 export * from './useBIBLE_TEX_TO_BIBLEINDEX_WIKIJS.js';
 export * from './useBIBLE_UPDATE_TITLES_WIKIJS.js';
 export * from './useBIBLE_TEX_CHECK.js';
+export * from './useTOPICS_TXT_TO_WIKIJS.js';
+export * from './useTOPICS_INDEX_TXT_TO_WIKIJS.js';
+export * from './useREVIEW_TOPIC_TXT_LU_JSON.js';
+export * from './useREVIEW_TOPIC_THREE_LANS.js';
+export * from './useSUM_TOPIC_TXT.js';
