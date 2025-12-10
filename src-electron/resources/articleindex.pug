@@ -1,0 +1,79 @@
+-
+	var classes = ['mr-1', 'mb-1', 'v-chip', 'v-chip--clickable', 
+	'v-chip--label', 'v-chip--link', 'theme--light', 'v-size--default', 'teal',
+	'lighten-5']
+	var classes2 = ['v-icon', 'notranslate', 'v-icon--left', 'mdi', 'mdi-tag',
+	'theme--light', 'teal--text']
+	var classes3 = ['decor-outline', 'decor-shadow']
+
+mixin article(article)
+	a(href=article.path class="title")= article.title
+	if article.note != null
+		sup.footnote-ref
+			a(href="#fn" + article.note, id="fnref" + article.note)= "[" + article.note + "]"
+	br
+	if article.author != ''
+		a(href=article.authorLink class="mr-2")= article.author
+	each tag in article.tags
+		if tag != ''
+			a(href="/t/" + tag + "?lang=" + language + "&sort=title", class=classes)
+				span.v-chip__content
+					i(aria-hidden="true" class=classes2 style="font-size: 16px;")
+					span(class="teal--text text--darken-2")= tag
+
+if link != ''
+	p= sourceText
+		a(href=link)= link
+
+if volumes.length > 0
+	each volume in volumes
+		h2= volume.title
+		if volume.subtitle
+			p= volume.subtitle
+		each issue in volume.issues
+			h3= issue.title
+			br
+			if issue.imagePath != ''
+				figure.image.urantiapedia.image-style-align-left
+					img(src=issue.imagePath class=classes3)
+			table
+				tbody
+					each article in issue.articles
+						tr
+							td
+								if article.path
+									+article(article)
+								else if article.group
+									span.title= article.title
+			if issue.imagePath != ''
+				br(style="clear:both;")
+		br
+else if issues.length > 0
+	each issue in issues
+		h2= issue.title
+		if issue.subtitle
+			p= issue.subtitle
+		br
+		if issue.imagePath != ''
+			figure.image.urantiapedia.image-style-align-left
+				img(src=issue.imagePath class=classes3)
+		table
+			tbody
+				each article in issue.articles
+					tr
+						td
+							if article.path
+								+article(article)
+							else if article.group
+								span.title= article.title
+		if issue.imagePath != ''
+			br(style="clear:both;")
+		br
+if notes.length > 0
+	h2= referencesText
+	section.footnotes
+		ol.footnotes-list
+			each note, i in notes
+				li.footnote-item(id="fn" + (i + 1))
+					p= note
+						a.footnote-backref(href="#fnref" + (i + 1))= "↩︎"

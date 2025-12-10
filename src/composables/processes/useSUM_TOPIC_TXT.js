@@ -11,6 +11,7 @@ import { TopicIndex } from 'src/core/topicindex.js';
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
  * @param {function} addTable Function to add table messages.
+ * @param {string[]} topicTypes Types of topics.
  */
 export const useSUM_TOPIC_TXT = (
   language,

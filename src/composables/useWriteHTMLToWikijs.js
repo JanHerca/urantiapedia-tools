@@ -1,3 +1,4 @@
+import { reflectPromise } from 'src/core/utils.js';
 import { fixWikijsHeader } from 'src/core/wikijs.js';
 
 /**

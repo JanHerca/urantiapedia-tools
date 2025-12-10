@@ -458,24 +458,6 @@ export const Processes = {
     ],
     emoji: "\u{1F4C7}"
   },
-  "ARTICLE_CATALOG_MARKDOWN_TO_WIKIJS": {
-    active: true,
-    desc: {
-      en: "ARTICLES: Convert a catalog of Articles (MARKDOWN) to Wiki.js",
-      es: "ARTICULOS: Convertir un catálogo de Artículos (MARKDOWN) a Wiki.js",
-    },
-    controls: [
-      {
-        type: 'file',
-        value: ['output', 'wikijs', '{0}', 'index', 'articles.md']
-      },
-      {
-        type: 'folder',
-        value: ['tests', 'article']
-      }
-    ],
-    emoji: "\u{1F4C3}"
-  },
   "ARTICLE_INDEX_TO_WIKIJS": {
     active: true,
     desc: {

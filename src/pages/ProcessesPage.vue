@@ -112,7 +112,9 @@ import {
   useTOPICS_INDEX_TXT_TO_WIKIJS,
   useREVIEW_TOPIC_TXT_LU_JSON,
   useREVIEW_TOPIC_THREE_LANS,
-  useSUM_TOPIC_TXT
+  useSUM_TOPIC_TXT,
+  useNORM_TOPIC_TXT,
+  useARTICLE_INDEX_TO_WIKIJS
 } from 'src/composables/processes';
 
 
@@ -186,12 +188,14 @@ const onExecuteClick = () => {
     case 'BOOK_JSON_TOPICS_TXT_TO_WIKIJS':
       values.push(urantiapediaFolder.value);
       executor = useBOOK_JSON_TOPICS_TXT_TO_WIKIJS(
-        language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addWarning, addErrors, 
+        addSuccess);
       break;
     case 'BOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS':
       values.push(urantiapediaFolder.value);
       executor = useBOOK_MULTIPLE_JSON_TOPICS_TXT_TO_WIKIJS(
-        language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addWarning, addErrors, 
+        addSuccess);
       break;
     case 'BOOK_INDEX_JSON_TO_WIKIJS':
       executor = useBOOK_INDEX_JSON_TO_WIKIJS(
@@ -203,7 +207,8 @@ const onExecuteClick = () => {
       break;
     case 'BIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS':
       executor = useBIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS(
-        language, uiLanguage, processing, addLog, addWarning, addErrors, addSuccess);
+        language, uiLanguage, processing, addLog, addWarning, addErrors, 
+        addSuccess);
       break;
     case 'BIBLE_TEX_TO_BIBLEINDEX_WIKIJS':
       executor = useBIBLE_TEX_TO_BIBLEINDEX_WIKIJS(
@@ -223,7 +228,8 @@ const onExecuteClick = () => {
       break;
     case 'TOPICS_INDEX_TXT_TO_WIKIJS':
       executor = useTOPICS_INDEX_TXT_TO_WIKIJS(
-        language, uiLanguage, processing, addLog, addErrors, addSuccess, topicIndexes);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess, 
+        topicIndexes);
       break;
     case 'REVIEW_TOPIC_TXT_LU_JSON':
       executor = useREVIEW_TOPIC_TXT_LU_JSON(
@@ -235,8 +241,16 @@ const onExecuteClick = () => {
       break;
     case 'SUM_TOPIC_TXT':
       executor = useSUM_TOPIC_TXT(
-        language, uiLanguage, processing, addLog, addErrors, addSuccess, addTable, 
-        topicTypes);
+        language, uiLanguage, processing, addLog, addErrors, addSuccess, 
+        addTable, topicTypes);
+      break;
+    case 'NORM_TOPIC_TXT':
+      executor = useNORM_TOPIC_TXT(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
+      break;
+    case 'ARTICLE_INDEX_TO_WIKIJS':
+      executor = useARTICLE_INDEX_TO_WIKIJS(
+        language, uiLanguage, processing, addLog, addErrors, addSuccess);
       break;
     default:
       addErrors(`Process "${process.value}" is not implemented.`);

@@ -229,6 +229,8 @@ export default defineConfig((/* ctx */) => {
 
         electronLanguages: ['en-US', 'es'],
 
+        extraResources: ['src-electron/resources/**'],
+
         win: {
           target: 'nsis',
           asarUnpack: [

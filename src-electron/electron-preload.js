@@ -15,4 +15,8 @@ contextBridge.exposeInMainWorld('NodeAPI', {
 
   //version
   getAppVersion: () => ipcRenderer.invoke('app:getVersion'),
+
+  //Pug
+  compileTemplate: (fileName) => ipcRenderer.invoke('pug:compileTemplate', fileName),
+  renderTemplate: (fileName, data) => ipcRenderer.invoke('pug:renderTemplate', fileName, data)
 })

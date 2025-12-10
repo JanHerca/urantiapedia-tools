@@ -3,6 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import { fileURLToPath } from 'node:url'
+import pug from 'pug';
 
 if (process.platform === 'win32') {
   app.setAppUserModelId(app.name)
@@ -12,37 +13,38 @@ if (process.platform === 'win32') {
 const platform = process.platform || os.platform()
 const currentDir = fileURLToPath(new URL('.', import.meta.url))
 
+const compiledPugFunctions = {}
 let mainWindow
 
-async function installDevTools() {
-  if (process.env.DEV) {
-    try {
-      // dynamic import to work in ESM environment
-      const devtools = await import('electron-devtools-installer')
-      await devtools.default(devtools.VUEJS3_DEVTOOLS)
-      console.log('Vue Devtools installed via electron-devtools-installer')
-    } catch (err) {
-      console.warn('electron-devtools-installer failed — trying loadExtension fallback', err)
+// async function installDevTools() {
+//   if (process.env.DEV) {
+//     try {
+//       // dynamic import to work in ESM environment
+//       const devtools = await import('electron-devtools-installer')
+//       await devtools.default(devtools.VUEJS3_DEVTOOLS)
+//       console.log('Vue Devtools installed via electron-devtools-installer')
+//     } catch (err) {
+//       console.warn('electron-devtools-installer failed — trying loadExtension fallback', err)
 
-      // fallback: load unpacked extension from a relative project folder 
-      // (no absolut path hard-coded) place the unpacked Vue Devtools in the 
-      // project root (folder name "vue-devtools"), or adjust this relative 
-      // path as needed.
-      const devtoolsPath = path.resolve(process.cwd(), 'vue-devtools')
+//       // fallback: load unpacked extension from a relative project folder 
+//       // (no absolut path hard-coded) place the unpacked Vue Devtools in the 
+//       // project root (folder name "vue-devtools"), or adjust this relative 
+//       // path as needed.
+//       const devtoolsPath = path.resolve(process.cwd(), 'vue-devtools')
 
-      try {
-        if (fs.existsSync(devtoolsPath)) {
-          await session.defaultSession.loadExtension(devtoolsPath, { allowFileAccess: true })
-          console.log('Vue Devtools loaded from', devtoolsPath)
-        } else {
-          console.warn('Vue Devtools unpacked folder not found at', devtoolsPath)
-        }
-      } catch (err2) {
-        console.error('Failed loading unpacked Vue Devtools', err2)
-      }
-    }
-  }
-}
+//       try {
+//         if (fs.existsSync(devtoolsPath)) {
+//           await session.defaultSession.loadExtension(devtoolsPath, { allowFileAccess: true })
+//           console.log('Vue Devtools loaded from', devtoolsPath)
+//         } else {
+//           console.warn('Vue Devtools unpacked folder not found at', devtoolsPath)
+//         }
+//       } catch (err2) {
+//         console.error('Failed loading unpacked Vue Devtools', err2)
+//       }
+//     }
+//   }
+// }
 
 async function createWindow () {
   const iconDir = process.env.DEV
@@ -97,7 +99,7 @@ async function createWindow () {
   })
 }
 
-app.whenReady().then(installDevTools).then(createWindow)
+app.whenReady()/*.then(installDevTools)*/.then(createWindow)
 
 app.on('window-all-closed', () => {
   if (platform !== 'darwin') {
@@ -216,4 +218,36 @@ ipcMain.handle('app:getVersion', async () => {
     console.error('Error reading package.json:', err)
     return null
   }
+})
+
+//Pug handlers
+ipcMain.handle('pug:compileTemplate', async (evt, fileName) => {
+  let filePath;
+  try {
+    const templatePath = process.env.NODE_ENV === 'development'
+      ? path.join(app.getAppPath(), '..', '..', 'src-electron', 'resources')
+      : app.getAppPath();
+    filePath = path.join(templatePath, fileName);
+    await fs.access(filePath, fs.constants.F_OK | fs.constants.W_OK); 
+  } catch (err) {
+    throw new Error(`[PUG ERROR] File not found: ${filePath}`);
+  }
+
+  try {
+    compiledPugFunctions[fileName] = pug.compileFile(filePath, { pretty: true });
+  } catch (err) {
+    throw err
+  }
+})
+
+ipcMain.handle('pug:renderTemplate', async (evt, fileName, data) => {
+  if (compiledPugFunctions[fileName]) {
+    try {
+      const htmlOutput = compiledPugFunctions[fileName](data);
+      return htmlOutput;
+    } catch (err) {
+      throw err
+    }
+  }
+  throw new Error('Template is not found as compiled.')
 })

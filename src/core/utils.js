@@ -20,11 +20,27 @@ export const tr = (code, language) => {
  * @return {string}
  */
 export const strformat = (...params) => {
-	const str = params[0];
-	return str.replace(/{(\d+)}/g, function(match, number) {
-		const n = (parseInt(number)+1).toString();
-		return typeof params[n] != 'undefined' ? params[n] : match;
-	});
+  const str = params[0];
+  return str.replace(/{(\d+)}/g, function (match, number) {
+    const n = (parseInt(number) + 1).toString();
+    return typeof params[n] != 'undefined' ? params[n] : match;
+  });
+};
+
+/**
+ * Corrects a string with some replacements.
+ * @param {string} text Text to correct.
+ * @param {Object} correction Object with strings to search as keys and strings
+ * to use instead as values.
+ * @return {string}
+ */
+export const autoCorrect = (text, correction) => {
+  let result = text;
+  Object.keys(correction).forEach(c => {
+    const reg = new RegExp(c, 'g');
+    result = result.replace(reg, correction[c]);
+  });
+  return result;
 };
 
 /**
@@ -49,8 +65,7 @@ export const extractStr = (content, start, end) => {
  * @returns {number|string|null} Verse number, 'all' for all verses, or null if invalid.
  */
 export const extractVers = (text) => {
-  let num = '',
-  i = 0;
+  let num = '', i = 0;
   if (text.length === 0) {
     return null;
   } else if (text === 'all') {
@@ -72,21 +87,21 @@ export const extractVers = (text) => {
  * @return {number[]}
  */
 export const getAllIndexes = (content, chars, ignoreHtml = true) => {
-	if (!content || !chars) return [];
-	const targets = Array.isArray(chars) ? chars.map(String) : [String(chars)];
-	const set = new Set(targets);
-	const indexes = [];
-	let inTag = false;
-	for (let i = 0; i < content.length; i++) {
-		const ch = content[i];
-		if (ignoreHtml) {
-			if (ch === '<') { inTag = true; continue; }
-			if (ch === '>') { inTag = false; continue; }
-			if (inTag) continue;
-		}
-		if (set.has(ch)) indexes.push(i);
-	}
-	return indexes;
+  if (!content || !chars) return [];
+  const targets = Array.isArray(chars) ? chars.map(String) : [String(chars)];
+  const set = new Set(targets);
+  const indexes = [];
+  let inTag = false;
+  for (let i = 0; i < content.length; i++) {
+    const ch = content[i];
+    if (ignoreHtml) {
+      if (ch === '<') { inTag = true; continue; }
+      if (ch === '>') { inTag = false; continue; }
+      if (inTag) continue;
+    }
+    if (set.has(ch)) indexes.push(i);
+  }
+  return indexes;
 };
 
 /**
@@ -97,7 +112,7 @@ export const getAllIndexes = (content, chars, ignoreHtml = true) => {
 export const getError = (...params) => {
   const language = params[0];
   const msg = params[1];
-  let text = Strings[msg] 
+  let text = Strings[msg]
     ? (Strings[msg][language]
       ? Strings[msg][language]
       : Strings[msg]['en'])
@@ -151,33 +166,33 @@ export const extendArray = (arr, data) => {
  * @return {string}
  */
 export const replaceTags = (
-  content, 
-  initTag, 
-  endTag, 
-  initTag2, 
-  endTag2, 
+  content,
+  initTag,
+  endTag,
+  initTag2,
+  endTag2,
   errors,
   uiLanguage
 ) => {
-	let result = '', ii, i = 0, index;
-	while (i < content.length) {
-		index = content.indexOf(initTag, i);
-		if (index === -1) {
-			result += content.substring(i);
-			break;
-		} else {
-			result += content.substring(i, index);
-		}
-		ii = index + initTag.length;
-		i = content.indexOf(endTag, ii);
-		if (i === -1) {
-			errors.push(getError(uiLanguage, 'book_tag_no_closing'));
-			return content;
-		}
-		result += initTag2 + content.substring(ii, i) + endTag2;
-		i += endTag.length;
-	}
-	return result;
+  let result = '', ii, i = 0, index;
+  while (i < content.length) {
+    index = content.indexOf(initTag, i);
+    if (index === -1) {
+      result += content.substring(i);
+      break;
+    } else {
+      result += content.substring(i, index);
+    }
+    ii = index + initTag.length;
+    i = content.indexOf(endTag, ii);
+    if (i === -1) {
+      errors.push(getError(uiLanguage, 'book_tag_no_closing'));
+      return content;
+    }
+    result += initTag2 + content.substring(ii, i) + endTag2;
+    i += endTag.length;
+  }
+  return result;
 };
 
 /**
@@ -199,35 +214,35 @@ export const replaceTags = (
  * @return {string}
  */
 export const removeHTMLTags = (
-  content, 
-  initTag, 
-  endTag, 
-  removeContent, 
+  content,
+  initTag,
+  endTag,
+  removeContent,
   errors,
   uiLanguage
 ) => {
-	let result = '', ii, i = 0, index;
-	const iTag = initTag.substring(0, initTag.length - 1);
-	while (i < content.length) {
-		index = content.indexOf(iTag, i);
-		if (index === -1) {
-			result += content.substring(i);
-			break;
-		}
-		result += content.substring(i, index);
-		ii = index + iTag.length;
-		index = content.indexOf('>', ii);
-		i = content.indexOf(endTag, ii);
-		if (i === -1 || index === -1 || index >= content.length - 4 || index >= i) {
-			errors.push(getError(uiLanguage, 'book_tag_no_closing'));
-			break;
-		}
-		if (!removeContent) {
-			result += content.substring(index + 1, i);
-		}
-		i += endTag.length;
-	}
-	return result;
+  let result = '', ii, i = 0, index;
+  const iTag = initTag.substring(0, initTag.length - 1);
+  while (i < content.length) {
+    index = content.indexOf(iTag, i);
+    if (index === -1) {
+      result += content.substring(i);
+      break;
+    }
+    result += content.substring(i, index);
+    ii = index + iTag.length;
+    index = content.indexOf('>', ii);
+    i = content.indexOf(endTag, ii);
+    if (i === -1 || index === -1 || index >= content.length - 4 || index >= i) {
+      errors.push(getError(uiLanguage, 'book_tag_no_closing'));
+      break;
+    }
+    if (!removeContent) {
+      result += content.substring(index + 1, i);
+    }
+    i += endTag.length;
+  }
+  return result;
 };
 
 /**
@@ -348,12 +363,12 @@ export const testWords = (arItems, text) => {
  * @return {string} Modified text.
  */
 export const replaceWords = (
-  arItems, 
-  arReplaces, 
-  text, 
+  arItems,
+  arReplaces,
+  text,
   ignoreCase,
-  replaceAll, 
-  useExisting, 
+  replaceAll,
+  useExisting,
   useFirst
 ) => {
   let result = text, ini = 0, fin = 0, j, item, testIni, testFin, p1, p2,
@@ -456,7 +471,7 @@ export const getBookPaperTitle = (paper, language, upper) => {
   const t = paper.paper_title;
   const i = paper.paper_index;
   const paperWord2 = paperWord.indexOf('{') != -1
-    ? strformat(paperWord, i) 
+    ? strformat(paperWord, i)
     : paperWord;
   const tu = t.toUpperCase();
   const pu = paperWord2.toUpperCase();

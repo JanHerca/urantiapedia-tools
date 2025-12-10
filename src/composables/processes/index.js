@@ -19,3 +19,5 @@ export * from './useTOPICS_INDEX_TXT_TO_WIKIJS.js';
 export * from './useREVIEW_TOPIC_TXT_LU_JSON.js';
 export * from './useREVIEW_TOPIC_THREE_LANS.js';
 export * from './useSUM_TOPIC_TXT.js';
+export * from './useNORM_TOPIC_TXT.js';
+export * from './useARTICLE_INDEX_TO_WIKIJS';
