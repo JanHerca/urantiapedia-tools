@@ -1,8 +1,8 @@
 import { useReadIndexFileFromTSV } from '../articles/useReadIndexFileFromTSV.js';
-import { useWriteIndexFileToWikijs } from '../articles/useWriteIndexFileToWikijs.js';
+import { useWriteArticleTitlesToTSV } from '../articles/useWriteArticleTitlesToTSV.js';
 
 /**
- * Convert a Articles Index File (TSV) to Wiki.js
+ * Add the translation for an index from existing articles (TSV out file required)
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {Ref<boolean>} processing Processing flag.
@@ -10,7 +10,7 @@ import { useWriteIndexFileToWikijs } from '../articles/useWriteIndexFileToWikijs
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
  */
-export const useARTICLE_INDEX_TO_WIKIJS = (
+export const useARTICLE_INDEX_ADD_FROM_TRANSLATION = (
   language,
   uiLanguage,
   processing,
@@ -18,37 +18,35 @@ export const useARTICLE_INDEX_TO_WIKIJS = (
   addErrors,
   addSuccess
 ) => {
-  const { readIndexFileFromTSV } = useReadIndexFileFromTSV(language, uiLanguage, 
+  const { readIndexFileFromTSV } = useReadIndexFileFromTSV(language, uiLanguage,
     addLog);
-  const { writeIndexFileToWikijs } = useWriteIndexFileToWikijs(uiLanguage, 
+  const { writeArticleTitlesToTSV } = useWriteArticleTitlesToTSV(language, uiLanguage,
     addLog);
 
   /**
-   * Reads Articles Index File (TSV)
-   * Writes Articles Index in Wiki.js
+   * Reads Articles Index File (TSV) in English 
+   * Reads all articles files in selected lan and extracts titles 
+   * Writes Articles Index File (TSV) in selected lan
    * @param {string} articlesFile File with an index of articles in TSV format.
-   * @param {string} outputFile Output file in HTML format.
+   * @param {string} outputFolder Output folder.
    */
   const executeProcess = async (
     articlesFile,
-    outputFile
+    outputFolder
   ) => {
     processing.value = true;
-    addLog('Executing process: ARTICLE_INDEX_TO_WIKIJS');
+    addLog('Executing process: ARTICLE_INDEX_ADD_FROM_TRANSLATION');
     try {
 
-      if (language.value === 'en') {
-        const { index, items } = await readIndexFileFromTSV(articlesFile);
-        await writeIndexFileToWikijs(outputFile, index);
-      } else {
+      if (language.value != 'en') {
         const articlesFileEN = articlesFile
           .replace(`articles-${language.value}`, 'articles-en');
-        let { index, items } = await readIndexFileFromTSV(articlesFileEN);
+        const { index, items } = await readIndexFileFromTSV(articlesFileEN);
         await readIndexFileFromTSV(articlesFile, index, items);
-        await writeIndexFileToWikijs(outputFile, index);
+        await writeArticleTitlesToTSV(articlesFile, outputFolder, index);
       }
 
-      addSuccess('Process successful: ARTICLE_INDEX_TO_WIKIJS');
+      addSuccess('Process successful: ARTICLE_INDEX_ADD_FROM_TRANSLATION');
     } catch (errors) {
       addErrors(errors);
     } finally {

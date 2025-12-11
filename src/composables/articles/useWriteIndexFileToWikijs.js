@@ -6,7 +6,6 @@ import { useWriteHTMLToWikijs } from '../useWriteHTMLToWikijs.js';
  * Writes the current index read to Wiki.js HTML format.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
- * @param {function} createArticlesIndex Function to create an index.
  */
 export const useWriteIndexFileToWikijs = (
   uiLanguage,

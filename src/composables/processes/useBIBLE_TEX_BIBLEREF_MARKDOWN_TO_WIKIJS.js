@@ -8,18 +8,18 @@ import { useWriteToWikijs } from '../bible/useWriteToWikijs.js';
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {Ref<boolean>} processing Processing flag.
  * @param {function} addLog Function to add log messages.
- * @param {function} addWarning Function to add warning messages.
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
+ * @param {function} addWarning Function to add warning messages.
  */
 export const useBIBLE_TEX_BIBLEREF_MARKDOWN_TO_WIKIJS = (
   language,
   uiLanguage,
   processing,
   addLog,
-  addWarning,
   addErrors,
-  addSuccess
+  addSuccess,
+  addWarning
 ) => {
   const { readForBible } = useReadForBible(language, uiLanguage, addLog);
   const { readFromLaTeX } = useReadFromLaTeX(language, uiLanguage, addLog);

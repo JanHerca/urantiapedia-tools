@@ -5,11 +5,14 @@
  * @property {Object} desc Object with descriptions in each supported language.
  * @property {Object[]} controls Array of control objects for the process.
  * Each control object has:
- * @property {string} controls.type Type of control: 'folder', 'file', 'select', 'toggle'.
- * @property {string|Array.<string>} controls.value Default value for the control. If type is
- * 'folder' or 'file', it is an array of folder names to join. If type is 'select', it is
- * the array of options. If type is 'toggle', it is ignored.
+ * @property {string} controls.type Type of control: 'folder', 'file', 'select', 
+ * 'toggle'.
+ * @property {string} controls.subtype Subtype. If type is 'select', determines
+ * the values.
+ * @property {string|Array.<string>} controls.value Default value for the control. 
+ * If type is 'folder' or 'file', it is an array of folder names to join. 
  * @property {?Object} extraPath Object with an extra folder name for some languages.
+ * @property {string} emoji Icon for the process.
  */
 
 /**
@@ -521,6 +524,10 @@ export const Processes = {
     controls: [
       {
         type: 'folder',
+        value: ['input', 'tt', 'articles-{0}', 'study_aids.tsv']
+      },
+      {
+        type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
       }
     ],
@@ -538,12 +545,12 @@ export const Processes = {
         value: ['input', 'json', 'book-{0}-footnotes']
       },
       {
-        type: 'file',
-        value: ['input', 'txt', 'articles-{0}', 'ub_paralells.tsv']
-      },
-      {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
+      },
+      {
+        type: 'file',
+        value: ['input', 'txt', 'articles-{0}', 'ub_paralells.tsv']
       }
     ],
     emoji: "\u{1F4C3}"
@@ -580,6 +587,10 @@ export const Processes = {
       {
         type: 'folder',
         value: ['output', 'wikijs', '{0}', 'article']
+      },
+      {
+        type: 'file',
+        value: ['input', 'txt', 'articles-{0}', 'authors_index.md']
       }
     ],
     emoji: "\u{1F4C3}"
@@ -665,27 +676,5 @@ export const Processes = {
       }
     ],
     emoji: "\u{1F520}"
-  },
-  "TEST": {
-    active: true,
-    desc: {
-      en: "TEST: Execute a testing process",
-      es: "TEST: Ejecutar un proceso de prueba"
-    },
-    controls: [
-      {
-        type: 'folder',
-        value: ['input', 'txt', 'topic-index-{0}']
-      },
-      {
-        type: 'folder',
-        value: ['input', 'json', 'book-{0}-footnotes']
-      },
-      {
-        type: 'folder',
-        value: ['input', 'html', 'test']
-      }
-    ],
-    emoji: "\u{1F528}"
   }
 };

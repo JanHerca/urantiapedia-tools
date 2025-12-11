@@ -1,8 +1,10 @@
 import { useReadIndexFileFromTSV } from '../articles/useReadIndexFileFromTSV.js';
-import { useWriteIndexFileToWikijs } from '../articles/useWriteIndexFileToWikijs.js';
+import { 
+  useWriteNavigationHeadersToWikijs 
+} from '../articles/useWriteNavigationHeadersToWikijs.js';
 
 /**
- * Convert a Articles Index File (TSV) to Wiki.js
+ * Add a navigation header to articles in Wiki.js
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {Ref<boolean>} processing Processing flag.
@@ -10,7 +12,7 @@ import { useWriteIndexFileToWikijs } from '../articles/useWriteIndexFileToWikijs
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
  */
-export const useARTICLE_INDEX_TO_WIKIJS = (
+export const useARTICLE_NAVIGATION_HEADERS_IN_WIKIJS = (
   language,
   uiLanguage,
   processing,
@@ -18,37 +20,38 @@ export const useARTICLE_INDEX_TO_WIKIJS = (
   addErrors,
   addSuccess
 ) => {
-  const { readIndexFileFromTSV } = useReadIndexFileFromTSV(language, uiLanguage, 
+  const { readIndexFileFromTSV } = useReadIndexFileFromTSV(language, uiLanguage,
     addLog);
-  const { writeIndexFileToWikijs } = useWriteIndexFileToWikijs(uiLanguage, 
-    addLog);
+  const { 
+    writeNavigationHeadersToWikijs 
+  } = useWriteNavigationHeadersToWikijs(language, uiLanguage, addLog);
 
   /**
    * Reads Articles Index File (TSV)
-   * Writes Articles Index in Wiki.js
+   * Writes navigation header/footer in Wiki.js
    * @param {string} articlesFile File with an index of articles in TSV format.
-   * @param {string} outputFile Output file in HTML format.
+   * @param {string} outputFolder Output folder.
    */
   const executeProcess = async (
     articlesFile,
-    outputFile
+    outputFolder
   ) => {
     processing.value = true;
-    addLog('Executing process: ARTICLE_INDEX_TO_WIKIJS');
+    addLog('Executing process: ARTICLE_NAVIGATION_HEADERS_IN_WIKIJS');
     try {
 
       if (language.value === 'en') {
         const { index, items } = await readIndexFileFromTSV(articlesFile);
-        await writeIndexFileToWikijs(outputFile, index);
+        await writeNavigationHeadersToWikijs(outputFolder, index);
       } else {
         const articlesFileEN = articlesFile
           .replace(`articles-${language.value}`, 'articles-en');
         let { index, items } = await readIndexFileFromTSV(articlesFileEN);
         await readIndexFileFromTSV(articlesFile, index, items);
-        await writeIndexFileToWikijs(outputFile, index);
+        await writeNavigationHeadersToWikijs(outputFolder, index);
       }
 
-      addSuccess('Process successful: ARTICLE_INDEX_TO_WIKIJS');
+      addSuccess('Process successful: ARTICLE_NAVIGATION_HEADERS_IN_WIKIJS');
     } catch (errors) {
       addErrors(errors);
     } finally {
