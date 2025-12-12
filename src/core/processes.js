@@ -608,6 +608,10 @@ export const Processes = {
       },
       {
         type: 'folder',
+        value: ['output', 'wikijs']
+      },
+      {
+        type: 'folder',
         value: ['tests', 'article']
       }
     ],
@@ -622,7 +626,7 @@ export const Processes = {
     controls: [
       {
         type: 'file',
-        value: ['tests', 'book', 'bookinfo.md']
+        value: ['input', 'markdown', '{0}', 'book-schemas', 'Bahaism', 'The_Splendour_of_God.md']
       },
       {
         type: 'folder',

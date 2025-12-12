@@ -97,7 +97,7 @@ export const useARTICLE_AUTHORS_INDEXES = (
       const indexes = results.filter(r => r.value != null).map(r => r.value);
       const authorIndexes = indexes.map(index => getAuthorsIndex(index));
       const authorPaths = await getAuthorPaths(articlesFolder);
-      await writeAuthorsIndex(outputFile, authorIndexes, authorPaths)
+      await writeAuthorsIndex(outputFile, authorIndexes, authorPaths);
 
       addSuccess('Process successful: ARTICLE_AUTHORS_INDEXES');
     } catch (errors) {

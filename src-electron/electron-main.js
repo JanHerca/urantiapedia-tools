@@ -170,6 +170,14 @@ ipcMain.handle('fs:mkdir', async (evt, p) => {
     throw err
   }
 })
+ipcMain.handle('fs:copyFile', async (evt, p1, p2) => {
+  try {
+    await fs.copyFile(p1, p2)
+    return { ok: true}
+  } catch (err) {
+    throw err
+  }
+})
 
 // Native dialog handlers
 ipcMain.handle('dialog:openSystemDialog', async (event, options = {}) => {

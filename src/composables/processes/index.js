@@ -27,3 +27,8 @@ export * from './useARTICLE_ANCHORS_IN_WIKIJS.js';
 export * from './useARTICLE_CREATE_PARALELLS_FROM_WIKIJS.js';
 export * from './useARTICLE_CREATE_BLANK_FROM_LIST.js';
 export * from './useARTICLE_AUTHORS_INDEXES.js';
+export * from './useARTICLE_COPY_TO_FOLDER.js';
+export * from './useLIBRARY_CREATE_BLANK_FROM_LIST.js';
+export * from './useFIX_MARKDOWN_FOOTNOTES.js';
+export * from './useALL_INDEXES.js';
+export * from './usePARALELL_INDEX.js';

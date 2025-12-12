@@ -1,10 +1,8 @@
 import { useReadIndexFileFromTSV } from '../articles/useReadIndexFileFromTSV.js';
-import { 
-  useWriteNavigationHeadersToWikijs 
-} from '../articles/useWriteNavigationHeadersToWikijs.js';
+import { useCopyArticles } from '../articles/useCopyArticles.js';
 
 /**
- * Add a navigation header to articles in Wiki.js
+ * Copy files to folder from an index
  * @param {Ref<string>} language Language ref.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {Ref<boolean>} processing Processing flag.
@@ -12,7 +10,7 @@ import {
  * @param {function} addErrors Function to add error messages.
  * @param {function} addSuccess Function to add success messages.
  */
-export const useARTICLE_NAVIGATION_HEADERS_IN_WIKIJS = (
+export const useARTICLE_COPY_TO_FOLDER = (
   language,
   uiLanguage,
   processing,
@@ -22,36 +20,35 @@ export const useARTICLE_NAVIGATION_HEADERS_IN_WIKIJS = (
 ) => {
   const { readIndexFileFromTSV } = useReadIndexFileFromTSV(language, uiLanguage,
     addLog);
-  const { 
-    writeNavigationHeadersToWikijs 
-  } = useWriteNavigationHeadersToWikijs(language, uiLanguage, addLog);
+  const { copyArticles } = useCopyArticles(language, uiLanguage, addLog);
 
   /**
-   * Reads Articles Index File (TSV)
-   * Writes navigation header/footer in Wiki.js
-   * @param {string} articlesFile File with an index of articles in TSV format.
+   * Reads a Articles Index File (TSV)
+   * Copy the articles to an existing folder
+   * @param {string} articlesFile File with index of articles in TSV format.
+   * @param {string} urantiapediaFolder Folder with content of Urantiapedia.
    * @param {string} outputFolder Output folder.
    */
   const executeProcess = async (
     articlesFile,
+    urantiapediaFolder,
     outputFolder
   ) => {
     processing.value = true;
-    addLog('Executing process: ARTICLE_NAVIGATION_HEADERS_IN_WIKIJS');
+    addLog('Executing process: ARTICLE_COPY_TO_FOLDER');
     try {
-
       if (language.value === 'en') {
-        const { index } = await readIndexFileFromTSV(articlesFile);
-        await writeNavigationHeadersToWikijs(outputFolder, index);
+        const { index } = readIndexFileFromTSV(articlesFile);
+        await copyArticles(urantiapediaFolder, outputFolder, index);
       } else {
         const articlesFileEN = articlesFile
           .replace(`articles-${language.value}`, 'articles-en');
         let { index, items } = await readIndexFileFromTSV(articlesFileEN);
         await readIndexFileFromTSV(articlesFile, index, items);
-        await writeNavigationHeadersToWikijs(outputFolder, index);
+        await copyArticles(urantiapediaFolder, outputFolder, index);
       }
 
-      addSuccess('Process successful: ARTICLE_NAVIGATION_HEADERS_IN_WIKIJS');
+      addSuccess('Process successful: ARTICLE_COPY_TO_FOLDER');
     } catch (errors) {
       addErrors(errors);
     } finally {

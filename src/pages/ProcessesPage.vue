@@ -119,7 +119,12 @@ import {
   useARTICLE_NAVIGATION_HEADERS_IN_WIKIJS,
   useARTICLE_ANCHORS_IN_WIKIJS,
   useARTICLE_CREATE_PARALELLS_FROM_WIKIJS,
-  useARTICLE_CREATE_BLANK_FROM_LIST
+  useARTICLE_CREATE_BLANK_FROM_LIST,
+  useARTICLE_COPY_TO_FOLDER,
+  useLIBRARY_CREATE_BLANK_FROM_LIST,
+  useFIX_MARKDOWN_FOOTNOTES,
+  useALL_INDEXES,
+  usePARALELL_INDEX
 } from 'src/composables/processes';
 
 
@@ -248,6 +253,21 @@ const onExecuteClick = () => {
       break;
     case 'ARTICLE_AUTHORS_INDEXES':
       executor = useARTICLE_AUTHORS_INDEXES(...basicParams);
+      break;
+    case 'ARTICLE_COPY_TO_FOLDER':
+      executor = useARTICLE_COPY_TO_FOLDER(...basicParams);
+      break;
+    case 'LIBRARY_CREATE_BLANK_FROM_LIST':
+      executor = useLIBRARY_CREATE_BLANK_FROM_LIST(...basicParams);
+      break;
+    case 'FIX_MARKDOWN_FOOTNOTES':
+      executor = useFIX_MARKDOWN_FOOTNOTES(...basicParams, addWarning);
+      break;
+    case 'ALL_INDEXES':
+      executor = useALL_INDEXES(...basicParams);
+      break;
+    case 'PARALELL_INDEX':
+      executor = usePARALELL_INDEX(...basicParams);
       break;
     default:
       addErrors(`Process "${process.value}" is not implemented.`);
