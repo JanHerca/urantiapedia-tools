@@ -22,6 +22,8 @@ export const useSearch = defineStore('search', () => {
   //Constants
   const copyTypes = ['Copy plain text', 'Copy Markdown', 'Copy HTML']
     .map(v => ({value:v, label: v}));
+  
+  //Variables
   let book1 = null;
   let book2 = null;
 

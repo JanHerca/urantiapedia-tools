@@ -11,16 +11,18 @@
     </q-header>
 
     <q-drawer 
-      :class="{ 'q-mt-xl' : miniState}"
       v-model="leftDrawerOpen" 
       :mini="!leftDrawerOpen || miniState"
       show-if-above 
-      bordered>
-      <q-list>
-        <q-item-label header> Urantiapedia Tools </q-item-label>
-
-        <SimpleLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
+      bordered
+      :width="200">
+      <div :class="{ 'q-pt-xl': miniState }">
+        <q-list>
+          <q-item-label header> Urantiapedia Tools </q-item-label>
+  
+          <SimpleLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        </q-list>
+      </div>
       <div class="absolute" style="top: 15px; right: -17px">
         <q-btn
           dense

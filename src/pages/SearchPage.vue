@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md column no-scroll no-wrap" :style-fn="pageStyle">
     <div class="row col q-col-gutter-sm no-wrap">
-      <div class="col-auto column no-wrap column no-wrap" style="width: 300px;">
+      <div class="col-auto column no-wrap" style="width: 300px;">
         <div class="col scroll q-pr-sm">
           <InputGroupTextArea
             label="Old Refs"
@@ -52,12 +52,14 @@
             v-model="copyWithQuotes" 
             label="Copy with quotation marks" 
             size="sm" 
-            class="q-mb-sm" />
+            class="q-mb-sm" 
+          />
           <q-checkbox 
             v-model="copyWithLink" 
             label="Copy text with link" 
             size="sm" 
-            class="q-mb-sm" />
+            class="q-mb-sm" 
+          />
           <InputSelect
             label="Copy type"
             :options="copyTypes" 
