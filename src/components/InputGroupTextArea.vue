@@ -4,12 +4,15 @@
       {{ label }}
     </div>
 
-    <q-input
-      outlined
-      dense
-      v-model="theText"
-      class="col"
-      :class="classes">
+    <q-input 
+      outlined 
+      dense 
+      v-model="theText" 
+      class="col" 
+      :class="classes"
+      :placeholder="placeholder"
+      :rows="rows"
+      type="textarea">
     </q-input>
   </div>
 </template>
@@ -25,6 +28,7 @@ const props = defineProps({
   label: { type: String, default: 'Label' },
   placeholder: { type: String, default: 'Enter a text' },
   classes: { type: String, default: '' },
+  rows: { type: Number, default: 3}
 });
 
 </script>

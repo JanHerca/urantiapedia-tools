@@ -12,6 +12,7 @@
       emit-value
       dense
       outlined
+      options-dense
       class="col"
       :class="classes"
       @update:modelValue="onSelected"

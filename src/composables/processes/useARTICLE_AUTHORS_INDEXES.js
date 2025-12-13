@@ -36,7 +36,7 @@ export const useARTICLE_AUTHORS_INDEXES = (
    * @return {Object}
    */
   const getAuthorsIndex = (index) => {
-    const index = {
+    const authorsIndex = {
       publication: Array.isArray(index.tags)
         ? index.tags.find(t => t != "Index" && t != "Article")
         : undefined,
@@ -46,7 +46,7 @@ export const useARTICLE_AUTHORS_INDEXES = (
     const addIssue = issue => {
       issue.articles.forEach(article => {
         const { title, filepath } = article;
-        index.articles.push({
+        authorsIndex.articles.push({
           title,
           path: filepath,
           issue: issue.title
@@ -56,7 +56,7 @@ export const useARTICLE_AUTHORS_INDEXES = (
 
     index.volumes.forEach(volume => volume.issues.forEach(addIssue));
     index.issues.forEach(addIssue);
-    return index;
+    return authorsIndex;
   };
 
   /**

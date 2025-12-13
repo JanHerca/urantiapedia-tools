@@ -1,4 +1,5 @@
-import { getError, extendArray, findBibleAbb, getUBRef } from 'src/core/utils.js';
+import { getError, extendArray, findBibleAbb, getUBRef, 
+  replaceTags } from 'src/core/utils.js';
 
 /**
  * UrantiaBook class.
@@ -369,6 +370,52 @@ export class UrantiaBook {
         });
       });
     });
+    return result;
+  }
+
+  /**
+   * Returns the referenced paragraph in HTML.
+   * @param {number[]} ref Reference as an array of three numbers.
+   * @param {string[]} errs Array to store errors.
+   * @returns {string}
+   */
+  toParInHTML(ref, errs) {
+    const errs2 = [];
+    let result = this.toParInMarkdown(ref, errs2);
+    if (errs2.length > 0) {
+      extendArray(errs, errs2);
+      return;
+    }
+    //Replace italics (avoiding special pars with asterisks)
+    result = result.indexOf('* * *') != -1
+      ? result
+      : replaceTags(result, '*', '*', '<i>', '</i>', errs, 'en');
+    return result;
+  }
+
+  /**
+   * Returns the referenced paragraph in HTML.
+   * @param {number[]} ref Reference as an array of three numbers.
+   * @param {string[]} errs Array to store errors.
+   * @returns {string}
+   */
+  toParInMarkdown(ref, errs) {
+    let result = '';
+    if (!ref) {
+      errs.push('Error: Ref is null');
+      return result;
+    }
+    const par = this.getPar(ref[0], ref[1], ref[2]);
+    if (!par) {
+      errs.push(`Error: Ref ${ref[0]}:${ref[1]}.${ref[2]}} not found`);
+      return result;
+    }
+    //Remove the references to footnotes
+    result = par.par_content
+      .replace(/{(\d+)}/g, function (match, number) { return ''; });
+    //Replace smallcaps tags with HTML
+    result = replaceTags(result, '$', '$',
+      '<span style="font-variant: small-caps;">', '</span>', errs, 'en');
     return result;
   }
 

@@ -1,13 +1,15 @@
 <template>
-<q-banner 
-	dense
-	rounded
-	:class="['bg-' + type, dark ? 'text-dark' : 'text-white', classes].join(' ')">
-	<template v-slot:avatar>
-	<q-icon :name="iconName" :color="dark ? 'dark' : 'white'" />
-	</template>
-	{{ text }}
-</q-banner>
+  <q-banner 
+    dense 
+    rounded 
+    class="force-wrap"
+    :class="['bg-' + type, dark ? 'text-dark' : 'text-white', classes].join(' ')"
+  >
+    <template v-slot:avatar>
+      <q-icon :name="iconName" :color="dark ? 'dark' : 'white'" />
+    </template>
+    {{ text }}
+  </q-banner>
 </template>
 
 <script setup>
@@ -21,27 +23,32 @@ const props = defineProps({
 });
 
 const iconName = computed(() => {
-	switch (props.type) {
-		case 'primary':
-			return 'info';
-		case 'secondary':
-			return 'info';
-		case 'accent':
-			return 'info';
-		case 'dark':
-			return 'info';
-		case 'positive':
-			return 'check_circle';
-		case 'negative':
-			return 'error';
-		case 'warning':
-			return 'warning';
-		case 'info':
-			return 'info';
-		default:
-			return 'info';
-	}
+  switch (props.type) {
+    case 'primary':
+      return 'info';
+    case 'secondary':
+      return 'info';
+    case 'accent':
+      return 'info';
+    case 'dark':
+      return 'info';
+    case 'positive':
+      return 'check_circle';
+    case 'negative':
+      return 'error';
+    case 'warning':
+      return 'warning';
+    case 'info':
+      return 'info';
+    default:
+      return 'info';
+  }
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.force-wrap {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+</style>

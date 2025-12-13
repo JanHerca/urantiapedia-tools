@@ -5,10 +5,11 @@
     </div>
 
     <q-input
-      filled
+      outlined
       dense
       v-model="theFolderPath"
       class="col"
+      :placeholder="placeholder"
       :class="classes">
       <template v-slot:append>
         <q-icon 

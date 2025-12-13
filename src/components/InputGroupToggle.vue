@@ -6,7 +6,7 @@
 
     <q-toggle
       :modelValue="theValue"
-	  :toggle-indeterminate="false"
+	    :toggle-indeterminate="false"
       @update:modelValue="onChecked"
     />
   </div>

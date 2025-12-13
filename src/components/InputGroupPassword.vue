@@ -6,7 +6,7 @@
 
     <q-input 
       v-model="thePassword" 
-      filled 
+      outlined 
       dense
       :type="isPwd ? 'password' : 'text'"
       class="col"

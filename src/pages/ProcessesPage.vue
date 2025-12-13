@@ -3,14 +3,12 @@
     <div class="row col q-col-gutter-md">
       <div class="col-12 col-md-6 column">
         <InputGroupSelect 
-          id="drpLanguage" 
           :label="Strings.lblLanguage[uiLanguage]" 
           :options="allLanguages" 
           v-model="language"
           class="q-pa-sm-none q-mb-sm-md"
         />
         <InputGroupSelect 
-          id="drpProcess" 
           :label="Strings.lblProcess[uiLanguage]" 
           :options="allProcesses" 
           v-model="process"
@@ -57,19 +55,11 @@
           class="q-mb-sm-md"
         />
         <div>
-          <q-btn 
-            color="primary"
-            class="q-mb-sm-md"
-            :disabled="processing"
-            @click="onExecuteClick">
-            <div v-if="processing" class="row items-center q-pr-sm">
-              <q-spinner
-                color="white"
-                size="1em"
-              />
-            </div>
-            {{ Strings.exeButton[uiLanguage] }}
-          </q-btn>
+          <ButtonProgress
+            :processing="processing"
+            :label="Strings.exeButton[uiLanguage]"
+            @click="onExecuteClick"
+          />
         </div>
       </div>
       <div class="col-12 col-md-6 column">
@@ -89,6 +79,7 @@ import InputGroupFile from 'src/components/InputGroupFile.vue';
 import InputGroupText from 'src/components/InputGroupText.vue';
 import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
+import ButtonProgress from 'src/components/ButtonProgress.vue';
 import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
 import { 
