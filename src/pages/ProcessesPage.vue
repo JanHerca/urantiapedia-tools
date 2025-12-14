@@ -55,7 +55,7 @@
           class="q-mb-sm-md"
         />
         <div>
-          <ButtonProgress
+          <ProgressButton
             :processing="processing"
             :label="Strings.exeButton[uiLanguage]"
             @click="onExecuteClick"
@@ -79,7 +79,7 @@ import InputGroupFile from 'src/components/InputGroupFile.vue';
 import InputGroupText from 'src/components/InputGroupText.vue';
 import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
-import ButtonProgress from 'src/components/ButtonProgress.vue';
+import ProgressButton from 'src/components/ProgressButton.vue';
 import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
 import { 

@@ -44,12 +44,12 @@
             v-model="copyType" />
         </div>
         <div class="q-pt-sm">
-          <ButtonProgress
+          <ProgressButton
             :processing="isSearching"
             :label="Strings.btnSearch[uiLanguage]"
             class="full-width"
             @click="startSearch" />
-          <ButtonProgress
+          <ProgressButton
             :processing="isAddingQuotes"
             label="Add Quotes to Files"
             class="full-width"
@@ -102,7 +102,7 @@ import InputGroupTextArea from 'src/components/InputGroupTextArea.vue';
 import InputGroupFile from 'src/components/InputGroupFile.vue';
 import InputSelect from 'src/components/InputSelect.vue';
 import UrantiaBookPars from 'src/components/UrantiaBookPars.vue';
-import ButtonProgress from 'src/components/ButtonProgress.vue';
+import ProgressButton from 'src/components/ProgressButton.vue';
 import Message from 'src/components/Message.vue';
 
 const searchStore = useSearch();

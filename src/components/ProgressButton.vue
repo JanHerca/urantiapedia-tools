@@ -1,7 +1,7 @@
 <template>
   <q-btn 
-    color="primary"
-    class="q-mb-sm-md"
+    :color="color"
+    :class="classes"
     :disabled="processing">
     <div v-if="processing" class="row items-center q-pr-sm">
       <q-spinner
@@ -17,7 +17,9 @@
 
 const props = defineProps({
   label: { type: String },
-  processing: { type: Boolean, default: false }
+  processing: { type: Boolean, default: false },
+  color: { type: String, default: 'primary'},
+  classes: { type: String, default: 'full-width q-mb-sm-md'}
 });
 </script>
 

@@ -1,29 +1,6 @@
 <template>
-  <q-list class="q-ma-none q-pa-none" dense separator>
-
-    <q-item dense class="q-py-sm q-px-none" tag="div">
-      <q-item-section>
-        <div class="row q-col-gutter-sm">
-          <div v-for="n in 3" :key="n" class="col-4">
-            <q-btn 
-              class="full-width" 
-              color="secondary" 
-              type="button" 
-              :data-topic="n - 1"
-              @click="$emit('request-openai', n - 1)">
-              <q-spinner 
-                v-if="loadingState[n - 1]" 
-                size="1em" 
-                class="q-mr-sm" 
-                color="white" />
-              <span>Request OpenAI</span>
-            </q-btn>
-          </div>
-        </div>
-      </q-item-section>
-    </q-item>
-
-    <q-item v-if="hasTopicErrors" dense class="q-px-none" tag="div">
+  <q-list dense separator>
+    <q-item v-if="hasTopicErrors" tag="div">
       <q-item-section>
         <div class="row q-col-gutter-sm">
           <div v-for="(errorGroup, index) in topicErrors" :key="index" class="col-4">
@@ -75,10 +52,6 @@ import { computed } from 'vue';
 import TopicLine from 'src/components/TopicLine.vue';
 
 const props = defineProps({
-  loadingState: {
-    type: Array,
-    default: () => [false, false, false],
-  },
   topicErrors: {
     type: Array,
     default: () => [],
@@ -105,7 +78,7 @@ const hasTopicErrors = computed(() => props.topicErrors && props.topicErrors.len
 
 const hasOpenAICopies = computed(() => props.topicOpenAI.some(text => text !== null));
 
-defineEmits(['request-openai', 'copy-openai', 'select-topic-line']);
+defineEmits(['copy-openai', 'select-topic-line']);
 </script>
 
 <style scoped>
