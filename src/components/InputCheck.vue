@@ -1,27 +1,22 @@
 <template>
-  <q-select 
-    :label="label"
-    :modelValue="options.find(option => option.value === theValue)" 
-    :options="options" 
-    option-value="value"
-    option-label="label" 
-    emit-value 
-    outlined 
-    options-dense
+  <q-checkbox 
+    :modelValue="theValue" 
+    :label="label" 
+    size="sm" 
     :class="classes"
-    @update:modelValue="onSelected" />
+    @update:modelValue="onSelected"
+  />
 </template>
 
 <script setup>
 
 const theValue = defineModel({
-  type: String,
+  type: Boolean,
   required: true
 });
 
 const props = defineProps({
   label: { type: String, default: 'Label' },
-  options: { type: Array, default: () => [] },
   classes: { type: String, default: 'q-mb-sm' }
 });
 
@@ -29,6 +24,7 @@ const onSelected = (val) => {
   theValue.value = val;
 };
 
+defineEmits(['click']);
 </script>
 
 <style scoped></style>

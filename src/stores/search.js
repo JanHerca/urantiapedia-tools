@@ -1,16 +1,16 @@
-import { ref, watch, watchEffect, computed } from 'vue';
+import { ref } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { useMain } from 'src/stores/main';
 import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
 import { UrantiaBook } from 'src/core/urantiabook.js';
 import { Strings } from 'src/core/strings.js';
-import { strformat } from 'src/core/utils.js';
+import { strformat, getParLink } from 'src/core/utils.js';
 
 import path from 'path';
 
 export const useSearch = defineStore('search', () => {
   const mainStore = useMain();
-  const { allLanguages, addLog } = mainStore;
+  const { allLanguages, copyTypes, addLog } = mainStore;
   const {
     uiLanguage,
     urantiapediaFolder,
@@ -19,10 +19,6 @@ export const useSearch = defineStore('search', () => {
 
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
 
-  //Constants
-  const copyTypes = ['Copy plain text', 'Copy Markdown', 'Copy HTML']
-    .map(v => ({value:v, label: v}));
-  
   //Variables
   let book1 = null;
   let book2 = null;
@@ -150,25 +146,6 @@ export const useSearch = defineStore('search', () => {
       parText = `${bqStart}${qStart}${parText}${qEnd}${link}${bqEnd}`;
     }
     return parText;
-  };
-
-  const getParLink = (book, ref, copyType) => {
-    if (!ref) return '';
-    const lan = book.language;
-    const bookAbb = Strings.bookAbb[lan];
-    const linkPLPattern = `/${lan}/The_Urantia_Book/{0}#p{1}_{2}`;
-    const p = `${bookAbb} {0}:{1}.{2}`;
-    const linkMDPattern = `[${p}](/${lan}/The_Urantia_Book/{0}#p{1}_{2})`;
-    const linkHTMLPattern = `<a href="/${lan}/The_Urantia_Book/{0}#p{1}_{2}">${p}</a>`;
-
-    let pattern = linkHTMLPattern;
-
-    if (copyType === copyTypes[0].value) {
-      pattern = linkPLPattern;
-    } else if (copyType === copyTypes[1].value) {
-      pattern = linkMDPattern;
-    }
-    return strformat(pattern, ref[0], ref[1], ref[2]);
   };
 
   const getPars = (r1, r2, r, old) => {

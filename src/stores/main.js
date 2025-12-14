@@ -34,9 +34,12 @@ export const useMain = defineStore('main', () => {
     {value: '_', label: 'NUMBER'},
     ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({value: l, label: l}))
   ];
+  const copyTypes = ['Copy plain text', 'Copy Markdown', 'Copy HTML']
+    .map(v => ({value:v, label: v}));
 
   //Storage
   const uiLanCode = LocalStorage.getItem('language') || 'en';
+  console.log(LocalStorage.getItem('darkTheme'));
   const initialDarkTheme = LocalStorage.getItem('darkTheme') === true;
   const initialUrantiapediaFolder = LocalStorage.getItem('urantiapediaFolder') || '';
   const initialTransProjID = LocalStorage.getItem('translateProjectID') || '';
@@ -71,7 +74,7 @@ export const useMain = defineStore('main', () => {
   watch(darkTheme, (newVal) => {
     LocalStorage.set('darkTheme', newVal);
     Dark.set(newVal);
-  });
+  }, {immediate: true});
 
   watch(urantiapediaFolder, (newVal) => {
     LocalStorage.set('urantiapediaFolder', newVal);
@@ -219,6 +222,7 @@ export const useMain = defineStore('main', () => {
     topicFilters,
     topicIndexes,
     topicLetters,
+    copyTypes,
     //State
     language,
     uiLanguage,

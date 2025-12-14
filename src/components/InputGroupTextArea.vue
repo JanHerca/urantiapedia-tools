@@ -27,7 +27,7 @@ const theText = defineModel({
 const props = defineProps({
   label: { type: String, default: 'Label' },
   placeholder: { type: String, default: 'Enter a text' },
-  classes: { type: String, default: '' },
+  classes: { type: String, default: 'q-mb-sm' },
   rows: { type: Number, default: 3}
 });
 

@@ -61,7 +61,7 @@ const linksList = [
     link: "search"
   },
   {
-    title: "Edit Topic Index",
+    title: "Topic Index",
     icon: "edit",
     link: "topicindexeditor"
   },

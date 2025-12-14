@@ -489,6 +489,33 @@ export const getBookPaperTitle = (paper, language, upper) => {
 };
 
 /**
+ * Returns the link for a Urantia book paragraph in different formats.
+ * @param {UrantiaBook} book The Urantia Book instance.
+ * @param {string[]} ref Reference as three values.
+ * @param {string} copyType Type of format: 'Copy plain text', 'Copy Markdown' or
+ * 'Copy HTML'.
+ */
+export const getParLink = (book, ref, copyType) => {
+  if (!ref) return '';
+  const lan = book.language;
+  const bookAbb = Strings.bookAbb[lan];
+  const linkPLPattern = `/${lan}/The_Urantia_Book/{0}#p{1}_{2}`;
+  const p = `${bookAbb} {0}:{1}.{2}`;
+  const linkMDPattern = `[${p}](/${lan}/The_Urantia_Book/{0}#p{1}_{2})`;
+  const linkHTMLPattern = 
+    `<a href="/${lan}/The_Urantia_Book/{0}#p{1}_{2}">${p}</a>`;
+  
+  let pattern = linkHTMLPattern;
+
+  if (copyType === 'Copy plain text') {
+    pattern = linkPLPattern;
+  } else if (copyType === 'Copy Markdown') {
+    pattern = linkMDPattern;
+  }
+  return strformat(pattern, ref[0], ref[1], ref[2]);
+};
+
+/**
  * Returns of the possible names for a topic to use when searching, dealing with
  * issues in some languages.
  * @param {Object} topic A topic entry.
@@ -536,3 +563,156 @@ export const getRefsLocations = (content, length) => {
   return indexes;
 };
 
+/**
+ * Returns a value between [0,1] that gives the similarity of two strings based
+ * on Levenshtein distance. 1 means both strings are identical. If strings are
+ * empty returns 1.
+ * Params should be in english to work correctly.
+ * Based in: https://stackoverflow.com/questions/10473745/compare-strings-javascript-return-of-likely
+ * @param {string} s1 String 1.
+ * @param {string} s2 String 2.
+ * @returns {number}
+ */
+export const stringSimilarity = (s1, s2) => {
+  let longer = s1;
+  let shorter = s2;
+  if (s1.length < s2.length) {
+    longer = s2;
+    shorter = s1;
+  }
+  const longerLength = longer.length;
+  if (longerLength == 0) {
+    return 1.0;
+  }
+
+  longer = longer.toLowerCase();
+  shorter = shorter.toLowerCase();
+
+  const costs = [];
+  for (let i = 0; i <= longer.length; i++) {
+    let lastValue = i;
+    for (let j = 0; j <= shorter.length; j++) {
+      if (i == 0)
+        costs[j] = j;
+      else {
+        if (j > 0) {
+          let newValue = costs[j - 1];
+          if (longer.charAt(i - 1) != shorter.charAt(j - 1))
+            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+          costs[j - 1] = lastValue;
+          lastValue = newValue;
+        }
+      }
+    }
+    if (i > 0)
+      costs[shorter.length] = lastValue;
+  }
+  const editDistance = costs[shorter.length];
+
+  return (longerLength - editDistance) / parseFloat(longerLength);
+};
+
+/**
+ * Returns a value between [0,1] that gives the similarity of two sentences.
+ * It breaks the sentence in words and compares individual words to obtain
+ * a value. 1 means both sentences have the same words no matter the occurrences. 
+ * If strings are empty returns 1.
+ * Params should be in english to work correctly.
+ * @param {string} s1 Sentence.
+ * @param {string} s2 Sentence to compare.
+ * @returns {number}
+ */
+export const sentenceSimilarity = (s1, s2) => {
+  if (s1.length === 0 && s2.length === 0) return 1;
+  if (s2.length === 0 || s2.length === 0) return 0;
+
+  //Remove punctuation from strings
+  const ss1 = s1.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()@\+\?><\[\]\+]/g, '');
+  const ss2 = s2.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()@\+\?><\[\]\+]/g, '');
+  //Break sentences in arrays of lowercase distinct words
+  const ar1 = ss1.split(' ')
+    .map(w => w.toLowerCase())
+    .reduce((a, b) => {
+      if (!a.includes(b)) a.push(b);
+      return a;
+    }, []);
+  const ar2 = ss2.split(' ')
+    .map(w => w.toLowerCase())
+    .reduce((a, b) => {
+      if (!a.includes(b)) a.push(b);
+      return a;
+    }, []);
+  //Obtain words in 2 that are in 1
+  const found = ar2.reduce((a, b) => {
+    if (ar1.includes(b)) {
+      a.push(b);
+    }
+    return a;
+  }, []);
+  return parseFloat(found.length) / parseFloat(ar2.length);
+};
+
+/**
+ * Returns the most similar sentence in a paragraph to the given sentence.
+ * @param {string} par Paragraph.
+ * @param {string} sentence Sentence to search.
+ * @returns {(string|null)}
+ */
+export const getMostSimilarSentence = (par, sentence) => {
+  //Split parragraph into sentences
+  //Careful: some languages has points at long numbers (ex: 2.000.000)
+  // const arSen = par.split(/(?<=[.!?;:])\s+/);
+  const arSen = par.replace(/([.?!])/g, "$1|").split("|");
+  if (arSen.length === 0) return null;
+
+  //Map to arrays of [sentence, similarity]
+  const arSenSim = arSen.map(sen => [sen, sentenceSimilarity(sen, sentence)]);
+  //Order arrays by similarity
+  arSenSim.sort((a, b) => b[1] - a[1]);
+
+  return (arSenSim[0][1] > 0.5 ? arSenSim[0][0] : null);
+};
+
+/**
+ * Returns true if the reference in text form contains the reference in 
+ * number form. For example: '101:2.3,6-10' contains [101,2,3], and 
+ * [101,2,7] but not [101,2,4]. Works also giving the reference of a full 
+ * paper or a full section.
+ * @param {string} lu_ref Book reference in text form.
+ * @param {number} paperIndex Paper index starting in zero.
+ * @param {number} sectionIndex Section index starting in zero.
+ * @param {number} parIndex Paragraph index starting in 1.
+ * @return {boolean}
+ */
+export const containsRef = (lu_ref, paperIndex, sectionIndex, parIndex) => {
+  let data, data2, data3, paper_id, section_id;
+  data = lu_ref.split(':');
+  paper_id = parseInt(data[0]);
+  if (data.length === 1) {
+    return (paper_id === paperIndex);
+  } else if (data.length > 1 && paper_id === paperIndex) {
+    data2 = data[1].split('.');
+    section_id = parseInt(data2[0]);
+    if (data2.length === 1) {
+      return (section_id === sectionIndex);
+    } else if (data2.length > 1 && section_id === sectionIndex) {
+      data3 = data2[1].split(',');
+      return (data3.find(d => {
+        const dd = d.split('-');
+        if (dd.length === 1 && parseInt(d) === parIndex) {
+          return true;
+        } else if (
+          dd.length > 1 &&
+          !isNaN(parseInt(dd[0])) && 
+          !isNaN(parseInt(dd[1])) &&
+          parseInt(dd[0]) <= parIndex && 
+          parseInt(dd[1]) >= parIndex
+        ) {
+          return true;
+        }
+        return false;
+      }) != null);
+    }
+  }
+  return false;
+};

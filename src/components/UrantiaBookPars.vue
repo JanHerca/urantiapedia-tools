@@ -18,22 +18,24 @@
         class="text-right q-px-xs row items-center justify-end"
       >
         <span class="q-mr-sm">{{ ref }}</span>
-        <q-btn
+        <q-btn 
+          round dense flat 
           v-if="linkToCopy[index] !== ''"
-          size="sm"
-          color="secondary"
-          label="Copy link"
-          @click.stop="copyText(linkToCopy[index])"
-          class="q-py-none q-px-xs q-ml-xs"
-        />
-        <q-btn
+          color="secondary" 
+          icon="link" 
+          title="Copy link"
+          @click.stop="copyText(linkToCopy[index])">
+          <q-tooltip>Copy link</q-tooltip>
+        </q-btn>
+        <q-btn 
+          round dense flat 
           v-if="textToCopy[index] !== ''"
-          size="sm"
-          color="secondary"
-          label="Copy text"
-          @click.stop="copyText(textToCopy[index])"
-          class="q-py-none q-px-xs q-ml-xs"
-        />
+          color="secondary" 
+          icon="text_fields" 
+          title="Copy text"
+          @click.stop="copyText(textToCopy[index])">
+          <q-tooltip>Copy text</q-tooltip>
+        </q-btn>
       </div>
     </div>
   </q-item>

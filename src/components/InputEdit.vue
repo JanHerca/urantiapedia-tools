@@ -1,15 +1,18 @@
 <template>
-  <q-select 
+  <q-input 
+    dense outlined 
     :label="label"
-    :modelValue="options.find(option => option.value === theValue)" 
-    :options="options" 
-    option-value="value"
-    option-label="label" 
-    emit-value 
-    outlined 
-    options-dense
+    :modelValue="theValue" 
     :class="classes"
-    @update:modelValue="onSelected" />
+    @update:modelValue="onSelected" >
+    <template v-slot:after>
+      <q-btn 
+        round dense flat 
+        icon="edit" 
+        color="primary" 
+        @click="$emit('click')" />
+    </template>
+  </q-input>
 </template>
 
 <script setup>
@@ -21,7 +24,6 @@ const theValue = defineModel({
 
 const props = defineProps({
   label: { type: String, default: 'Label' },
-  options: { type: Array, default: () => [] },
   classes: { type: String, default: 'q-mb-sm' }
 });
 
@@ -29,6 +31,7 @@ const onSelected = (val) => {
   theValue.value = val;
 };
 
+defineEmits(['click']);
 </script>
 
 <style scoped></style>

@@ -16,7 +16,7 @@
 import { computed } from 'vue';
 const props = defineProps({
   text: { type: String, default: 'Label' },
-  classes: { type: String, default: '' },
+  classes: { type: String, default: 'q-mb-sm-md' },
   // primary, secondary, accent, dark, positive, negative, warning, info
   type: { type: String, default: 'primary' },
   dark: { type: Boolean, default: false }

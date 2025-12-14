@@ -12,9 +12,6 @@ export const useCopyArticles = (
   addLog
 ) => {
 
-  const m = `/${language.value}/article/`;
-  const m2 = `/${language.value}/book/`;
-
   /**
    * Copies an article.
    * @param {string} urantiapediaFolder Folder with content of Urantiapedia.
@@ -24,6 +21,8 @@ export const useCopyArticles = (
   const copyArticle = async (urantiapediaFolder, outputFolder, article) => {
     try {
       //Both articles and frontpages of books are considered
+      const m = `/${language.value}/article/`;
+      const m2 = `/${language.value}/book/`;
       const subpath = article.path.replace(m, '').replace(m2, '');
       const pathParts = subpath.split('/');
       const authorFolder = pathParts.length > 1 

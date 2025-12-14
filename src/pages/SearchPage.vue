@@ -6,87 +6,59 @@
           <InputGroupTextArea
             label="Old Refs"
             placeholder="1390.1;1392.5;1501"
-            :rows="3"
-            class="q-mb-sm"
-            v-model="oldRefs"
-          />
+            v-model="oldRefs" />
           <InputGroupTextArea
             label="New Refs"
             placeholder="126:3.6;126:4.7;135:5"
-            :rows="3"
-            class="q-mb-sm"
-            v-model="newRefs"
-          />
+            v-model="newRefs" />
           <InputGroupTextArea
             label="Text"
             placeholder="the only possible meaning the term Messiah"
-            :rows="3"
-            class="q-mb-sm"
-            v-model="searchText"
-          />
+            v-model="searchText" />
           <InputGroupFile
             label="File"
             placeholder="Browse path"
             v-model="fileName"
             class="q-pa-sm-none q-mb-sm-md"
-            classes="full-width"
-          />
-          <q-checkbox 
+            classes="full-width" />
+          <InputCheck 
             v-model="isFileSecondLan" 
-            label="File is in second language" 
-            size="sm" 
-            class="q-mb-sm" />
+            label="File is in second language" />
           <InputSelect
             label="Search language"
             :options="allLanguages" 
-            v-model="searchLanguage"
-            class="q-mb-sm"
-          />
+            v-model="searchLanguage" />
           <InputSelect
             label="Second language"
             :options="allLanguages" 
-            v-model="secondLanguage"
-            class="q-mb-sm"
-          />
-          <q-checkbox 
+            v-model="secondLanguage" />
+          <InputCheck 
             v-model="copyWithQuotes" 
-            label="Copy with quotation marks" 
-            size="sm" 
-            class="q-mb-sm" 
-          />
-          <q-checkbox 
+            label="Copy with quotation marks" />
+          <InputCheck 
             v-model="copyWithLink" 
-            label="Copy text with link" 
-            size="sm" 
-            class="q-mb-sm" 
-          />
+            label="Copy text with link" />
           <InputSelect
             label="Copy type"
             :options="copyTypes" 
-            v-model="copyType"
-            class="q-mb-sm"
-          />
+            v-model="copyType" />
         </div>
         <div class="q-pt-sm">
           <ButtonProgress
             :processing="isSearching"
             :label="Strings.btnSearch[uiLanguage]"
             class="full-width"
-            @click="startSearch"
-          />
+            @click="startSearch" />
           <ButtonProgress
             :processing="isAddingQuotes"
             label="Add Quotes to Files"
             class="full-width"
-            @click="addQuotes"
-          />
+            @click="addQuotes" />
           <Message 
             v-if="error != null"
             type="warning"
             :dark="darkTheme"
-            :text="error"
-            class="q-mb-sm-md"
-          />
+            :text="error" />
         </div>
       </div>
 
@@ -125,6 +97,7 @@
 import { storeToRefs } from 'pinia';
 import { useSearch } from 'src/stores/search';
 import { Strings } from 'src/core/strings';
+import InputCheck from 'src/components/InputCheck.vue';
 import InputGroupTextArea from 'src/components/InputGroupTextArea.vue';
 import InputGroupFile from 'src/components/InputGroupFile.vue';
 import InputSelect from 'src/components/InputSelect.vue';
