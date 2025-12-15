@@ -30,7 +30,7 @@ const theValue = defineModel({
 const props = defineProps({
   label: { type: String, default: 'Label' },
   options: { type: Array, default: () => [] },
-  classes: { type: String, default: '' }
+  classes: { type: String, default: 'q-pa-xs-none q-mb-xs-md' }
 });
 
 const onSelected = (val) => {

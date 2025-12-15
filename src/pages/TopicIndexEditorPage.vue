@@ -52,8 +52,7 @@
             :dark="darkTheme"
             :text="error" />
         </div>
-        <q-separator class="q-my-sm" />
-        <div class="col scroll rounded-borders border-grey">
+        <div class="col scroll rounded-borders border-grey q-mb-xs-sm">
           <q-list dense separator>
             <TopicListItem
               v-for="topic in topicList"
@@ -64,6 +63,20 @@
             />
           </q-list>
         </div>
+        <q-btn-dropdown 
+          label="Topic Data" 
+          color="primary">
+          <TopicData
+            v-model:topicName="topicName"
+            v-model:topicUrl="topicUrl"
+            v-model:topicAliases="topicAliases"
+            v-model:topicRefs="topicRefs"
+            v-model:topicSeeAlso="topicSeeAlso"
+            v-model:topicLinks="topicLinks"
+            v-model:topicCategory="topicCategory"
+            v-model:topicRevised="topicRevised"
+          />
+        </q-btn-dropdown>
       </div>
       <div class="col column no-wrap">
         <q-banner class="q-mb-sm">Topic content & errors</q-banner>
@@ -140,15 +153,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useTopics } from 'src/stores/topics';
 import InputCheck from 'src/components/InputCheck.vue';
-import InputEdit from 'src/components/InputEdit.vue';
 import InputSelect from 'src/components/InputSelect.vue';
 import ProgressButton from 'src/components/ProgressButton.vue';
 import Message from 'src/components/Message.vue';
-import RoundButton from 'src/components/RoundButton.vue';
+import TopicData from 'src/components/TopicData.vue';
 import TopicListItem from 'src/components/TopicListItem.vue';
 import TopicLines from 'src/components/TopicLines.vue';
 import UrantiaBookPars from 'src/components/UrantiaBookPars.vue';

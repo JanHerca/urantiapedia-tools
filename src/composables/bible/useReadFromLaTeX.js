@@ -53,7 +53,7 @@ export const useReadFromLaTeX = (
             errors.push(getError(uiLanguage.value, 'bible_title_invalid', baseName, i));
           } else {
             bookIndex = booknames.indexOf(extract);
-            book.file = path.basename(baseName, '.tex');
+            book.file = path.basename(baseName.replace(/\\/g, '/'), '.tex');
             book.title = extract;
             book.titleEN = booknamesEN[bookIndex];
             book.path = bookpaths[bookIndex];
@@ -161,7 +161,7 @@ export const useReadFromLaTeX = (
   const readFileFromLaTeX = async (filePath) => {
     try {
       addLog(`Reading file ${filePath}`);
-      const baseName = path.basename(filePath);
+      const baseName = path.basename(filePath.replace(/\\/g, '/'));
       const buf = await window.NodeAPI.readFile(filePath);
       const lines = buf.toString().split('\n');
       const errors = [];

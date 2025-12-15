@@ -66,7 +66,7 @@ export const useWriteIndexToWikijs = (
   const writeIndexToWikijs = async (dirPath, index, topicIndex, topicIndexEN) => {
     try {
       let filename = null;
-      const baseName = path.basename(dirPath);
+      const baseName = path.basename(dirPath.replace(/\\/g, '/'));
       if (index === 'ALL') {
         filename = 'topics.html';
       } else if (index === 'PERSON') {

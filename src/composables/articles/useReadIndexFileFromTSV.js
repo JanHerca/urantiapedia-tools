@@ -26,8 +26,8 @@ export const useReadIndexFileFromTSV = (
     addLog(`Reading file: ${filePath}`);
     try {
       const lan = language.value;
-      const baseName = path.basename(filePath);
-      const baseName2 = path.basename(filePath, '.tsv');
+      const baseName = path.basename(filePath.replace(/\\/g, '/'));
+      const baseName2 = path.basename(filePath.replace(/\\/g, '/'), '.tsv');
       const indexPath = `/${lan}/index/${baseName2}`;
       const correction = {
         "\\.": "",

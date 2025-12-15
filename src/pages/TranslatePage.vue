@@ -1,76 +1,50 @@
 <template>
-  <q-page class="q-pa-sm-md">
-    <div class="row">
-      <div class="col">
-        <InputGroupSelect
-          id="drpTranslateLanguage1"
-          label="Origin Language"
-          :options="allLanguages"
-          v-model="translateSourceLanguage"
-          class="q-pa-sm-none q-mb-sm-md"
-          classes="full-width"
-        />
-      </div>
-      <div class="col">
-        <InputGroupSelect
-          id="drpTranslateLanguage2"
-          label="Target Language"
-          placeholder="Browse path"
-          :options="allLanguages"
-          v-model="translateTargetLanguage"
-          class="q-pa-sm-none q-mb-sm-md"
-          classes="full-width"
-        />
-      </div>
-    </div>
-    <InputGroupFolder
-      id="fnTranslateOriginFolder"
-      label="Origin folder"
-      class="q-pa-sm-none q-mb-sm-md"
-      classes="full-width"
-    />
-    <div class="form-group row p-0 mb-2">
-      <div class="input-group input-group-sm col-sm-12">
-        <div class="input-group-prepend">
-          <span id="lblTranslateOriginFolder" class="input-group-text">Origin folder:</span>
+  <q-page class="q-pa-md column no-scroll no-wrap" :style-fn="pageStyle">
+    <div class="row col q-col-gutter-sm no-wrap">
+      <div class="col-4 column no-wrap">
+        <div class="col scroll q-pr-sm">
+          <InputGroupSelect
+            label="Origin Language"
+            :options="allLanguages"
+            v-model="sourceLanguage" />
+          <InputGroupSelect
+            label="Target Language"
+            :options="allLanguages"
+            v-model="targetLanguage" />
+          <InputGroupFolder
+            label="Origin folder"
+            v-model="sourceFolder" />
+          <InputGroupFolder
+            label="Target folder"
+            v-model="targetFolder" />
         </div>
-        <input id="fnTranslateOriginFolder" class="form-control" type="text" placeholder="Browse path"
-          readonly="readonly" />
-        <div class="input-group-append">
-          <button id="fnTranslateOriginClear" class="btn btn-sm btn-secondary" type="button"><i
-              class="bi-x-lg"></i></button>
-          <button id="fnTranslateOriginOpen" class="btn btn-sm btn-secondary" type="button"><i
-              class="bi-file-earmark"></i></button>
+        <div class="q-pt-sm">
+          <Message 
+            v-if="urantiapediaFolder === ''"
+            type="warning"
+            :dark="darkTheme"
+            text="Urantiapedia folder is required in Settings." />
+          <ProgressButton
+            :processing="translating"
+            label="Translate"
+            @click="startTranslate" />
+          <ProgressButton
+            :processing="estimating"
+            label="Estimate"
+            @click="startEstimate" 
+            classes="full-width" />
         </div>
       </div>
-    </div>
-    <div class="form-group row p-0 mb-2">
-      <div class="input-group input-group-sm col-sm-12">
-        <div class="input-group-prepend">
-          <span id="lblTranslateTargetFolder" class="input-group-text">Target folder:</span>
+      <div class="col col-8 column no-wrap">
+        <div class="row q-col-gutter-sm q-mb-sm q-pb-none">
+          <TerminalButtonGroup
+            v-model:logs-complete="logsComplete"
+            v-model:logs-filter="logsFilter"
+          />
         </div>
-        <input id="fnTranslateTargetFolder" class="form-control" type="text" placeholder="Browse path"
-          readonly="readonly" />
-        <div class="input-group-append">
-          <button id="fnTranslateTargetClear" class="btn btn-sm btn-secondary" type="button"><i
-              class="bi-x-lg"></i></button>
-          <button id="fnTranslateTargetOpen" class="btn btn-sm btn-secondary" type="button"><i
-              class="bi-file-earmark"></i></button>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row p-0 mb-2">
-      <div class="col-sm-10">
-        <button id="translateButton" class="btn btn-sm btn-secondary" type="button">Translate</button>
-        <button id="estimateButton" class="btn btn-sm btn-secondary" type="button">Estimate</button>
-      </div>
-      <div class="col-sm-2">
-        <div class="spinner-border d-none" role="status" id="translateProgress"></div>
-      </div>
-    </div>
-    <div class="form-group row p-0 mb-0 logContainer">
-      <div class="col-sm-12 col-form-label-sm alert alert-secondary mb-0">
-        <div id="logAreaTranslate"></div>
+        <Terminal 
+          :logs="filteredLogs" 
+          class="col scroll" />
       </div>
     </div>
   </q-page>
@@ -79,16 +53,36 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import InputGroupSelect from 'src/components/InputGroupSelect.vue';
-import InputGroupToggle from 'src/components/InputGroupToggle.vue';
-import InputGroupPassword from 'src/components/InputGroupPassword.vue';
-import { useMain } from 'src/stores/main';
-import InputGroupFile from 'src/components/InputGroupFile.vue';
 import InputGroupFolder from 'src/components/InputGroupFolder.vue';
+import Message from 'src/components/Message.vue';
+import Terminal from 'src/components/Terminal.vue';
+import TerminalButtonGroup from 'src/components/TerminalButtonGroup.vue';
+import ProgressButton from 'src/components/ProgressButton.vue';
+import { useTranslate } from 'src/stores/translate';
 
-const mainStore = useMain();
-const { allLanguages } = mainStore;
+const translateStore = useTranslate();
+const {
+  allLanguages,
+  startTranslate,
+  startEstimate
+} = translateStore;
 const { 
-  translateSourceLanguage,
-  translateTargetLanguage,
-} = storeToRefs(mainStore);
+  urantiapediaFolder,
+  darkTheme,
+  sourceLanguage,
+  targetLanguage,
+  sourceFolder,
+  targetFolder,
+  translating,
+  estimating,
+  logs: logsComplete,
+  filteredLogs,
+  logsFilter
+} = storeToRefs(translateStore);
+
+const pageStyle = (offset) => {
+  // offset is header height (around 50px)
+  return { height: `calc(100vh - ${offset}px)` };
+};
+
 </script>

@@ -302,7 +302,6 @@ export const useSearch = defineStore('search', () => {
       executeSearch(lines);
     } catch (err) {
       error.value = err.message;
-      console.error(err);
     } finally {
       isSearching.value = false;
     }

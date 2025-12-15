@@ -44,7 +44,7 @@ export const useReadFromTXT = (
    * @returns {Object} Object with book title, abbreviation, and references.
    */
   const extractFromTXT = (baseName, lines) => {
-    const booknameEN = path.basename(baseName, '.txt');
+    const booknameEN = path.basename(baseName.replace(/\\/g, '/'), '.txt');
     const booknamesEN = Object.values(BibleAbbs.en).map(e => e[0]);
     const booknames = Object.values(BibleAbbs[language.value]).map(e => e[0]);
     const bookabbs = Object.keys(BibleAbbs[language.value]);
@@ -119,7 +119,7 @@ export const useReadFromTXT = (
    */
   const readFileFromTXT = async(filePath) => {
     addLog(`Reading file: ${filePath}`);
-    const baseName = path.basename(filePath);
+    const baseName = path.basename(filePath.replace(/\\/g, '/'));
 
     try {
       const buf = await window.NodeAPI.readFile(filePath);

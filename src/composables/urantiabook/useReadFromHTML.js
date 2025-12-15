@@ -165,11 +165,11 @@ export const useReadFromHTML = (
   const readFileFromHTML = async (filePath) => {
     addLog(`Reading file: ${filePath}`);
     try {
-      const baseName = path.basename(filePath);
+      const baseName = path.basename(filePath.replace(/\\/g, '/'));
       const dirPath = path.dirname(filePath);
       const ext = path.extname(filePath);
       const fname = baseName.replace(ext, '');
-      const language = path.basename(dirPath).replace('book-', '');
+      const language = path.basename(dirPath.replace(/\\/g, '/')).replace('book-', '');
       const paperIndex = parseInt(fname.substring(fname.length - 3));
       const config = bookConfigs.find(c => c.languages.indexOf(language) != -1);
 

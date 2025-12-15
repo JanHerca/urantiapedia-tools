@@ -80,7 +80,7 @@ export const useCopyArticles = (
     try {
       addLog(`Copying articles to folder: ${outputFolder}`);
       
-      const baseName = path.basename(outputFolder);
+      const baseName = path.basename(outputFolder.replace(/\\/g, '/'));
       const exists = await window.NodeAPI.exists(outputFolder);
       if (!exists) {
         throw getError(uiLanguage.value, 'folder_no_access', baseName);

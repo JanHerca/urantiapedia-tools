@@ -25,7 +25,7 @@ export const useReadRefsFromJSON = (
     addLog(`Accessing folder: ${dirPath}`);
 
     try {
-      const baseName = path.basename(dirPath);
+      const baseName = path.basename(dirPath.replace(/\\/g, '/'));
       const access = await window.NodeAPI.exists(dirPath);
       if (!access) {
         throw getError(uiLanguage.value, 'folder_no_access', baseName);

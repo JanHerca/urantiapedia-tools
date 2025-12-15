@@ -21,7 +21,7 @@ export const useReadFromJSON = (
    */
   const readFileFromJSON = async(filePath) => {
     addLog(`Reading file: ${filePath}`);
-    const baseName = path.basename(filePath);
+    const baseName = path.basename(filePath.replace(/\\/g, '/'));
     const paperIndex = parseInt(extractStr(baseName, 'Doc', '.json'));
     if (isNaN(paperIndex)) {
       throw getError(uiLanguage.value, 'book_no_paper_index', baseName, 1);

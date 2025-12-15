@@ -34,7 +34,7 @@ const thePassword = defineModel({
 
 const props = defineProps({
   label: { type: String, default: 'Label' },
-  classes: { type: String, default: '' }
+  classes: { type: String, default: 'full-width q-pa-xs-none q-mb-xs-md' }
 });
 
 </script>

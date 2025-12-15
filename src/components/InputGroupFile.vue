@@ -15,7 +15,7 @@
         <q-icon 
           name="file_open" 
           @click="onOpenFileClick" 
-          class="cursor-pointer q-pr-sm-sm" />
+          class="cursor-pointer q-pr-xs-sm" />
         <q-icon 
           name="close" 
           @click="theFilePath = ''" 
@@ -35,7 +35,7 @@ const theFilePath = defineModel({
 const props = defineProps({
   label: { type: String, default: 'Label' },
   placeholder: { type: String, default: 'Select a file' },
-  classes: { type: String, default: '' },
+  classes: { type: String, default: 'full-width q-pa-xs-none q-mb-xs-md' },
   basePath: { type: String, default: '' },
   filters: { type: Array, default: () => ['*'] }
 });

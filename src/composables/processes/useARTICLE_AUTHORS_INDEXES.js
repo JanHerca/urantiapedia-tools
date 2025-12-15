@@ -67,7 +67,7 @@ export const useARTICLE_AUTHORS_INDEXES = (
   const getAuthorPaths = async (dirPath) => {
     const lan = language.value;
     const paths = await getFolders(dirPath);
-    return paths.map(p => `/${lan}/article/${path.basename(p)}`);
+    return paths.map(p => `/${lan}/article/${path.basename(p.replace(/\\/g, '/'))}`);
   };
 
   /**
@@ -87,7 +87,7 @@ export const useARTICLE_AUTHORS_INDEXES = (
     try {
       const files = await getFiles(indexesFolder);
       const promises = files
-        .filter(f => path.basename(f).startsWith('articles'))
+        .filter(f => path.basename(f.replace(/\\/g, '/')).startsWith('articles'))
         .map(f => readIndexFileFromTSV(f));
       const results = await Promise.all(promises);
       const errors = results.filter(r => r.error).map(r => r.error);

@@ -19,7 +19,7 @@ const props = defineProps({
   label: { type: String },
   processing: { type: Boolean, default: false },
   color: { type: String, default: 'primary'},
-  classes: { type: String, default: 'full-width q-mb-sm-md'}
+  classes: { type: String, default: 'full-width q-mb-xs-sm'}
 });
 </script>
 

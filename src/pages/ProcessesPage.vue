@@ -1,71 +1,62 @@
 <template>
-  <q-page class="q-pa-md column">
-    <div class="row col q-col-gutter-md">
-      <div class="col-12 col-md-6 column">
-        <InputGroupSelect 
-          :label="Strings.lblLanguage[uiLanguage]" 
-          :options="allLanguages" 
-          v-model="language"
-          class="q-pa-sm-none q-mb-sm-md"
-        />
-        <InputGroupSelect 
-          :label="Strings.lblProcess[uiLanguage]" 
-          :options="allProcesses" 
-          v-model="process"
-          class="q-pa-sm-none q-mb-sm-md"
-        />
-        <div
-          v-for="control in processData.controls">
-          <InputGroupFolder
-            v-if="control.type === 'folder'"
-            label="Folder"
-            v-model="control.value"
-            :basePath="urantiapediaFolder"
-            class="q-pa-sm-none q-mb-sm-md"
-            classes="full-width"
-          />
-          <InputGroupFile
-            v-if="control.type === 'file'"
-            label="File"
-            v-model="control.value"
-            class="q-pa-sm-none q-mb-sm-md"
-            classes="full-width"
-          />
+  <q-page class="q-pa-md column no-scroll no-wrap" :style-fn="pageStyle">
+    <div class="row col q-col-gutter-sm no-wrap">
+      <div class="col-4 column no-wrap">
+        <div class="col scroll q-pr-sm">
           <InputGroupSelect 
-            v-if="control.type === 'select'"
-            :label="Strings[`lbl${control.subtype}`][uiLanguage]" 
-            :options="control.values" 
-            v-model="control.value"
-            class="q-pa-sm-none q-mb-sm-md"
-          />
-          <InputGroupText
-            v-if="control.type === 'text'"
-            :label="control.label"
-            :placeholder="control.placeholder"
-            v-model="control.value"
-            class="q-pa-sm-none q-mb-sm-md"
-            classes="full-width"
-          />
+            :label="Strings.lblLanguage[uiLanguage]" 
+            :options="allLanguages" 
+            v-model="language" />
+          <InputGroupSelect 
+            :label="Strings.lblProcess[uiLanguage]" 
+            :options="allProcesses" 
+            v-model="process" />
+          <div
+            v-for="control in processData.controls">
+            <InputGroupFolder
+              v-if="control.type === 'folder'"
+              label="Folder"
+              v-model="control.value"
+              :basePath="urantiapediaFolder" />
+            <InputGroupFile
+              v-if="control.type === 'file'"
+              label="File"
+              v-model="control.value" />
+            <InputGroupSelect 
+              v-if="control.type === 'select'"
+              :label="Strings[`lbl${control.subtype}`][uiLanguage]" 
+              :options="control.values" 
+              v-model="control.value" />
+            <InputGroupText
+              v-if="control.type === 'text'"
+              :label="control.label"
+              :placeholder="control.placeholder"
+              v-model="control.value" />
+          </div>
         </div>
-        <Message 
-          v-if="urantiapediaFolder === ''"
-          type="warning"
-          :dark="darkTheme"
-          text="Urantiapedia folder is required in Settings."
-          class="q-mb-sm-md"
-        />
-        <div>
+        <div class="q-pt-sm">
+          <Message 
+            v-if="urantiapediaFolder === ''"
+            type="warning"
+            :dark="darkTheme"
+            text="Urantiapedia folder is required in Settings." />
           <ProgressButton
             :processing="processing"
             :label="Strings.exeButton[uiLanguage]"
-            @click="onExecuteClick"
-          />
+            @click="onExecuteClick" 
+            classes="full-width" />
         </div>
       </div>
-      <div class="col-12 col-md-6 column">
+      <div class="col col-8 column no-wrap">
+        <div class="row q-col-gutter-sm q-mb-sm q-pb-none">
+          <TerminalButtonGroup
+            v-model:logs-complete="logsComplete"
+            v-model:logs-filter="logsFilter"
+          />
+        </div>
         <Terminal 
           :logs="filteredLogs" 
-          class="col" />
+          class="col scroll" />
       </div>
     </div>
   </q-page>
@@ -79,6 +70,7 @@ import InputGroupFile from 'src/components/InputGroupFile.vue';
 import InputGroupText from 'src/components/InputGroupText.vue';
 import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
+import TerminalButtonGroup from 'src/components/TerminalButtonGroup.vue';
 import ProgressButton from 'src/components/ProgressButton.vue';
 import { Strings } from 'src/core/strings';
 import { useMain } from 'src/stores/main';
@@ -138,10 +130,17 @@ const {
   processData,
   processing,
   allProcesses,
+  logs: logsComplete,
   filteredLogs,
+  logsFilter,
 } = storeToRefs(mainStore);
 
 const topicIndexes = ['ALL', ...topicTypes];
+
+const pageStyle = (offset) => {
+  // offset is header height (around 50px)
+  return { height: `calc(100vh - ${offset}px)` };
+};
 
 //Handlers
 

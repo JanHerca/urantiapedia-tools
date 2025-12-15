@@ -22,7 +22,7 @@ export const useNormalize = (
   const normalizeFile = async (filePath) => {
     addLog(`Reading file: ${filePath}`);
     try {
-      const baseName = path.basename(filePath);
+      const baseName = path.basename(filePath.replace(/\\/g, '/'));
       const lines = buf.toString().split('\n');
       const errors = [];
       let result = '';

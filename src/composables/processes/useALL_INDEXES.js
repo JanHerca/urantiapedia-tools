@@ -32,7 +32,7 @@ export const useALL_INDEXES = (
       addLog(`Reading folder: ${dirPath}`);
       const lan = language.value;
 
-      const baseName = path.basename(dirPath);
+      const baseName = path.basename(dirPath.replace(/\\/g, '/'));
       const exists = await window.NodeAPI.exists(dirPath);
       if (!exists) {
         throw getError(uiLanguage.value, 'dir_no_access', baseName)

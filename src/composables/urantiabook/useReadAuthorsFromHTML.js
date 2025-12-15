@@ -46,7 +46,7 @@ export const useReadAuthorsFromHTML = (
   const readAuthorsFromHTML = async (dirPath, papers) => {
     addLog(`Reading authors file in folder: ${dirPath}`);
     let files = null;
-    const language = path.basename(dirPath).replace('book-', '');
+    const language = path.basename(dirPath.replace(/\\/g, '/')).replace('book-', '');
     try {
       files = await window.NodeAPI.readDir(dirPath);
     } catch (err) {

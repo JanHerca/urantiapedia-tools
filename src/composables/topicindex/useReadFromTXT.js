@@ -44,7 +44,7 @@ export const useReadFromTXT = (
   const readFileFromTXT = async (filePath, category = 'ALL', letter = 'ALL') => {
     addLog(`Reading file: ${filePath}`);
     try {
-      const baseName = path.basename(filePath);
+      const baseName = path.basename(filePath.replace(/\\/g, '/'));
       if (letter != 'ALL' && !baseName.startsWith(letter)) {
         return null;
       }

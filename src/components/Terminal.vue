@@ -1,108 +1,78 @@
 <template>
-  <div class="column fit">
-    <q-btn-group flat>
-      <q-btn 
-        icon="warning" 
-        label="Warnings" 
-        color="orange-7"
-        size="sm"
-        @click="logsFilter = (logsFilter === 'warning' ? null : 'warning')"
-        :flat="logsFilter !== 'warning'"
-      />
-      <q-btn 
-        icon="error" 
-        label="Errors" 
-        color="red-7"
-        size="sm"
-        @click="logsFilter = (logsFilter === 'error' ? null : 'error')"
-        :flat="logsFilter !== 'error'"
-      />
-      <q-btn 
-        icon="not_interested" 
-        label="Clear" 
-        color="primary"
-        size="sm"
-        flat
-        @click="logsComplete = []"
-      />
-    </q-btn-group>
-    <QCard dark class="terminal-card col">
-      <QScrollArea 
-        class="terminal-output-area" 
-        ref="scrollAreaRef"
-        :thumb-style="{
-          borderRadius: '5px',
-          backgroundColor: '#027be3',
-          width: '10px',
-          opacity: 0.75
-        }"
-        :bar-style="{
-          borderRadius: '9px',
-          backgroundColor: '#027be3',
-          width: '10px',
-          opacity: 0.2
-        }"
-        >
-        <div 
-          class="fit"
-          v-for="(log, index) in logs" 
-          :key="index" 
-          :class="['log-line', `log-type-${log.type}`]"
-        >
-          <template v-if="log.type !== 'table'">
-            <span class="timestamp">[{{ log.time }}]</span>
-            <span class="message">{{ log.message }}</span>
-            <QExpansionItem
-              v-if="log.type === 'error' && log.stack && log.stack.length > 0"
-              dense
-              switch-toggle-side
-              label="Stack Trace"
-              class="stack-trace-expansion"
-            >
-              <div class="stack-trace-content">
-                <div 
-                  v-for="(line, lineIndex) in log.stack" 
-                  :key="lineIndex"
-                  class="stack-trace-line"
-                >
-                  {{ line }}
+  <q-card dark class="terminal-card">
+    <div class="row full-width">
+      <div class="col-12 q-pa-sm">
+        <q-list 
+          class="terminal-output-area" 
+          ref="scrollAreaRef"
+          :thumb-style="{
+            borderRadius: '5px',
+            backgroundColor: '#027be3',
+            width: '10px',
+            opacity: 0.75
+          }"
+          :bar-style="{
+            borderRadius: '9px',
+            backgroundColor: '#027be3',
+            width: '10px',
+            opacity: 0.2
+          }"
+          >
+          <div 
+            class="fit"
+            v-for="(log, index) in logs" 
+            :key="index" 
+            :class="['log-line', `log-type-${log.type}`]"
+          >
+            <template v-if="log.type !== 'table'">
+              <span class="timestamp">[{{ log.time }}]</span>
+              <span class="message">{{ log.message }}</span>
+              <q-expansion-item
+                v-if="log.type === 'error' && log.stack && log.stack.length > 0"
+                dense
+                switch-toggle-side
+                label="Stack Trace"
+                class="stack-trace-expansion"
+              >
+                <div class="stack-trace-content">
+                  <div 
+                    v-for="(line, lineIndex) in log.stack" 
+                    :key="lineIndex"
+                    class="stack-trace-line"
+                  >
+                    {{ line }}
+                  </div>
                 </div>
-              </div>
-            </QExpansionItem>
-          </template>
-
-          <div v-else class="table-container">
-            <q-table
-              v-if="log.table"
-              :rows="log.table"
-              :title="log.message"
-              row-key="name"
-              dense
-              :rows-per-page-options="[0]"
-              hide-pagination
-              :class="['terminal-table', 'q-mt-sm']"
-            >
-              <template v-slot:body-cell="props">
-                <q-td :props="props" class="terminal-table-cell">
-                  {{ props.value }}
-                </q-td>
-              </template>
-            </q-table>
+              </q-expansion-item>
+            </template>
+    
+            <div v-else class="table-container">
+              <q-table
+                v-if="log.table"
+                :rows="log.table"
+                :title="log.message"
+                row-key="name"
+                dense
+                :rows-per-page-options="[0]"
+                hide-pagination
+                :class="['terminal-table', 'q-mt-sm']"
+              >
+                <template v-slot:body-cell="props">
+                  <q-td :props="props" class="terminal-table-cell">
+                    {{ props.value }}
+                  </q-td>
+                </template>
+              </q-table>
+            </div>
           </div>
-        </div>
-      </QScrollArea>
-    </QCard>
-  </div>
+        </q-list>
+      </div>
+    </div>
+  </q-card>
 </template>
 
 <script setup>
 import { ref, watch, nextTick } from 'vue';
-import { storeToRefs } from 'pinia';
-import { QCard, QScrollArea, QExpansionItem } from 'quasar';
-import { useMain } from 'src/stores/main';
-
-const mainStore = useMain();
-const { logs: logsComplete , logsFilter } = storeToRefs(mainStore);
 
 //Props
 const props = defineProps({
@@ -118,13 +88,13 @@ const props = defineProps({
 const scrollAreaRef = ref(null);
 
 //Watchers
-watch(props.logs, () => {
-  nextTick(() => {
-    if (scrollAreaRef.value) {
-      scrollAreaRef.value.setScrollPercentage('vertical', 1);
-    }
-  });
-}, { deep: true });
+// watch(props.logs, () => {
+//   nextTick(() => {
+//     if (scrollAreaRef.value) {
+//       scrollAreaRef.value.setScrollPercentage('vertical', 1);
+//     }
+//   });
+// }, { deep: true });
 </script>
 
 <style scoped>
@@ -133,18 +103,6 @@ watch(props.logs, () => {
   color: #cccccc;
   border-radius: 4px;
   border: 1px solid #333;
-  position: relative;
-  height: 100%;
-  min-height: 0;
-  width: 100%;
-}
-.terminal-output-area {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  padding: 8px;
 }
 .log-line {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;

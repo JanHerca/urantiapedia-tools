@@ -44,21 +44,20 @@
             v-model="copyType" />
         </div>
         <div class="q-pt-sm">
-          <ProgressButton
-            :processing="isSearching"
-            :label="Strings.btnSearch[uiLanguage]"
-            class="full-width"
-            @click="startSearch" />
-          <ProgressButton
-            :processing="isAddingQuotes"
-            label="Add Quotes to Files"
-            class="full-width"
-            @click="addQuotes" />
           <Message 
             v-if="error != null"
             type="warning"
             :dark="darkTheme"
             :text="error" />
+          <ProgressButton
+            :processing="isSearching"
+            :label="Strings.btnSearch[uiLanguage]"
+            @click="startSearch" />
+          <ProgressButton
+            :processing="isAddingQuotes"
+            label="Add Quotes to Files"
+            @click="addQuotes" 
+            classes="full-width"/>
         </div>
       </div>
 
