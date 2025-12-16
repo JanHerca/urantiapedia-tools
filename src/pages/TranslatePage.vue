@@ -26,8 +26,15 @@
             text="Urantiapedia folder is required in Settings." />
           <ProgressButton
             :processing="translating"
-            label="Translate"
+            label="Translate (One Step)"
             @click="startTranslate" />
+          <ProgressButtonGroup
+            :processing1="preparing"
+            :processing2="building"
+            label1="Translate (1/2 Step) - Prepare"
+            label2="Translate (2/2 Step) - Build"
+            @click1="prepareTranslation" 
+            @click2="buildTranslation" />
           <ProgressButton
             :processing="estimating"
             label="Estimate"
@@ -58,12 +65,15 @@ import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
 import TerminalButtonGroup from 'src/components/TerminalButtonGroup.vue';
 import ProgressButton from 'src/components/ProgressButton.vue';
+import ProgressButtonGroup from 'src/components/ProgressButtonGroup.vue';
 import { useTranslate } from 'src/stores/translate';
 
 const translateStore = useTranslate();
 const {
   allLanguages,
   startTranslate,
+  prepareTranslation,
+  buildTranslation,
   startEstimate
 } = translateStore;
 const { 
@@ -74,6 +84,8 @@ const {
   sourceFolder,
   targetFolder,
   translating,
+  preparing,
+  building,
   estimating,
   logs: logsComplete,
   filteredLogs,

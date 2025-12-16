@@ -2,14 +2,16 @@ import { reflectPromise } from 'src/core/utils.js';
 import { useGetFiles } from '../useGetFiles.js';
 import { useProcessLines } from './useProcessLines.js';
 
+import path from 'path';
+
 /**
- * Estimates number of characters required for translation in all Markdown
-   * files inside a folder.
+ * Creates a collection of files with content ready for being translated in an
+ * external tool.
  * @param {Ref<string>} uiLanguage UI language ref.
  * @param {function} addLog Function to add log messages.
  * @param {function} addWarning Function to add warning messages.
  */
-export const useEstimateFolder = (
+export const usePrepareTranslation = (
   uiLanguage,
   addLog,
   addWarning
@@ -18,20 +20,23 @@ export const useEstimateFolder = (
   const { processLines } = useProcessLines(uiLanguage, addLog);
 
   /**
-   * Estimates number of characters required for translation in a Markdown file.
+   * Creates a collection of files with content ready for being translated in an
+   * external tool.
    * @param {string} sourcePath Source file path.
    * @param {string} sourceLan Source language code, like `en`.
    * @param {string} targetLan Target language code, like `es`.
    * @param {boolean} isLibraryBook If it is a book (otherwise is an article).
+   * @param {UrantiaBook} sourceBook Urantia Book in source language.
    * @param {UrantiaBook} targetBook Urantia Book in target language.
-   * @return {Promise} Returns an array of strings with a report of issues found.
+   * @param {string} urantiapediaFolder Urantiapedia folder.
    */
-  const estimateFile = async (
+  const prepareFile = async (
     sourcePath,
     sourceLan,
     targetLan,
     isLibraryBook,
-    targetBook
+    sourceBook,
+    targetBook,
   ) => {
     const result = {};
     try {
@@ -39,54 +44,48 @@ export const useEstimateFolder = (
       const buf = await window.NodeAPI.readFile(sourcePath);
       const lines = buf.toString().split('\n');
 
-      addLog(`Estimating file: ${sourcePath}`);
-      //Process lines
+      addLog(`Preparing translation of file: ${sourcePath}`);
+      //Preparing
       const errors = [];
       result.objects = processLines(lines, sourceLan, targetLan, isLibraryBook,
         targetBook, errors);
       result.errors = errors.flat().slice();
-      const lineCount = result.objects
-        .reduce((ac, cur) => ac + cur.line.length, 0);
-      result.lineCount = lineCount;
-      const trCount = result.objects
-        .filter(obj => obj.ignore != true)
-        .reduce((ac, cur) => ac + (cur.text ? cur.text.length : 0), 0);
-      result.trCount = trCount;
-      if (result.errors.length > 0) {
-        result.errors.forEach(e => addWarning(e));
-      }
       return result;
+
     } catch (err) {
       throw err;
     }
-  }
+  };
+
 
   /**
-   * Estimates number of characters required for translation in all Markdown
-   * files inside a folder.
+   * Creates a collection of files with content ready for being translated in an
+   * external tool.
    * @param {string} sourcePath Source file path.
+   * @param {string} sourcePath Target file path.
    * @param {string} sourceLan Source language code, like `en`.
    * @param {string} targetLan Target language code, like `es`.
    * @param {boolean} isLibraryBook If it is a book (otherwise is an article).
+   * @param {UrantiaBook} sourceBook Urantia Book in source language.
    * @param {UrantiaBook} targetBook Urantia Book in target language.
    * @param {string} urantiapediaFolder Urantiapedia folder.
-   * @return {Promise<Object>} Returns an object with objects (information for
-   * translation) and summary (a table summarizing estimations).
    */
-  const estimateFolder = async (
+  const prepareFolder = async (
     sourcePath,
+    targetPath,
     sourceLan,
     targetLan,
     isLibraryBook,
+    sourceBook,
     targetBook,
     urantiapediaFolder
   ) => {
     try {
-      addLog(`Estimating folder: ${sourcePath}`);
+      addLog(`Preparing translation of folder: ${sourcePath}`);
       const files = await getFiles(sourcePath);
       const promises = files.map(file => {
-        const promise = estimateFile(file, sourceLan, targetLan,
-          isLibraryBook, targetBook);
+        const promise = prepareFile(file, sourceLan, targetLan,
+          isLibraryBook, sourceBook, targetBook);
         return reflectPromise(promise);
       });
       const results = await Promise.all(promises);
@@ -94,41 +93,32 @@ export const useEstimateFolder = (
       if (errors.length > 0) {
         throw errors;
       }
-      let lineCount = 0;
-      let trCount = 0;
-      const output = {
-        objects: {},
-        summary: []
-      };
-      const root = urantiapediaFolder.replace(/\\/g, '/');
 
+      const output = {};
       results.forEach((result, i) => {
-        const name = files[i].replace(/\\/g, '/').replace(root, '');
-        const obj = result.value;
-        output.objects[name] = obj;
-        lineCount += obj.lineCount;
-        trCount += obj.trCount;
-        output.summary.push({
-          name,
-          text_in_file: obj.lineCount,
-          text_to_translate: obj.trCount
-        });
+        const name = files[i].replace(urantiapediaFolder, '').replace(/\\/g, '/');
+        output[name] = result.value;
       });
 
-      output.summary.push({
-        name: 'Total',
-        text_in_file: lineCount,
-        text_to_translate: trCount
-      });
+      //Writing the objects file (_translate.json)
+      const filePath = path.join(targetPath, '_translate.json');
+      addLog(`Writing to file: ${filePath}`);
+      const json = JSON.stringify(output, null, 4);
+      await window.NodeAPI.writeFile(filePath, json);
 
-      return output;
+      //Writing the files to translate (_translate_XX.md)
+      //TODO: Include in translate key of each object an array with file index and line
+      //TODO: Create a max of 99 files (better if 10 to 20) with texts
+      //TODO: Improvements: extract texts from copyright lines
+      //TODO: Improvements: add original and trasnlated UB pars for use in quotes
+      //TODO: Improvements: process Markdown tables to avoid problems in translations
 
     } catch (err) {
       throw err;
     }
-  }
+  };
 
   return {
-    estimateFolder
+    prepareFolder
   };
 };

@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia';
 import { useMain } from 'src/stores/main.js';
 import { UrantiaBook } from 'src/core/urantiabook.js';
 import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
+import { usePrepareTranslation } from 'src/composables/translate/usePrepareTranslation';
 import { useEstimateFolder } from 'src/composables/translate/useEstimateFolder';
 
 import path from 'path';
@@ -29,6 +30,7 @@ export const useTranslate = defineStore('translate', () => {
   } = storeToRefs(mainStore);
 
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
+  const { prepareFolder } = usePrepareTranslation(uiLanguage, addLog, addWarning);
   const { estimateFolder } = useEstimateFolder(uiLanguage, addLog, addWarning);
 
   // Constants
@@ -44,9 +46,15 @@ export const useTranslate = defineStore('translate', () => {
   const sourceFolder = ref('');
   const targetFolder = ref('');
   const translating = ref(false);
+  const preparing = ref(false);
+  const building = ref(false);
   const estimating = ref(false);
 
   //Functions
+  /**
+   * Reads the Urantia Book in both source and target language to be used for
+   * later us in translations.
+   */
   const loadTranslateBooks = async () => {
     const root = path.join(urantiapediaFolder.value, 'input', 'json');
     const dirSourceBook = path.join(root, `book-${sourceLanguage.value}`);
@@ -55,11 +63,13 @@ export const useTranslate = defineStore('translate', () => {
     const loadSource = (
       !sourceBook ||
       sourceBook.language != sourceLanguage.value ||
-      sourceBook.papers.length == 0);
+      sourceBook.papers.length == 0
+    );
     const loadTarget = (
       !targetBook ||
       targetBook.language != targetLanguage.value ||
-      targetBook.papers.length == 0);
+      targetBook.papers.length == 0
+    );
 
     if (loadSource) {
       const sourcePapers = await readFromJSON(dirSourceBook);
@@ -71,86 +81,139 @@ export const useTranslate = defineStore('translate', () => {
     }
   };
 
-  // const showTranslateLog = (issues) => {
-  //   controls.logAreaTranslate.innerHTML = issues
-  //     .map(arIssuesOrErr => {
-  //       if (arIssuesOrErr instanceof Error) {
-  //         return arIssuesOrErr.stack.split('\n').map((s, i) => {
-  //           return (i === 0 ?
-  //             `<p class="text-danger mt-1 mb-0">${s}</p>` :
-  //             `<p class="text-danger ml-3 mb-0 small">${s}</p>`);
-  //         }).join('');
-  //       }
-  //       return arIssuesOrErr.map((info, i) => {
-  //         return (i == 0 ?
-  //           `<p class="mb-1">${info}</p>` :
-  //           `<p class="mb-1 alert alert-light small">${info}</p>`);
-  //       }).join('');
-  //     }).join('');
-  // };
-
-  // const showTranslateError = (errors) => {
-  //   controls.logAreaTranslate.innerHTML = errors.map(err => {
-  //     return err.stack.split('\n').map((s, i) => {
-  //       return (i === 0 ?
-  //         `<p class="text-danger mt-1 mb-0">${s}</p>` :
-  //         `<p class="text-danger ml-3 mb-0 small">${s}</p>`);
-  //     }).join('');
-  //   }).join('');
-  // };
-
   //Actions
+
+  /**
+   * Translates all files inside a folder requesting translations to a Google
+   * Translate web services (requires a Google account for payments).
+   */
   const startTranslate = async () => {
-    // if (urantiapediaFolder.value === '') return;
-    // const isLibraryBook = path.basename(sourceFolder.value.replace(/\\/g, '/')).startsWith('book');
-
-    // if (!sourceFolder.value || sourceFolder.value == '' ||
-    //   !targetFolder.value || targetFolder.value == '') {
-    //   showTranslateError([new Error('Folder missing.')]);
-    //   return;
-    // }
-
-    // //Test to translate a text
-    // // translator.translateText('¡Hola mundo!', sourceLanguage.value, targetLanguage.value)
-    // // 	.then(translations => alert(translations));
-
-    // loadTranslateBooks()
-    //   .then(() => {
-    //     translator.configureBooks(bookTranslate, bookTranslate2);
-    //     return translator.translateFolder(sourceFolder.value, targetFolder.value,
-    //       sourceLanguage.value, targetLanguage.value);
-    //   })
-    //   .then(issues => showTranslateLog(issues))
-    //   .catch(err => showTranslateError([err]));
-  };
-
-  const startEstimate = async () => {
     if (urantiapediaFolder.value === '') return;
-    estimating.value = true;
+    if (!sourceFolder.value || sourceFolder.value == '') {
+      addErrors('Origin folder missing.');
+      return;
+    }
+    if (!targetFolder.value || targetFolder.value == '') {
+      addErrors('Target folder missing.');
+      return;
+    }
+
+    translating.value = true;
     try {
-      const isLibraryBook = path.basename(sourceFolder.value.replace(/\\/g, '/')).startsWith('book');
-  
       if (!sourceFolder.value || sourceFolder.value == '') {
         throw new Error('Origin folder missing.');
       }
+      if (!targetFolder.value || targetFolder.value == '') {
+        throw new Error('Target folder missing.');
+      }
+      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
+      const targetFolderN = targetFolder.value.replace(/\\/g, '/');
+      const isLibraryBook = path.basename(sourceFolderN).startsWith('book');
+  
+      // //Test to translate a text
+      // // translator.translateText('¡Hola mundo!', sourceLanguage.value, targetLanguage.value)
+      // // 	.then(translations => alert(translations));
+  
+      // loadTranslateBooks()
+      //   .then(() => {
+      //     translator.configureBooks(bookTranslate, bookTranslate2);
+      //     return translator.translateFolder(sourceFolder.value, targetFolder.value,
+      //       sourceLanguage.value, targetLanguage.value);
+      //   })
+      //   .then(issues => showTranslateLog(issues))
+      //   .catch(err => showTranslateError([err]));
+
+      addSuccess('Translation ended with success');
+    } catch (err) {
+      addErrors(err);
+    } finally {
+      translating.value = false;
+    }
+  };
+
+  /**
+   * Executes a preparation for a translation of files in a folder creating some
+   * intermediate files that can later be used for translation in external tools.
+   */
+  const prepareTranslation = async () => {
+    if (urantiapediaFolder.value === '') return;
+    if (!sourceFolder.value || sourceFolder.value == '') {
+      addErrors('Origin folder missing.');
+      return;
+    }
+    if (!targetFolder.value || targetFolder.value == '') {
+      addErrors('Target folder missing.');
+      return;
+    }
+
+    preparing.value = true;
+    try {
+      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
+      const targetFolderN = targetFolder.value.replace(/\\/g, '/');
+      const isLibraryBook = path.basename(sourceFolderN).startsWith('book');
+
+      await loadTranslateBooks();
+      await prepareFolder(
+        sourceFolderN, 
+        targetFolderN, 
+        sourceLanguage.value,
+        targetLanguage.value,
+        isLibraryBook,
+        sourceBook, 
+        targetBook,
+        urantiapediaFolder.value
+      );
+
+      addSuccess('Preparation of translation ended with success');
+    } catch (err) {
+      addErrors(err);
+    } finally {
+      preparing.value = false;
+    }
+  };
+
+  /**
+   * Executes a rebuild of folders and files using expected files with the
+   * translations created using a external tool.
+   */
+  const buildTranslation = async () => {
+    if (urantiapediaFolder.value === '') return;
+    building.value = true;
+    try {
+
+
+      addSuccess('Build of translation ended with success');
+    } catch (err) {
+      addErrors(err);
+    } finally {
+      building.value = false;
+    }
+  };
+
+  /**
+   * Executes an estimation of characters to translate in all files in a folder .
+   */
+  const startEstimate = async () => {
+    if (urantiapediaFolder.value === '') return;
+    if (!sourceFolder.value || sourceFolder.value == '') {
+      addErrors('Origin folder missing.');
+      return;
+    }
+
+    estimating.value = true;
+    try {
+      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
+      const isLibraryBook = path.basename(sourceFolderN).startsWith('book');
 
       await loadTranslateBooks();
       const output = await estimateFolder(
-        sourceFolder.value, 
+        sourceFolderN, 
         sourceLanguage.value, 
         targetLanguage.value, 
         isLibraryBook, 
         targetBook,
         urantiapediaFolder.value
       );
-
-      // for (let key in output.objects) {
-      //   const errors = output.objects[key].errors;
-      //   if (errors.length > 0) {
-      //     addWarning(`File contains problems: ${key}`);
-      //     errors.forEach(e => addWarning(e));
-      //   }
-      // }
 
       addTable('Translate estimations', output.summary);
 
@@ -175,12 +238,16 @@ export const useTranslate = defineStore('translate', () => {
     sourceFolder,
     targetFolder,
     translating,
+    preparing,
+    building,
     estimating,
     logs,
     filteredLogs,
     logsFilter,
     //Actions
     startTranslate,
+    prepareTranslation,
+    buildTranslation,
     startEstimate
   }
 });
