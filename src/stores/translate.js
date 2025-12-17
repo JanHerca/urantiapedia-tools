@@ -43,8 +43,8 @@ export const useTranslate = defineStore('translate', () => {
   //Storage
   const sourceLanguage = ref('en');
   const targetLanguage = ref('es');
-  const sourceFolder = ref('');
-  const targetFolder = ref('');
+  const sourceFolder = ref(path.join(urantiapediaFolder.value, 'output', 'wikijs', 'en', 'article', 'Ann_Bendall'));
+  const targetFolder = ref(path.join(urantiapediaFolder.value, 'tests', 'article_translated'));
   const translating = ref(false);
   const preparing = ref(false);
   const building = ref(false);

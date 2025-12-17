@@ -1,4 +1,4 @@
-import { strformat } from 'src/core/utils.js';
+import { strformat, removeHTMLTags } from 'src/core/utils.js';
 import { Strings } from 'src/core/strings.js';
 
 /**
@@ -46,13 +46,14 @@ export const useProcessLines = (
         `\\[*<sup><small>[^<]+<\\/small><\\/sup>\\]*<\\/span>`, 'g');
       const reVerseNumber = new RegExp(`<sup id="[^"]+">` +
         `<small>[^<]+<\\/small><\\/sup>`, 'g');
-      const reVerseNumber2 = new RegExp(`<span id="[^"]+">` +
-        `<i>[^<]+<\\/i>[^<]*<\\/span>`, 'g');
+      const reVerseNumber2 = new RegExp(
+        `<span id="[^"]+"><i>[^<]+<\\/i>[^<]*<\\/span>`, 'g');
       const reSVGText = new RegExp('<text [^>]+>|<\\/text>', 'g');
       const reTitle = new RegExp('<span class="text-h[3|5]">|<\\/span><br>')
       const reLinks = new RegExp(
         `\\(?(https?:\\/\\/[\\w\\d./?=#\\-\\%\\(\\)]+)\\)?`, 'g');
       const reMath = new RegExp('\\$([^ ][^$]*)\\$', 'g');
+      const reHref = /href=["'](.*?)["']/g;
       const sourceAbb = Strings.bookAbb[sourceLan];
       const targetAbb = Strings.bookAbb[targetLan];
   
@@ -63,7 +64,7 @@ export const useProcessLines = (
           if (cur.startsWith('>')) {
             if (i === 0 || !array[i - 1].startsWith('>')) {
               ac.push([i, i]);
-            } else if (array[i + 1] && !array[1 + 1].startsWith('>')) {
+            } else if (array[i + 1] && !array[i + 1].startsWith('>')) {
               ac[ac.length - 1][1] = i;
             }
           }
@@ -104,6 +105,7 @@ export const useProcessLines = (
         let text = null;
         let extractIndex = -1;
         let line_type = 'other';
+        const errors = [];
         const extracts = [];
         const msg1 = 'Urantia Book ref in line: {0}|{1}:{2}.{3} - {4}';
         const prev = (i > 0 ? array[i - 1] : null);
@@ -112,7 +114,7 @@ export const useProcessLines = (
         const isDesc = line.startsWith('description:');
         const hasDesc = (isDesc &&
           line.replace('description:', '').replace(/"/g, '').trim() != '');
-        const isCopy = line.startsWith('<p class="v-card');
+        const isCopy = line.startsWith('<p class="v-card v-sheet theme--light grey lighten-3');
         const isNavStart = line.startsWith('<figure class="table chapter-navigator">');
         const isImgStart = line.indexOf('class="image urantiapedia') != -1;
         const isBookFrontStart = line.startsWith('<div class="urantiapedia-book-front');
@@ -230,6 +232,10 @@ export const useProcessLines = (
           if (hasDesc) {
             text = line.replace('description:', '').replace(/"/g, '').trim();
           }
+          //Copyright
+          if (isCopy) {
+            text = removeHTMLTags(line, '<p>', '</p>', false, errors, uiLanguage.value);
+          }
           //Check Urantia Book quotes
           if (quoteGroup) {
             ignore = true;
@@ -270,12 +276,18 @@ export const useProcessLines = (
               .replace(reSVGText, genericReplace);
           }
           //External links
-          text = text.replace(reLinks, genericReplace);
+          // text = text.replace(reLinks, genericReplace);
+          text = text.replace(reHref, (match, p1) => {
+            extractIndex++;
+            extracts.push(p1);
+            const replacement = `href="%%${extractIndex}%%"`;
+            return replacement;
+          });
           //Math LaTeX
           text = text.replace(reMath, genericReplace);
   
           //If text has collapsed set to ignore
-          if (insideNavigator && text.trim() === '<a href=%%0%%>') {
+          if (insideNavigator && text.trim() === '<a href="%%0%%">') {
             ignore = true;
           }
   
@@ -290,11 +302,11 @@ export const useProcessLines = (
           line,
           line_type,
           text,
-          translation: null,
           ignore,
           remove,
           extracts,
-          quoteGroup
+          quoteGroup,
+          ...(errors.length > 0 ? { errors } : {})
         };
       });
     } catch (err) {

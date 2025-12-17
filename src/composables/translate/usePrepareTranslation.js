@@ -100,16 +100,54 @@ export const usePrepareTranslation = (
         output[name] = result.value;
       });
 
+      //Writing the files to translate (_translate_XX.md)
+      let fileline = -1;
+      let filename = 1;
+      let text = '';
+      let many = false;
+      const texts = [];
+      for (let key in output) {
+        const { objects } = output[key];
+        objects.forEach(obj => {
+          if (filename > 99) {
+            many = true;
+            return;
+          }
+          if (fileline > 2000) {
+            texts.push([filename, text]);
+            filename++;
+            fileline = -1;
+            text = '';
+          }
+          if (obj.text) {
+            fileline += 2;
+            obj.fileline = fileline;
+            obj.filename = `_translate_${filename.toString().padStart(2, '0')}.md`;
+            text += (obj.text + (obj.text.endsWith('\r') ? '\n\r\n' : '\r\n\r\n'));
+          }
+        });
+      }
+      if (many) {
+        throw new Error('Too many lines to translate. Reduce number of files.');
+      }
+      if (text != '') {
+        texts.push([filename, text]);
+      }
+      const promises2 = texts.map(tt => {
+        const fileName = `_translate_${tt[0].toString().padStart(2, '0')}.md`;
+        const filePathMD = path.join(targetPath, fileName);
+        addLog(`Writing to file: ${filePathMD}`);
+        return window.NodeAPI.writeFile(filePathMD, tt[1]);
+      });
+      await Promise.all(promises2);
+
       //Writing the objects file (_translate.json)
       const filePath = path.join(targetPath, '_translate.json');
       addLog(`Writing to file: ${filePath}`);
       const json = JSON.stringify(output, null, 4);
       await window.NodeAPI.writeFile(filePath, json);
 
-      //Writing the files to translate (_translate_XX.md)
-      //TODO: Include in translate key of each object an array with file index and line
-      //TODO: Create a max of 99 files (better if 10 to 20) with texts
-      //TODO: Improvements: extract texts from copyright lines
+      //TODO: Improvement: If all the line is a link extract correctly
       //TODO: Improvements: add original and trasnlated UB pars for use in quotes
       //TODO: Improvements: process Markdown tables to avoid problems in translations
 
