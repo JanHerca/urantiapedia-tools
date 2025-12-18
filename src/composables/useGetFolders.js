@@ -12,7 +12,7 @@ export const useGetFolders = (
   /**
    * Get folders that are under the given path.
    * @param {string} dirPath Folder.
-   * @param {string[]} folders Array to stores folder paths.
+   * @param {string[]} folders Array to store folder paths.
    * @param {number} level Current level.
    * @param {number} maxLevels Maximum number of levels.
    */

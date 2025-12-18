@@ -1,10 +1,11 @@
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { useMain } from 'src/stores/main.js';
 import { UrantiaBook } from 'src/core/urantiabook.js';
 import { useReadFromJSON } from 'src/composables/urantiabook/useReadFromJSON.js';
-import { usePrepareTranslation } from 'src/composables/translate/usePrepareTranslation';
-import { useEstimateFolder } from 'src/composables/translate/useEstimateFolder';
+import { usePrepareTranslation } from 'src/composables/translate/usePrepareTranslation.js';
+import { useBuildTranslation } from 'src/composables/translate/useBuildTranslation.js';
+import { useEstimateFolder } from 'src/composables/translate/useEstimateFolder.js';
 
 import path from 'path';
 
@@ -31,6 +32,7 @@ export const useTranslate = defineStore('translate', () => {
 
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
   const { prepareFolder } = usePrepareTranslation(uiLanguage, addLog, addWarning);
+  const { buildTranslationFolder } = useBuildTranslation(uiLanguage, addLog, addWarning);
   const { estimateFolder } = useEstimateFolder(uiLanguage, addLog, addWarning);
 
   // Constants
@@ -43,7 +45,7 @@ export const useTranslate = defineStore('translate', () => {
   //Storage
   const sourceLanguage = ref('en');
   const targetLanguage = ref('es');
-  const sourceFolder = ref(path.join(urantiapediaFolder.value, 'output', 'wikijs', 'en', 'article', 'Ann_Bendall'));
+  const sourceFolder = ref(path.join(urantiapediaFolder.value, 'tests', 'article_progress'));
   const targetFolder = ref(path.join(urantiapediaFolder.value, 'tests', 'article_translated'));
   const translating = ref(false);
   const preparing = ref(false);
@@ -178,9 +180,24 @@ export const useTranslate = defineStore('translate', () => {
    */
   const buildTranslation = async () => {
     if (urantiapediaFolder.value === '') return;
+    if (!sourceFolder.value || sourceFolder.value == '') {
+      addErrors('Origin folder missing.');
+      return;
+    }
+    if (!targetFolder.value || targetFolder.value == '') {
+      addErrors('Target folder missing.');
+      return;
+    }
+
     building.value = true;
     try {
+      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
+      const targetFolderN = targetFolder.value.replace(/\\/g, '/');
 
+      await buildTranslationFolder(
+        sourceFolderN, 
+        targetFolderN
+      );
 
       addSuccess('Build of translation ended with success');
     } catch (err) {
