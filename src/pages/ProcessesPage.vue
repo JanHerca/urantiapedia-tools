@@ -21,7 +21,8 @@
             <InputGroupFile
               v-if="control.type === 'file'"
               label="File"
-              v-model="control.value" />
+              v-model="control.value"
+              :basePath="urantiapediaFolder" />
             <InputGroupSelect 
               v-if="control.type === 'select'"
               :label="Strings[`lbl${control.subtype}`][uiLanguage]" 

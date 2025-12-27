@@ -51,7 +51,7 @@ export const useMain = defineStore('main', () => {
   //State
   const language = ref('en');
   const uiLanguage = ref(uiLanCode);
-  const urantiapediaFolder = ref(initialUrantiapediaFolder);
+  const urantiapediaFolder = ref(initialUrantiapediaFolder.replace(/\\/g, '/'));
   const process = ref('BIBLEREF_TXT_BOOK_JSON_TO_TXT');
   const processData = ref({ active: false, desc: {}, controls: [] });
   const processing = ref(false);

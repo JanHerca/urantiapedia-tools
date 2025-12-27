@@ -48,8 +48,8 @@ const chooseFile = async () => {
   });
   if (path) {
     theFilePath.value = props.basePath != ''
-      ? path.replace(props.basePath, '{ Urantiapedia Folder }')
-      : path;
+      ? path.replace(/\\/g, '/').replace(props.basePath, '{ Urantiapedia Folder }')
+      : path.replace(/\\/g, '/');
   }
 }
 

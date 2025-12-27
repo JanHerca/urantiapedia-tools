@@ -68,7 +68,7 @@ export const useReadIndexFileFromTSV = (
           tags: [],
           issues: [],
           volumes: [],
-          language: 'en',
+          language: language.value,
           notes: [],
           referencesText: 'References'
         };
