@@ -1,6 +1,7 @@
 import { reflectPromise } from 'src/core/utils.js';
 import { useCreateFolders } from '../useCreateFolders.js';
 import { useGetFiles } from '../useGetFiles.js';
+import { useFinalizeTranslation } from './useFinalizeTranslation.js';
 
 import path from 'path';
 
@@ -18,6 +19,8 @@ export const  useBuildTranslation = (
 ) => {
   const { createFolders } = useCreateFolders(uiLanguage, addLog);
   const { getFiles } = useGetFiles(uiLanguage, addLog);
+  const { finalizeTranslation } = useFinalizeTranslation(uiLanguage, addLog, 
+    addWarning);
 
   /**
    * Reads a _translatedXX.md file and returns the lines from it.
@@ -26,7 +29,8 @@ export const  useBuildTranslation = (
   const readTranslatedFile = async (filePath) => {
     try {
       addLog(`Reading file: ${filePath}`);
-      const baseName = path.basename(filePath.replace(/\\/g, '/'));
+      const filename = path.basename(filePath.replace(/\\/g, '/'))
+        .replace('translated', 'translate');
       const buf = await window.NodeAPI.readFile(filePath);
       const lines = buf.toString().split('\n');
       return { filename, lines };
@@ -35,9 +39,22 @@ export const  useBuildTranslation = (
     }
   };
 
+  /**
+   * Builds the translation files inside the target folder.
+   * @param {string} sourcePath Source file path.
+   * @param {string} targetPath Target file path.
+   * @param {string} sourceLan Source language code, like `en`.
+   * @param {string} targetLan Target language code, like `es`.
+   * @param {UrantiaBook} targetBook Urantia Book in target language.
+   * @param {string} urantiapediaFolder Urantiapedia folder.
+   */
   const buildTranslationFolder = async (
     sourcePath,
-    targetPath
+    targetPath,
+    sourceLan,
+    targetLan,
+    targetBook,
+    urantiapediaFolder
   ) => {
     try {
       addLog(`Building translation of folder: ${targetPath}`);
@@ -84,8 +101,8 @@ export const  useBuildTranslation = (
           .filter(obj => obj.ignore != true)
           .forEach(obj => {
             const { filename, fileline } = obj;
-            if (translations[filename] && translations[filename][fileline]) {
-              obj.translation = translations[filename][fileline];
+            if (translations[filename] && translations[filename][fileline - 1]) {
+              obj.translation = translations[filename][fileline - 1];
             } else {
               const err = `Translation not found: Filename ${filename} : ${fileline}`;
               obj.translationError = err;
@@ -98,12 +115,47 @@ export const  useBuildTranslation = (
       }
 
       //Rebuild files
-      
+      const translatedLines = {};
+      for (let key in objects) {
+        const objs = objects[key].objects;
+        const errors = [];
+        const lines = finalizeTranslation(
+          objs, 
+          sourceLan, 
+          targetLan, 
+          targetBook, 
+          errors
+        );
+        translatedLines[key] = { lines, errors };
+        if (errors.length > 0) {
+          translationErrors.push(...errors.map(msg => new Error(msg)));
+        }
+      }
+      if (translationErrors.length > 0) {
+        throw translationErrors;
+      }
 
-      
+      //Save new files
+      const promises2 = Object.keys(translatedLines)
+        .map(key => {
+          const targetFile = path.join(urantiapediaFolder, key)
+            .replace(sourcePath, targetPath);
+          addLog(`Writing to file: ${targetFile}`);
+          const lines = translatedLines[key].lines.join('');
+          return window.NodeAPI.writeFile(targetFile, lines);
+        })
+      const results2 = await Promise.all(promises2);
+      const errors2 = results2.filter(r => r.error).map(r => r.error);
+      if (errors2.length > 0) {
+        throw errors2;
+      }
     } catch (err) {
       throw err;
     }
+
+    //TODO: Errors in headers of books (adding " " in wrong place)
+    //TODO: figcaption tags are removed in figure sometimes
+    //TODO: Abbreviated names in persons like G. H. Barry are collapsed to GH Barry
   };
 
   return {

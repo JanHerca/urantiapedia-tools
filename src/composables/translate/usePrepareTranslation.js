@@ -28,7 +28,6 @@ export const usePrepareTranslation = (
    * @param {boolean} isLibraryBook If it is a book (otherwise is an article).
    * @param {UrantiaBook} sourceBook Urantia Book in source language.
    * @param {UrantiaBook} targetBook Urantia Book in target language.
-   * @param {string} urantiapediaFolder Urantiapedia folder.
    */
   const prepareFile = async (
     sourcePath,
@@ -62,7 +61,7 @@ export const usePrepareTranslation = (
    * Creates a collection of files with content ready for being translated in an
    * external tool.
    * @param {string} sourcePath Source file path.
-   * @param {string} sourcePath Target file path.
+   * @param {string} targetPath Target file path.
    * @param {string} sourceLan Source language code, like `en`.
    * @param {string} targetLan Target language code, like `es`.
    * @param {boolean} isLibraryBook If it is a book (otherwise is an article).
@@ -140,6 +139,15 @@ export const usePrepareTranslation = (
         return window.NodeAPI.writeFile(filePathMD, tt[1]);
       });
       await Promise.all(promises2);
+
+      //Writing the blank files to write the translations (_translated_XX.md)
+      const promises3 = texts.map(tt => {
+        const fileName = `_translated_${tt[0].toString().padStart(2, '0')}.md`;
+        const filePathMD = path.join(targetPath, fileName);
+        addLog(`Writing to file (blank): ${filePathMD}`);
+        return window.NodeAPI.writeFile(filePathMD, '');
+      });
+      await Promise.all(promises3);
 
       //Writing the objects file (_translate.json)
       const filePath = path.join(targetPath, '_translate.json');

@@ -32,7 +32,8 @@ export const useTranslate = defineStore('translate', () => {
 
   const { readFromJSON } = useReadFromJSON(uiLanguage, addLog);
   const { prepareFolder } = usePrepareTranslation(uiLanguage, addLog, addWarning);
-  const { buildTranslationFolder } = useBuildTranslation(uiLanguage, addLog, addWarning);
+  const { buildTranslationFolder } = useBuildTranslation(uiLanguage, addLog, 
+    addWarning, urantiapediaFolder);
   const { estimateFolder } = useEstimateFolder(uiLanguage, addLog, addWarning);
 
   // Constants
@@ -40,17 +41,17 @@ export const useTranslate = defineStore('translate', () => {
   //Variables
   let sourceBook = null;
   let targetBook = null;
-  const objects = {};
 
   //Storage
   const sourceLanguage = ref('en');
   const targetLanguage = ref('es');
-  const sourceFolder = ref(path.join(urantiapediaFolder.value, 'tests', 'article_progress'));
-  const targetFolder = ref(path.join(urantiapediaFolder.value, 'tests', 'article_translated'));
+  const sourceFolder = ref(path.join('{ Urantiapedia Folder }', 'tests', 'article_progress'));
+  const targetFolder = ref(path.join('{ Urantiapedia Folder }', 'tests', 'article_translated'));
   const translating = ref(false);
   const preparing = ref(false);
   const building = ref(false);
   const estimating = ref(false);
+  const isLibraryBook = ref(false);
 
   //Functions
   /**
@@ -89,7 +90,7 @@ export const useTranslate = defineStore('translate', () => {
    * Translates all files inside a folder requesting translations to a Google
    * Translate web services (requires a Google account for payments).
    */
-  const startTranslate = async () => {
+  const startTranslation = async () => {
     if (urantiapediaFolder.value === '') return;
     if (!sourceFolder.value || sourceFolder.value == '') {
       addErrors('Origin folder missing.');
@@ -110,7 +111,6 @@ export const useTranslate = defineStore('translate', () => {
       }
       const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
       const targetFolderN = targetFolder.value.replace(/\\/g, '/');
-      const isLibraryBook = path.basename(sourceFolderN).startsWith('book');
   
       // //Test to translate a text
       // // translator.translateText('¡Hola mundo!', sourceLanguage.value, targetLanguage.value)
@@ -150,9 +150,12 @@ export const useTranslate = defineStore('translate', () => {
 
     preparing.value = true;
     try {
-      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
-      const targetFolderN = targetFolder.value.replace(/\\/g, '/');
-      const isLibraryBook = path.basename(sourceFolderN).startsWith('book');
+      const sourceFolderN = sourceFolder.value
+        .replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
+        .replace(/\\/g, '/');
+      const targetFolderN = targetFolder.value
+        .replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
+        .replace(/\\/g, '/');
 
       await loadTranslateBooks();
       await prepareFolder(
@@ -160,7 +163,7 @@ export const useTranslate = defineStore('translate', () => {
         targetFolderN, 
         sourceLanguage.value,
         targetLanguage.value,
-        isLibraryBook,
+        isLibraryBook.value,
         sourceBook, 
         targetBook,
         urantiapediaFolder.value
@@ -191,12 +194,20 @@ export const useTranslate = defineStore('translate', () => {
 
     building.value = true;
     try {
-      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
-      const targetFolderN = targetFolder.value.replace(/\\/g, '/');
+      const sourceFolderN = sourceFolder.value
+        .replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
+        .replace(/\\/g, '/');
+      const targetFolderN = targetFolder.value
+        .replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
+        .replace(/\\/g, '/');
 
       await buildTranslationFolder(
         sourceFolderN, 
-        targetFolderN
+        targetFolderN,
+        sourceLanguage.value,
+        targetLanguage.value,
+        targetBook,
+        urantiapediaFolder.value
       );
 
       addSuccess('Build of translation ended with success');
@@ -210,7 +221,7 @@ export const useTranslate = defineStore('translate', () => {
   /**
    * Executes an estimation of characters to translate in all files in a folder .
    */
-  const startEstimate = async () => {
+  const startEstimation = async () => {
     if (urantiapediaFolder.value === '') return;
     if (!sourceFolder.value || sourceFolder.value == '') {
       addErrors('Origin folder missing.');
@@ -219,15 +230,16 @@ export const useTranslate = defineStore('translate', () => {
 
     estimating.value = true;
     try {
-      const sourceFolderN = sourceFolder.value.replace(/\\/g, '/');
-      const isLibraryBook = path.basename(sourceFolderN).startsWith('book');
+      const sourceFolderN = sourceFolder.value
+        .replace('{ Urantiapedia Folder }', urantiapediaFolder.value)
+        .replace(/\\/g, '/');
 
       await loadTranslateBooks();
       const output = await estimateFolder(
         sourceFolderN, 
         sourceLanguage.value, 
         targetLanguage.value, 
-        isLibraryBook, 
+        isLibraryBook.value, 
         targetBook,
         urantiapediaFolder.value
       );
@@ -261,10 +273,11 @@ export const useTranslate = defineStore('translate', () => {
     logs,
     filteredLogs,
     logsFilter,
+    isLibraryBook,
     //Actions
-    startTranslate,
+    startTranslation,
     prepareTranslation,
     buildTranslation,
-    startEstimate
+    startEstimation
   }
 });

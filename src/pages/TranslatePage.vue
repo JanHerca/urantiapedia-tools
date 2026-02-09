@@ -17,6 +17,12 @@
           <InputGroupFolder
             label="Target folder"
             v-model="targetFolder" />
+          <InputGroupToggle
+            id="tglLibraryBook"
+            label="Library book"
+            v-model="isLibraryBook"
+            class="q-pa-sm-none q-mb-sm-md"
+          />
         </div>
         <div class="q-pt-sm">
           <Message 
@@ -26,19 +32,19 @@
             text="Urantiapedia folder is required in Settings." />
           <ProgressButton
             :processing="translating"
-            label="Translate (One Step)"
-            @click="startTranslate" />
+            label="Translate (Automatic)"
+            @click="startTranslation" />
           <ProgressButtonGroup
             :processing1="preparing"
             :processing2="building"
-            label1="Translate (1/2 Step) - Prepare"
-            label2="Translate (2/2 Step) - Build"
+            label1="Translate (Manual) - Prepare"
+            label2="Translate (Manual) - Build"
             @click1="prepareTranslation" 
             @click2="buildTranslation" />
           <ProgressButton
             :processing="estimating"
             label="Estimate"
-            @click="startEstimate" 
+            @click="startEstimation" 
             classes="full-width" />
         </div>
       </div>
@@ -61,6 +67,7 @@
 import { storeToRefs } from 'pinia';
 import InputGroupSelect from 'src/components/InputGroupSelect.vue';
 import InputGroupFolder from 'src/components/InputGroupFolder.vue';
+import InputGroupToggle from 'src/components/InputGroupToggle.vue';
 import Message from 'src/components/Message.vue';
 import Terminal from 'src/components/Terminal.vue';
 import TerminalButtonGroup from 'src/components/TerminalButtonGroup.vue';
@@ -71,10 +78,10 @@ import { useTranslate } from 'src/stores/translate';
 const translateStore = useTranslate();
 const {
   allLanguages,
-  startTranslate,
+  startTranslation,
   prepareTranslation,
   buildTranslation,
-  startEstimate
+  startEstimation
 } = translateStore;
 const { 
   urantiapediaFolder,
@@ -89,7 +96,8 @@ const {
   estimating,
   logs: logsComplete,
   filteredLogs,
-  logsFilter
+  logsFilter,
+  isLibraryBook
 } = storeToRefs(translateStore);
 
 const pageStyle = (offset) => {

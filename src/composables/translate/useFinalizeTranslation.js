@@ -163,4 +163,6 @@ export const useFinalizeTranslation = (
         return tr;
       });
   };
+
+  return { finalizeTranslation };
 };
