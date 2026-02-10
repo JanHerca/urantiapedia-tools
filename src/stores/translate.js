@@ -206,6 +206,8 @@ export const useTranslate = defineStore('translate', () => {
         targetFolderN,
         sourceLanguage.value,
         targetLanguage.value,
+        isLibraryBook.value,
+        sourceBook,
         targetBook,
         urantiapediaFolder.value
       );

@@ -32,7 +32,7 @@ export const  useBuildTranslation = (
       const filename = path.basename(filePath.replace(/\\/g, '/'))
         .replace('translated', 'translate');
       const buf = await window.NodeAPI.readFile(filePath);
-      const lines = buf.toString().split('\n');
+      const lines = buf.toString().split('\n').map(line => line.trim());
       return { filename, lines };
     } catch (err) {
       throw err;
@@ -45,6 +45,8 @@ export const  useBuildTranslation = (
    * @param {string} targetPath Target file path.
    * @param {string} sourceLan Source language code, like `en`.
    * @param {string} targetLan Target language code, like `es`.
+   * @param {boolean} isLibraryBook If it is a book (otherwise is an article).
+   * @param {UrantiaBook} sourceBook Urantia Book in source language.
    * @param {UrantiaBook} targetBook Urantia Book in target language.
    * @param {string} urantiapediaFolder Urantiapedia folder.
    */
@@ -53,6 +55,8 @@ export const  useBuildTranslation = (
     targetPath,
     sourceLan,
     targetLan,
+    isLibraryBook,
+    sourceBook,
     targetBook,
     urantiapediaFolder
   ) => {
@@ -123,6 +127,8 @@ export const  useBuildTranslation = (
           objs, 
           sourceLan, 
           targetLan, 
+          isLibraryBook,
+          sourceBook,
           targetBook, 
           errors
         );
@@ -141,7 +147,7 @@ export const  useBuildTranslation = (
           const targetFile = path.join(urantiapediaFolder, key)
             .replace(sourcePath, targetPath);
           addLog(`Writing to file: ${targetFile}`);
-          const lines = translatedLines[key].lines.join('');
+          const lines = translatedLines[key].lines.join('\n');
           return window.NodeAPI.writeFile(targetFile, lines);
         })
       const results2 = await Promise.all(promises2);
@@ -152,10 +158,6 @@ export const  useBuildTranslation = (
     } catch (err) {
       throw err;
     }
-
-    //TODO: Errors in headers of books (adding " " in wrong place)
-    //TODO: figcaption tags are removed in figure sometimes
-    //TODO: Abbreviated names in persons like G. H. Barry are collapsed to GH Barry
   };
 
   return {
