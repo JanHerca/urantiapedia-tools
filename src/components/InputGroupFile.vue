@@ -47,9 +47,10 @@ const chooseFile = async () => {
     filters: props.filters
   });
   if (path) {
+    const npath = path.replace(/\\/g, '/');
     theFilePath.value = props.basePath != ''
-      ? path.replace(/\\/g, '/').replace(props.basePath, '{ Urantiapedia Folder }')
-      : path.replace(/\\/g, '/');
+      ? npath.replace(props.basePath, '{ Urantiapedia Folder }')
+      : npath;
   }
 }
 

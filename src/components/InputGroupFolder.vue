@@ -46,9 +46,10 @@ const chooseFolder = async () => {
     filters: []
   });
   if (path) {
+    const npath = path.replace(/\\/g, '/');
     theFolderPath.value = props.basePath != ''
-      ? path.replace(props.basePath, '{ Urantiapedia Folder }')
-      : path;
+      ? npath.replace(props.basePath, '{ Urantiapedia Folder }')
+      : npath;
   }
 }
 

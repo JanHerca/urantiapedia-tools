@@ -79,7 +79,7 @@ export const useRead = (
     try {
       if (!supported.includes(language.value)) {
         addLog(`Map catalog not supported for: ${language.value}`);
-        return null;
+        return { maps: [], translations: [] };
       }
       const mapcatalogFileEN = path.join(urantiapediaFolder, 'input', 
         'markdown', 'en', 'map_catalog.md');

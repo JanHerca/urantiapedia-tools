@@ -184,7 +184,10 @@ export const useReadFromHTML = (
       const $ = cheerio.load(content);
       const paperTitleQuery = config.paperTitle.replace(
         '{paperIndex}', paperIndex.toString());
-      const paperTitle = $(paperTitleQuery).text();
+      const paperTitle = $(paperTitleQuery)
+        .map((i, el) => $(el).text().trim())
+        .get()
+        .join(' ');
       const secs = $(config.secs);
       const pars = $(config.pars);
 
@@ -196,7 +199,7 @@ export const useReadFromHTML = (
       };
       const is_b = [31, 56, 120].includes(paperIndex);
       let i = 0, p, removeErr, text, pId, sec, pdata;
-      //Add section 0 if it exists
+      //Add section 0 (if not exists is later removed)
       paper.sections.push({
         section_index: 0,
         section_ref: `${paperIndex}:0`,
@@ -212,7 +215,7 @@ export const useReadFromHTML = (
         // 31:10.21, 56:10.22, 120:3.11 (repeats, so we add 'b')
         // 134:6.14 (do not repeats, is a common par)
         // 144:5.11,25,38,54,73,87 (do not repeats, is a common par)
-        if ($(p).text().indexOf('* * *') != -1) {
+        if (sec && $(p).text().indexOf('* * *') != -1) {
           const b = is_b ? 'b' : '';
           if (!is_b) {
             pId[2] = pId[2] + 1;
@@ -290,7 +293,7 @@ export const useReadFromHTML = (
       const results = await Promise.all(promises);
       const errors = results.filter(r => r.error).map(r => r.error);
       if (errors.length > 0) {
-        throw errors;
+        throw errors.flat(Infinity);
       }
       return results.filter(r => r.value != null).map(r => r.value);
     } catch (err) {

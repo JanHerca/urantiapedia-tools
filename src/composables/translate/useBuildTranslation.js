@@ -105,7 +105,10 @@ export const  useBuildTranslation = (
           .filter(obj => obj.ignore != true)
           .forEach(obj => {
             const { filename, fileline } = obj;
-            if (translations[filename] && translations[filename][fileline - 1]) {
+            if (
+              translations[filename] != undefined && 
+              translations[filename][fileline - 1] != undefined
+            ) {
               obj.translation = translations[filename][fileline - 1];
             } else {
               const err = `Translation not found: Filename ${filename} : ${fileline}`;
@@ -159,6 +162,9 @@ export const  useBuildTranslation = (
       throw err;
     }
   };
+
+  //TODO: If figcaption has several lines only first is translated
+  //Navigator must be recreated, not translated (and if no library book ignored)
 
   return {
     buildTranslationFolder
